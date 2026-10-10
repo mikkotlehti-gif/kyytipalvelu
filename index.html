@@ -50,7 +50,9 @@ function naytaMaaranpaa() {
     }
 
     tallennettuMaaranpaa = document.getElementById("maaranpaa").value;
-     
+
+    document.getElementById("maaranpaa").value = "";
+    
     document.getElementById("valittumaaranpaa").innerHTML =
         "Määränpää: " +
         tallennettuMaaranpaa;
@@ -107,11 +109,15 @@ function peruKyytipyynto() {
 
     tallennettuMaaranpaa = "";
 
+    document.getElementById("maaranpaa").value = "";
+
     kyytipyyntoAktiivinen = false;
 
     document.getElementById("tallennanappi").disabled = true;    
 
     document.getElementById("poistanappi").disabled = true;
+
+    document.getElementById("luonappi").disabled = true;
 
     document.getElementById("maaranpaa").disabled = false;
     

@@ -27,6 +27,8 @@
 
 <p id="tarjoajantila">En tarjoa kyytiä</p>
 
+<p id="lahellaolevatpyynnot">Lähellä olevat kyytipyynnöt: 0</p>
+
 <script>
 
 var nykyinenSijainti = "";
@@ -141,9 +143,8 @@ function aloitaTarjoaminen() {
     
     tarjoaKyytia = true;
 
-    document.getElementById("tarjoajantila").innerHTML =
-    "Tarjoan kyytiä<br>Aloitettu: " +
-    tarjoaminenAloitettu;
+    document.getElementById("lahellaolevatpyynnot").innerHTML =
+    "Lähellä olevat kyytipyynnöt: 1";
 
     document.getElementById("aloitatarjoaminen").disabled = true;
 }

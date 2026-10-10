@@ -31,6 +31,7 @@ var nykyinenSijainti = "";
 var kyytipyyntoAktiivinen = false;
 var tallennettuMaaranpaa = "";
 var tarjoaKyytia = false;
+var tarjoaminenAloitettu = "";
     
 navigator.geolocation.watchPosition(
     function(sijainti) {
@@ -134,10 +135,13 @@ function peruKyytipyynto() {
 }
 
 function aloitaTarjoaminen() {
+    tarjoaminenAloitettu = new Date().toLocaleTimeString();
+    
     tarjoaKyytia = true;
 
     document.getElementById("tarjoajantila").innerHTML =
-        "Tarjoan kyytiä";
+    "Tarjoan kyytiä<br>Aloitettu: " +
+    tarjoaminenAloitettu;
 
     document.getElementById("aloitatarjoaminen").disabled = true;
 }

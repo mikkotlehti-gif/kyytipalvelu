@@ -50,9 +50,7 @@ function naytaMaaranpaa() {
     }
 
     tallennettuMaaranpaa = document.getElementById("maaranpaa").value;
-    
-    tallennettuMaaranpaa = "";
-    
+     
     document.getElementById("valittumaaranpaa").innerHTML =
         "Määränpää: " +
         tallennettuMaaranpaa;
@@ -85,7 +83,7 @@ function luoKyytipyynto() {
     document.getElementById("kyytipyynto").innerHTML =
         "Lähtöpaikka: " + nykyinenSijainti +
         "<br>Määränpää: " +
-        document.getElementById("maaranpaa").value +
+        tallennettuMaaranpaa +
         "<br>Luotu: " + aika;
 
     document.getElementById("valittumaaranpaa").innerHTML = "";

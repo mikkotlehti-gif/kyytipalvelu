@@ -134,6 +134,16 @@ async function luoKyytipyynto() {
 
     kyytipyyntoAktiivinen = true;
 
+    await addDoc(
+      collection(db, "kyytipyynnot"),
+      {
+          lahtopaikka: nykyinenSijainti,
+          maaranpaa: tallennettuMaaranpaa,
+          luotu: new Date().toISOString(),
+          status: "aktiivinen"
+      }
+    );
+  
     document.getElementById("kyytipyynto").innerHTML =
         "Lähtöpaikka: " + nykyinenSijainti +
         "<br>Määränpää: " +

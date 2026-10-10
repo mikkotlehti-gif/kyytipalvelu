@@ -13,5 +13,5 @@ navigator.geolocation.getCurrentPosition(
         document.getElementById("sijainti").innerHTML = virhe.message;
     }
 );
-    function naytaMaaranpaa() {}
+function naytaMaaranpaa() { document.getElementById("valittumaaranpaa").innerHTML = document.getElementById("maaranpaa").value; }
 </script>

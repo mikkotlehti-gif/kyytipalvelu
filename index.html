@@ -19,6 +19,7 @@
 
 <p><b>Sijaintisi:</b></p>
 <p id="sijainti">Haetaan sijaintia...</p>
+<p id="viimeksipaivitetty"></p>
 
 <script>
 
@@ -36,6 +37,8 @@ navigator.geolocation.watchPosition(
         document.getElementById("sijainti").innerHTML =
             "Leveysaste: " + sijainti.coords.latitude +
             "<br>Pituusaste: " + sijainti.coords.longitude;
+        document.getElementById("viimeksipaivitetty").innerHTML =
+            "Viimeksi päivitetty: " + new Date().toLocaleTimeString();
     },
     function(virhe) {
         document.getElementById("sijainti").innerHTML =

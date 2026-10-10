@@ -19,19 +19,19 @@
 <script>
 
 var nykyinenSijainti = "";
-var kyytipyyntoNumero = 0;
-    
+var kyytipyyntoAktiivinen = false;
+
 navigator.geolocation.getCurrentPosition(
     function(sijainti) {
 
-    nykyinenSijainti =
-        sijainti.coords.latitude + ", " +
-        sijainti.coords.longitude;
+        nykyinenSijainti =
+            sijainti.coords.latitude + ", " +
+            sijainti.coords.longitude;
 
-    document.getElementById("sijainti").innerHTML =
-        "Leveysaste: " + sijainti.coords.latitude +
-        "<br>Pituusaste: " + sijainti.coords.longitude;
-},
+        document.getElementById("sijainti").innerHTML =
+            "Leveysaste: " + sijainti.coords.latitude +
+            "<br>Pituusaste: " + sijainti.coords.longitude;
+    },
     function(virhe) {
         document.getElementById("sijainti").innerHTML =
             virhe.message;
@@ -43,29 +43,10 @@ function naytaMaaranpaa() {
         "Määränpää: " +
         document.getElementById("maaranpaa").value;
 }
-    
-function luoKyytipyynto() {
-
-    var aika = new Date().toLocaleString();
-    
-    if (document.getElementById("maaranpaa").value == "") {
-    document.getElementById("kyytipyynto").innerHTML =
-        "Anna ensin määränpää";
-    return;
-    }
-    
-    document.getElementById("kyytipyynto").innerHTML =
-        "Lähtöpaikka: " + nykyinenSijainti +
-"<br>Määränpää: " + document.getElementById("maaranpaa").value;
-
-    document.getElementById("valittumaaranpaa").innerHTML = "";
-} 
 
 function luoKyytipyynto() {
 
     var aika = new Date().toLocaleString();
-
-    kyytipyyntoNumero++;
 
     if (document.getElementById("maaranpaa").value == "") {
         document.getElementById("kyytipyynto").innerHTML =
@@ -73,14 +54,33 @@ function luoKyytipyynto() {
         return;
     }
 
+    if (kyytipyyntoAktiivinen) {
+        document.getElementById("kyytipyynto").innerHTML =
+            "Sinulla on jo aktiivinen kyytipyyntö";
+        return;
+    }
+
+    kyytipyyntoAktiivinen = true;
+
     document.getElementById("kyytipyynto").innerHTML =
-        "Kyytipyyntö #" + kyytipyyntoNumero +
-        "<br>Lähtöpaikka: " + nykyinenSijainti +
+        "Lähtöpaikka: " + nykyinenSijainti +
         "<br>Määränpää: " +
         document.getElementById("maaranpaa").value +
         "<br>Luotu: " + aika;
 
     document.getElementById("valittumaaranpaa").innerHTML = "";
 }
-    
+
+function peruKyytipyynto() {
+
+    document.getElementById("kyytipyynto").innerHTML =
+        "Ei aktiivista kyytipyyntöä";
+
+    document.getElementById("valittumaaranpaa").innerHTML = "";
+
+    document.getElementById("maaranpaa").value = "";
+
+    kyytipyyntoAktiivinen = false;
+}
+
 </script>

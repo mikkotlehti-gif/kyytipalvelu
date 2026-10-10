@@ -1,17 +1,33 @@
 <h1>Kyytipalvelu</h1>
+
 <button>Näytä sijaintini</button><br>
+
 <input id="maaranpaa" type="text" placeholder="Anna määränpää" size="30">
+
 <button onclick="naytaMaaranpaa()">Tallenna määränpää</button>
+
 <p id="valittumaaranpaa">Määränpää: ei valittu</p>
+
 <p id="sijainti"></p>
+
 <script>
+
 navigator.geolocation.getCurrentPosition(
     function(sijainti) {
-        document.getElementById("sijainti").innerHTML = "Leveysaste: " + sijainti.coords.latitude + "<br>Pituusaste: " + sijainti.coords.longitude;
+        document.getElementById("sijainti").innerHTML =
+            "Leveysaste: " + sijainti.coords.latitude +
+            "<br>Pituusaste: " + sijainti.coords.longitude;
     },
     function(virhe) {
-        document.getElementById("sijainti").innerHTML = virhe.message;
+        document.getElementById("sijainti").innerHTML =
+            virhe.message;
     }
 );
-function naytaMaaranpaa() { document.getElementById("valittumaaranpaa").innerHTML = "Nappi toimii"; }
+
+function naytaMaaranpaa() {
+    document.getElementById("valittumaaranpaa").innerHTML =
+        "Määränpää: " +
+        document.getElementById("maaranpaa").value;
+}
+
 </script>

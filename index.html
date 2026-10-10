@@ -1,6 +1,6 @@
 <h1>Kyytipalvelu</h1>
 
-<input id="maaranpaa" type="text" placeholder="Anna määränpää" size="30">
+<input id="maaranpaa" type="text" placeholder="Anna määränpää" size="30" oninput="document.getElementById('tallennanappi').disabled = (this.value=='')">
 
 <button id="tallennanappi" onclick="naytaMaaranpaa()" disabled>Tallenna määränpää</button>
 

@@ -5,7 +5,7 @@ Tässä näkyy myöhemmin käyttäjän sijainti.<br>
 <script>
 navigator.geolocation.getCurrentPosition(
     function(sijainti) {
-        document.getElementById("sijainti").innerHTML = sijainti.coords.latitude;
+        document.getElementById("sijainti").innerHTML = "Leveysaste: " + sijainti.coords.latitude; + "<br>Pituusaste: " + sijainti.coords.longitude
     },
     function(virhe) {
         document.getElementById("sijainti").innerHTML = virhe.message;

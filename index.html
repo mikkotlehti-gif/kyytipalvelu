@@ -41,8 +41,11 @@ navigator.geolocation.getCurrentPosition(
 function naytaMaaranpaa() {
 
     if (kyytipyyntoAktiivinen) {
+    document.getElementById("valittumaaranpaa").innerHTML =
+        "Peruuta ensin aktiivinen kyytipyyntö";
     return;
     }
+    
     document.getElementById("valittumaaranpaa").innerHTML =
         "Määränpää: " +
         document.getElementById("maaranpaa").value;

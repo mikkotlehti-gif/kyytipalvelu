@@ -51,11 +51,11 @@ function naytaMaaranpaa() {
 
     tallennettuMaaranpaa = document.getElementById("maaranpaa").value;
     
-    document.getElementById("maaranpaa").value = "";
+    tallennettuMaaranpaa = "";
     
     document.getElementById("valittumaaranpaa").innerHTML =
         "Määränpää: " +
-        document.getElementById("maaranpaa").value;
+        tallennettuMaaranpaa;
 
     document.getElementById("luonappi").disabled = false;
 }

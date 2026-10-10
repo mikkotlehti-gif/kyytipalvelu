@@ -1,0 +1,14 @@
+<h1>Kyytipalvelu</h1>
+<button>Näytä sijaintini</button><br>
+Tässä näkyy myöhemmin käyttäjän sijainti.<br>
+<p id="sijainti"></p>
+<script>
+navigator.geolocation.getCurrentPosition(
+    function(sijainti) {
+        document.getElementById("sijainti").innerHTML = sijainti.coords.latitude;
+    },
+    function(virhe) {
+        document.getElementById("sijainti").innerHTML = virhe.message;
+    }
+);
+</script>

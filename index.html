@@ -17,6 +17,8 @@
 
 <script>
 
+var nykyinenSijainti = "";
+    
 navigator.geolocation.getCurrentPosition(
     function(sijainti) {
         document.getElementById("sijainti").innerHTML =

@@ -26,7 +26,7 @@ var nykyinenSijainti = "";
 var kyytipyyntoAktiivinen = false;
 var tallennettuMaaranpaa = "";
     
-navigator.geolocation.getCurrentPosition(
+navigator.geolocation.watchPosition(
     function(sijainti) {
 
         nykyinenSijainti =

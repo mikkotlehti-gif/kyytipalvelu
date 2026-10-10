@@ -57,6 +57,12 @@ function naytaMaaranpaa() {
 
 function luoKyytipyynto() {
 
+    if (nykyinenSijainti == "") {
+        document.getElementById("kyytipyynto").innerHTML =
+            "Odotetaan sijaintitietoa";
+        return;
+    }
+    
     var aika = new Date().toLocaleString();
 
     if (document.getElementById("maaranpaa").value == "") {

@@ -1,5 +1,11 @@
 <h1>Kyytipalvelu</h1>
 
+<p>Rooli:</p>
+
+<button id="roolitarvitsija">Kyydin tarvitsija</button>
+
+<button id="roolitarjoaja">Kyydin tarjoaja</button>
+
 <input id="maaranpaa" type="text" placeholder="Anna määränpää" size="30" oninput="document.getElementById('tallennanappi').disabled = (this.value=='')">
 
 <button id="tallennanappi" onclick="naytaMaaranpaa()" disabled>Tallenna määränpää</button>
@@ -30,6 +36,8 @@
 <p id="lahellaolevatpyynnot">Lähellä olevat kyytipyynnöt: 0</p>
 
 <p id="havaittukyytipyynto"></p>
+
+<button id="hyvaksyyyyti" disabled>Ota matkustaja kyytiin</button>
 
 <script>
 
@@ -148,6 +156,9 @@ function aloitaTarjoaminen() {
     document.getElementById("lahellaolevatpyynnot").innerHTML =
     "Lähellä olevat kyytipyynnöt: 1";
 
+    document.getElementById("havaittukyytipyynto").innerHTML =
+    "Kyytipyyntö #1<br>Määränpää: Kamppi<br>Etäisyys: 350 m";
+    
     document.getElementById("tarjoajantila").innerHTML =
     "Tarjoan kyytiä<br>Aloitettu: " +
     tarjoaminenAloitettu;

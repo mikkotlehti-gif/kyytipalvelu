@@ -55,11 +55,9 @@ function luoKyytipyynto() {
     }
 
     if (kyytipyyntoAktiivinen) {
-        document.getElementById("kyytipyynto").innerHTML =
-            "Sinulla on jo aktiivinen kyytipyyntö";
         return;
     }
-
+   
     kyytipyyntoAktiivinen = true;
 
     document.getElementById("kyytipyynto").innerHTML =

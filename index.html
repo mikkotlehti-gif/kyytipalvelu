@@ -44,7 +44,10 @@ function naytaMaaranpaa() {
     
 function luoKyytipyynto() {
     document.getElementById("kyytipyynto").innerHTML =
-        "Kyytipyyntö<br>Lähtöpaikka: nykyinen sijainti<br>Määränpää: " + document.getElementById("maaranpaa").value;document.getElementById("valittumaaranpaa").innerHTML = "";
+        "Kyytipyyntö<br>Lähtöpaikka: " + nykyinenSijainti +
+        "<br>Määränpää: " + document.getElementById("maaranpaa").value;
+
+    document.getElementById("valittumaaranpaa").innerHTML = "";
 } 
     
 </script>

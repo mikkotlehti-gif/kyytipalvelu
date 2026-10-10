@@ -70,7 +70,7 @@ function luoKyytipyynto() {
     
     var aika = new Date().toLocaleString();
 
-    if (document.getElementById("maaranpaa").value == "") {
+    if (tallennettuMaaranpaa == "") {
         document.getElementById("kyytipyynto").innerHTML =
             "Anna ensin määränpää";
         return;

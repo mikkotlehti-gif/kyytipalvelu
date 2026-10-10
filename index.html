@@ -249,6 +249,15 @@ async function testaaFirebase() {
     }
 }
 
+async function haeKyytipyynnot() {
+
+    const snapshot = await getDocs(
+        collection(db, "kyytipyynnot")
+    );
+
+    console.log("Kyytipyyntöjä löytyi:", snapshot.size);
+}
+  
 window.naytaMaaranpaa = naytaMaaranpaa;
 window.luoKyytipyynto = luoKyytipyynto;
 window.peruKyytipyynto = peruKyytipyynto;

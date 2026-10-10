@@ -39,6 +39,10 @@ navigator.geolocation.getCurrentPosition(
 );
 
 function naytaMaaranpaa() {
+
+    if (kyytipyyntoAktiivinen) {
+    return;
+    }
     document.getElementById("valittumaaranpaa").innerHTML =
         "Määränpää: " +
         document.getElementById("maaranpaa").value;

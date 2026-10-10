@@ -3,12 +3,18 @@
 <input id="maaranpaa" type="text" placeholder="Anna määränpää" size="30">
 
 <button onclick="naytaMaaranpaa()">Tallenna määränpää</button>
+
+<p>Jos haluat vaihtaa määränpäätä, poista ensin nykyinen kyytipyyntö.</p>
+
 <br><br>
 
-<button onclick="luoKyytipyynto()">Tarvitsen kyydin</button> <button onclick="peruKyytipyynto()">Peru kyytipyyntö</button>
+<button onclick="luoKyytipyynto()">Luo kyytipyyntö</button>
+<button onclick="peruKyytipyynto()">Poista kyytipyyntö</button>
 
 <hr>
+
 <h2>Kyytipyyntöni</h2>
+
 <p id="kyytipyynto">Ei aktiivista kyytipyyntöä</p>
 
 <p id="valittumaaranpaa"></p>
@@ -41,11 +47,9 @@ navigator.geolocation.getCurrentPosition(
 function naytaMaaranpaa() {
 
     if (kyytipyyntoAktiivinen) {
-    document.getElementById("valittumaaranpaa").innerHTML =
-        "Peruuta ensin aktiivinen kyytipyyntö";
-    return;
+        return;
     }
-    
+
     document.getElementById("valittumaaranpaa").innerHTML =
         "Määränpää: " +
         document.getElementById("maaranpaa").value;
@@ -64,7 +68,7 @@ function luoKyytipyynto() {
     if (kyytipyyntoAktiivinen) {
         return;
     }
-   
+
     kyytipyyntoAktiivinen = true;
 
     document.getElementById("kyytipyynto").innerHTML =

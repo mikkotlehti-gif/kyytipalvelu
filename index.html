@@ -30,8 +30,11 @@ navigator.geolocation.getCurrentPosition(
 );
 
 function naytaMaaranpaa() {
+    document.getElementById("valittumaaranpaa").innerHTML =
+        "Määränpää: " +
+        document.getElementById("maaranpaa").value;
 }
-
+    
 function luoKyytipyynto() {
     document.getElementById("kyytipyynto").innerHTML =
         "Kyytipyyntö<br>Lähtöpaikka: nykyinen sijainti<br>Määränpää: " + document.getElementById("maaranpaa").value;document.getElementById("valittumaaranpaa").innerHTML = "";

@@ -188,6 +188,8 @@ function peruKyytipyynto() {
 
 function aloitaTarjoaminen() {
 
+    haeKyytipyynnot();
+  
     console.log("Tarjoaminen käynnistyi");
   
     tarjoaminenAloitettu = new Date().toLocaleTimeString();
@@ -256,13 +258,18 @@ async function haeKyytipyynnot() {
     );
 
     console.log("Kyytipyyntöjä löytyi:", snapshot.size);
-}
-  
+
+    snapshot.forEach((doc) => {
+        console.log(doc.data());
+    });
+}  
+
 window.naytaMaaranpaa = naytaMaaranpaa;
 window.luoKyytipyynto = luoKyytipyynto;
 window.peruKyytipyynto = peruKyytipyynto;
 window.aloitaTarjoaminen = aloitaTarjoaminen;
 window.lopetaTarjoaminen = lopetaTarjoaminen;
 window.testaaFirebase = testaaFirebase;
+window.haeKyytipyynnot = haeKyytipyynnot;
   
 </script>

@@ -44,6 +44,19 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js";
 
 import { getFirestore } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCRvr7AuJEp_bQzaXQo506Y2CQfArewjtM",
+  authDomain: "kyytipalvelu-c03b1.firebaseapp.com",
+  projectId: "kyytipalvelu-c03b1",
+  storageBucket: "kyytipalvelu-c03b1.firebasestorage.app",
+  messagingSenderId: "1087195218441",
+  appId: "1:1087195218441:web:2731bd7fea44daa316eed8"
+};
+    
+    const app = initializeApp(firebaseConfig);
+
+    const db = getFirestore(app);
     
 var nykyinenSijainti = "";
 var kyytipyyntoAktiivinen = false;

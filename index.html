@@ -60,13 +60,23 @@ function luoKyytipyynto() {
     document.getElementById("valittumaaranpaa").innerHTML = "";
 } 
 
-function peruKyytipyynto() {
+function luoKyytipyynto() {
+
+    var aika = new Date().toLocaleString();
+
+    if (document.getElementById("maaranpaa").value == "") {
+        document.getElementById("kyytipyynto").innerHTML =
+            "Anna ensin määränpää";
+        return;
+    }
+
     document.getElementById("kyytipyynto").innerHTML =
-        "Ei aktiivista kyytipyyntöä";
+        "Lähtöpaikka: " + nykyinenSijainti +
+        "<br>Määränpää: " +
+        document.getElementById("maaranpaa").value +
+        "<br>Luotu: " + aika;
 
     document.getElementById("valittumaaranpaa").innerHTML = "";
-
-    document.getElementById("maaranpaa").value = "";
 }
     
 </script>

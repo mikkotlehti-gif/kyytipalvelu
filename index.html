@@ -21,10 +21,15 @@ var nykyinenSijainti = "";
     
 navigator.geolocation.getCurrentPosition(
     function(sijainti) {
-        document.getElementById("sijainti").innerHTML =
-            "Leveysaste: " + sijainti.coords.latitude +
-            "<br>Pituusaste: " + sijainti.coords.longitude;
-    },
+
+    nykyinenSijainti =
+        sijainti.coords.latitude + ", " +
+        sijainti.coords.longitude;
+
+    document.getElementById("sijainti").innerHTML =
+        "Leveysaste: " + sijainti.coords.latitude +
+        "<br>Pituusaste: " + sijainti.coords.longitude;
+},
     function(virhe) {
         document.getElementById("sijainti").innerHTML =
             virhe.message;

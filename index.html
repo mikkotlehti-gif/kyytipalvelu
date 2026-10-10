@@ -43,11 +43,14 @@ function naytaMaaranpaa() {
         document.getElementById("maaranpaa").value;
 }
     
-function luoKyytipyynto() {if (document.getElementById("maaranpaa").value == "") {
+function luoKyytipyynto() {
+    
+    if (document.getElementById("maaranpaa").value == "") {
     document.getElementById("kyytipyynto").innerHTML =
         "Anna ensin määränpää";
     return;
-}
+    }
+    
     document.getElementById("kyytipyynto").innerHTML =
         "Lähtöpaikka: " + nykyinenSijainti +
 "<br>Määränpää: " + document.getElementById("maaranpaa").value;

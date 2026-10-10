@@ -29,6 +29,8 @@
 
 <p id="lahellaolevatpyynnot">Lähellä olevat kyytipyynnöt: 0</p>
 
+<p id="havaittukyytipyynto"></p>
+
 <script>
 
 var nykyinenSijainti = "";
@@ -146,6 +148,10 @@ function aloitaTarjoaminen() {
     document.getElementById("lahellaolevatpyynnot").innerHTML =
     "Lähellä olevat kyytipyynnöt: 1";
 
+    document.getElementById("tarjoajantila").innerHTML =
+    "Tarjoan kyytiä<br>Aloitettu: " +
+    tarjoaminenAloitettu;
+    
     document.getElementById("aloitatarjoaminen").disabled = true;
 }
 

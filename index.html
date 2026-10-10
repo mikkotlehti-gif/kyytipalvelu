@@ -21,11 +21,16 @@
 <p id="sijainti">Haetaan sijaintia...</p>
 <p id="viimeksipaivitetty"></p>
 
+<button id="aloitatarjoaminen" onclick="aloitaTarjoaminen()">Aloita kyydin tarjoaminen</button>
+
+<p id="tarjoajantila">En tarjoa kyytiä</p>
+
 <script>
 
 var nykyinenSijainti = "";
 var kyytipyyntoAktiivinen = false;
 var tallennettuMaaranpaa = "";
+var tarjoaKyytia = false;
     
 navigator.geolocation.watchPosition(
     function(sijainti) {
@@ -128,4 +133,13 @@ function peruKyytipyynto() {
     
 }
 
+function aloitaTarjoaminen() {
+    tarjoaKyytia = true;
+
+    document.getElementById("tarjoajantila").innerHTML =
+        "Tarjoan kyytiä";
+
+    document.getElementById("aloitatarjoaminen").disabled = true;
+}
+    
 </script>

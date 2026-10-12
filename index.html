@@ -21,6 +21,8 @@
 
 <p id="kyytipyynto">Ei aktiivista kyytipyyntöä</p>
 
+<p id="kyytiSaapunut"></p>
+
 <p id="valittumaaranpaa"></p>
 
 <p><b>Sijaintisi:</b></p>
@@ -154,6 +156,8 @@ async function luoKyytipyynto() {
 );
 
 firestoreKyytipyyntoId = docRef.id;
+
+kuunteleOmaaKyytia();
   
     document.getElementById("kyytipyynto").innerHTML =
         "Lähtöpaikka: " + nykyinenSijainti +
@@ -300,26 +304,83 @@ unsubscribeKyytipyynnot = onSnapshot(
 
                 const pyynto = doc.data();
 
-                html +=
-                    "<hr>" +
-                    "<b>ID:</b> " + doc.id +
-                    "<br><b>Määränpää:</b> " +
-                    pyynto.maaranpaa +
-                    "<br><b>Lähtöpaikka:</b> " +
-                    pyynto.lahtopaikka +
-                    "<br><b>Luotu:</b> " +
-                    new Date(
-                        pyynto.luotu
-                    ).toLocaleString() +
-                    "<br><b>Status:</b> " +
-                    pyynto.status +
-                    "<br>";
+            html +=
+                "<hr>" +
+                "<b>ID:</b> " + doc.id +
+                "<br><b>Määränpää:</b> " +
+                pyynto.maaranpaa +
+                "<br><b>Lähtöpaikka:</b> " +
+                pyynto.lahtopaikka +
+                "<br><b>Luotu:</b> " +
+                new Date(
+                    pyynto.luotu
+                ).toLocaleString() +
+                "<br><b>Status:</b> " +
+                pyynto.status +
+                "<br>" +
+                "<button onclick=\"olenPaikalla('" +
+                doc.id +
+                "')\">Olen paikalla</button><br>";
 
             });
 
             document.getElementById(
                 "havaittukyytipyynto"
             ).innerHTML = html;
+
+        }
+    );
+}
+
+async function olenPaikalla(id) {
+
+    await updateDoc(
+        doc(
+            db,
+            "kyytipyynnot",
+            id
+        ),
+        {
+            status: "tarjoaja_paikalla"
+        }
+    );
+
+}
+
+function kuunteleOmaaKyytia() {
+
+    if (firestoreKyytipyyntoId == "") {
+        return;
+    }
+
+    onSnapshot(
+        doc(
+            db,
+            "kyytipyynnot",
+            firestoreKyytipyyntoId
+        ),
+        (snapshot) => {
+
+            if (!snapshot.exists()) {
+                return;
+            }
+
+            const pyynto = snapshot.data();
+
+            if (pyynto.status == "tarjoaja_paikalla") {
+
+                document.getElementById(
+                    "kyytiSaapunut"
+                ).innerHTML =
+                    "🚕 Kyyti on saapunut";
+
+            } else {
+
+                document.getElementById(
+                    "kyytiSaapunut"
+                ).innerHTML = "";
+
+            }
 
         }
     );
@@ -332,5 +393,6 @@ window.aloitaTarjoaminen = aloitaTarjoaminen;
 window.lopetaTarjoaminen = lopetaTarjoaminen;
 window.testaaFirebase = testaaFirebase;
 window.haeKyytipyynnot = haeKyytipyynnot;
+window.olenPaikalla = olenPaikalla;
   
 </script>

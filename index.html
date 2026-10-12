@@ -51,7 +51,8 @@ import {
   collection,
   getDocs,
   deleteDoc,
-  doc
+  doc,
+  onSnapshot
 } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
   
 const firebaseConfig = {
@@ -75,6 +76,7 @@ var tallennettuMaaranpaa = "";
 var tarjoaKyytia = false;
 var tarjoaminenAloitettu = "";
 var firestoreKyytipyyntoId = "";
+var unsubscribeKyytipyynnot = null;
   
 navigator.geolocation.watchPosition(
     function(sijainti) {
@@ -225,6 +227,11 @@ function aloitaTarjoaminen() {
 
     function lopetaTarjoaminen() {
 
+    if (unsubscribeKyytipyynnot) {
+        unsubscribeKyytipyynnot();
+        unsubscribeKyytipyynnot = null;
+    }
+      
     tarjoaKyytia = false;
 
     document.getElementById("tarjoajantila").innerHTML =
@@ -262,37 +269,54 @@ async function testaaFirebase() {
     }
 }
 
-async function haeKyytipyynnot() {
+function haeKyytipyynnot() {
 
-    const snapshot = await getDocs(
-        collection(db, "kyytipyynnot")
+    unsubscribeKyytipyynnot = onSnapshot(
+        collection(db, "kyytipyynnot"),
+        (snapshot) => {
+
+            console.log(
+                "Kyytipyyntöjä löytyi:",
+                snapshot.size
+            );
+
+            document.getElementById(
+                "lahellaolevatpyynnot"
+            ).innerHTML =
+                "Lähellä olevat kyytipyynnöt: " +
+                snapshot.size;
+
+            let html = "";
+
+            snapshot.forEach((doc) => {
+
+                const pyynto = doc.data();
+
+                html +=
+                    "<hr>" +
+                    "<b>ID:</b> " + doc.id +
+                    "<br><b>Määränpää:</b> " +
+                    pyynto.maaranpaa +
+                    "<br><b>Lähtöpaikka:</b> " +
+                    pyynto.lahtopaikka +
+                    "<br><b>Luotu:</b> " +
+                    new Date(
+                        pyynto.luotu
+                    ).toLocaleString() +
+                    "<br><b>Status:</b> " +
+                    pyynto.status +
+                    "<br>";
+
+            });
+
+            document.getElementById(
+                "havaittukyytipyynto"
+            ).innerHTML = html;
+
+        }
     );
-
-    console.log("Kyytipyyntöjä löytyi:", snapshot.size);
-
-    document.getElementById("lahellaolevatpyynnot").innerHTML =
-        "Lähellä olevat kyytipyynnöt: " + snapshot.size;
-
-    let html = "";
-
-    snapshot.forEach((doc) => {
-
-        const pyynto = doc.data();
-
-        html +=
-          "<hr>" +
-          "<b>Määränpää:</b> " + pyynto.maaranpaa +
-          "<br><b>Lähtöpaikka:</b> " + pyynto.lahtopaikka +
-          "<br><b>Luotu:</b> " +
-          new Date(pyynto.luotu).toLocaleString() +
-          "<br><b>Status:</b> " + pyynto.status +
-          "<br>";
-
-    });
-
-    document.getElementById("havaittukyytipyynto").innerHTML = html;
 }
-
+  
 window.naytaMaaranpaa = naytaMaaranpaa;
 window.luoKyytipyynto = luoKyytipyynto;
 window.peruKyytipyynto = peruKyytipyynto;

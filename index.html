@@ -258,6 +258,8 @@ async function haeKyytipyynnot() {
 
     snapshot.forEach((doc) => {
 
+        console.log(doc.id, doc.data());
+      
         const pyynto = doc.data();
 
         document.getElementById("havaittukyytipyynto").innerHTML =

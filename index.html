@@ -126,6 +126,40 @@ function naytaMaaranpaa() {
     document.getElementById("luonappi").disabled = false;
 }
 
+async function haeMaaranpaanKoordinaatit() {
+
+    const vastaus = await fetch(
+        "https://nominatim.openstreetmap.org/search?format=json&q=" +
+        encodeURIComponent(tallennettuMaaranpaa)
+    );
+
+    const tulokset = await vastaus.json();
+
+    if (tulokset.length == 0) {
+
+        alert("Määränpäätä ei löytynyt");
+
+        maaranpaaLatitude = null;
+        maaranpaaLongitude = null;
+
+        return false;
+    }
+
+    maaranpaaLatitude =
+        parseFloat(tulokset[0].lat);
+
+    maaranpaaLongitude =
+        parseFloat(tulokset[0].lon);
+
+    console.log(
+        "Määränpään koordinaatit:",
+        maaranpaaLatitude,
+        maaranpaaLongitude
+    );
+
+    return true;
+}
+  
 async function luoKyytipyynto() {
 
     console.log("luoKyytipyynto käynnistyi");
@@ -139,6 +173,12 @@ async function luoKyytipyynto() {
     var aika = new Date().toLocaleString();
 
     if (tallennettuMaaranpaa == "") {
+      const loytyi = await haeMaaranpaanKoordinaatit();
+
+      if (!loytyi) {
+          return;
+      }
+      
         document.getElementById("kyytipyynto").innerHTML =
             "Anna ensin määränpää";
         return;
@@ -152,9 +192,11 @@ async function luoKyytipyynto() {
 
     const docRef = await addDoc(
     collection(db, "kyytipyynnot"),
-    {
+   {
         lahtopaikka: nykyinenSijainti,
         maaranpaa: tallennettuMaaranpaa,
+        maaranpaaLatitude: maaranpaaLatitude,
+        maaranpaaLongitude: maaranpaaLongitude,
         luotu: new Date().toISOString(),
         status: "aktiivinen"
     }

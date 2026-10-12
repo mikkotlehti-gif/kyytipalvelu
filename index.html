@@ -72,7 +72,8 @@ var kyytipyyntoAktiivinen = false;
 var tallennettuMaaranpaa = "";
 var tarjoaKyytia = false;
 var tarjoaminenAloitettu = "";
-    
+var firestoreKyytipyyntoId = "";
+  
 navigator.geolocation.watchPosition(
     function(sijainti) {
 
@@ -135,15 +136,17 @@ async function luoKyytipyynto() {
 
     kyytipyyntoAktiivinen = true;
 
-    await addDoc(
-      collection(db, "kyytipyynnot"),
-      {
-          lahtopaikka: nykyinenSijainti,
-          maaranpaa: tallennettuMaaranpaa,
-          luotu: new Date().toISOString(),
-          status: "aktiivinen"
-      }
-    );
+    const docRef = await addDoc(
+    collection(db, "kyytipyynnot"),
+    {
+        lahtopaikka: nykyinenSijainti,
+        maaranpaa: tallennettuMaaranpaa,
+        luotu: new Date().toISOString(),
+        status: "aktiivinen"
+    }
+);
+
+firestoreKyytipyyntoId = docRef.id;
   
     document.getElementById("kyytipyynto").innerHTML =
         "Lähtöpaikka: " + nykyinenSijainti +
@@ -263,11 +266,13 @@ async function haeKyytipyynnot() {
         const pyynto = doc.data();
 
         html +=
-            "<hr>" +
-            "<b>Määränpää:</b> " + pyynto.maaranpaa +
-            "<br><b>Lähtöpaikka:</b> " + pyynto.lahtopaikka +
-            "<br><b>Status:</b> " + pyynto.status +
-            "<br>";
+          "<hr>" +
+          "<b>Määränpää:</b> " + pyynto.maaranpaa +
+          "<br><b>Lähtöpaikka:</b> " + pyynto.lahtopaikka +
+          "<br><b>Luotu:</b> " +
+          new Date(pyynto.luotu).toLocaleString() +
+          "<br><b>Status:</b> " + pyynto.status +
+          "<br>";
 
     });
 

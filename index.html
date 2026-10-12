@@ -89,6 +89,8 @@
 
 <p id="reittiAB"></p>
 
+<p id="reittiACDB"></p>
+
 <button
     id="aloitatarjoaminen"
     onclick="aloitaTarjoaminen()"
@@ -753,14 +755,22 @@ function haeKyytipyynnot() {
                 const pyynto =
                     doc.data();
 
-                laskeReittiACDB(pyynto)
+               laskeReittiACDB(pyynto)
     .then((reittiACDB) => {
 
-        console.log(
-            "ACDB matka:",
-            reittiACDB.matkaKm,
-            "km"
-        );
+        document.getElementById(
+            "reittiACDB"
+        ).innerHTML =
+
+            "<b>Reitti A → C → D → B</b>" +
+
+            "<br>Matka: " +
+            reittiACDB.matkaKm.toFixed(1) +
+            " km" +
+
+            "<br>Aika: " +
+            reittiACDB.aikaMin.toFixed(0) +
+            " min";
 
     });
                 

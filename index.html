@@ -259,10 +259,20 @@ async function haeKyytipyynnot() {
 
     console.log("Kyytipyyntöjä löytyi:", snapshot.size);
 
+    document.getElementById("lahellaolevatpyynnot").innerHTML =
+        "Lähellä olevat kyytipyynnöt: " + snapshot.size;
+
     snapshot.forEach((doc) => {
-        console.log(doc.data());
+
+        const pyynto = doc.data();
+
+        document.getElementById("havaittukyytipyynto").innerHTML =
+            "Määränpää: " + pyynto.maaranpaa +
+            "<br>Lähtöpaikka: " + pyynto.lahtopaikka;
+
     });
-}  
+
+}
 
 window.naytaMaaranpaa = naytaMaaranpaa;
 window.luoKyytipyynto = luoKyytipyynto;

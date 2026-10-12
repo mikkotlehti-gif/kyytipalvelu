@@ -173,14 +173,16 @@ async function luoKyytipyynto() {
     var aika = new Date().toLocaleString();
 
     if (tallennettuMaaranpaa == "") {
-      const loytyi = await haeMaaranpaanKoordinaatit();
 
-      if (!loytyi) {
-          return;
-      }
-      
         document.getElementById("kyytipyynto").innerHTML =
             "Anna ensin määränpää";
+
+        return;
+    }
+    
+    const loytyi = await haeMaaranpaanKoordinaatit();
+    
+    if (!loytyi) {
         return;
     }
 

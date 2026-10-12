@@ -278,15 +278,14 @@ async function testaaFirebase() {
 
 function haeKyytipyynnot() {
 
-    unsubscribeKyytipyynnot = const aktiivisetPyynnot = query(
-    collection(db, "kyytipyynnot"),
-    where("status", "==", "aktiivinen")
-);
+    const aktiivisetPyynnot = query(
+        collection(db, "kyytipyynnot"),
+        where("status", "==", "aktiivinen")
+    );
 
-unsubscribeKyytipyynnot = onSnapshot(
-    aktiivisetPyynnot,
-    (snapshot) => {
-
+    unsubscribeKyytipyynnot = onSnapshot(
+        aktiivisetPyynnot,
+        (snapshot) => {
             console.log(
                 "Kyytipyyntöjä löytyi:",
                 snapshot.size

@@ -80,6 +80,7 @@ var tarjoaKyytia = false;
 var tarjoaminenAloitettu = "";
 var firestoreKyytipyyntoId = "";
 var unsubscribeKyytipyynnot = null;
+var unsubscribeOmaKyyti = null;
   
 navigator.geolocation.watchPosition(
     function(sijainti) {
@@ -177,6 +178,11 @@ kuunteleOmaaKyytia();
 
 async function peruKyytipyynto() {
 
+    if (unsubscribeOmaKyyti) {
+    unsubscribeOmaKyyti();
+    unsubscribeOmaKyyti = null;
+    }
+  
     if (firestoreKyytipyyntoId != "") {
 
         await deleteDoc(
@@ -197,8 +203,6 @@ async function peruKyytipyynto() {
 
     document.getElementById("kyytiSaapunut").innerHTML = "";
 
-    firestoreKyytipyyntoId = "";
-  
     tallennettuMaaranpaa = "";
 
     document.getElementById("maaranpaa").value = "";
@@ -333,12 +337,13 @@ function kuunteleOmaaKyytia() {
         return;
     }
 
-    onSnapshot(
+    unsubscribeOmaKyyti = onSnapshot(
         doc(
             db,
             "kyytipyynnot",
             firestoreKyytipyyntoId
         ),
+      
         (snapshot) => {
 
             if (!snapshot.exists()) {

@@ -85,6 +85,8 @@ var firestoreKyytipyyntoId = "";
 var unsubscribeKyytipyynnot = null;
 var unsubscribeOmaKyyti = null;
 var autonTuntomerkki = "";
+var maaranpaaLatitude = null;
+var maaranpaaLongitude = null;
   
 navigator.geolocation.watchPosition(
     function(sijainti) {
@@ -274,6 +276,8 @@ function aloitaTarjoaminen() {
     document.getElementById("havaittukyytipyynto").innerHTML = "";
 
     document.getElementById("autonTuntomerkki").disabled = false;
+
+    autonTuntomerkki = "";
         
 }
 

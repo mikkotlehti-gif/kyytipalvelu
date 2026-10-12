@@ -32,6 +32,11 @@
 <label for="autonTuntomerkki">Auton tuntomerkki:</label><br>
 <input id="autonTuntomerkki" type="text" placeholder="Anna autosi tuntomerkki"><br><br>
 
+<label for="tarjoajanMaaranpaa">Oma määränpää:</label><br>
+<input id="tarjoajanMaaranpaa"
+       type="text"
+       placeholder="Anna oma määränpää"><br><br>
+
 <button id="aloitatarjoaminen" onclick="aloitaTarjoaminen()">Aloita kyydin tarjoaminen</button>
 
 <button id="lopetatarjoaminen" onclick="lopetaTarjoaminen()" disabled>Lopeta kyydin tarjoaminen</button>
@@ -281,11 +286,6 @@ async function aloitaTarjoaminen() {
         return;
     }
 
-    <label for="tarjoajanMaaranpaa">Oma määränpää:</label><br>
-    <input id="tarjoajanMaaranpaa"
-           type="text"
-           placeholder="Anna oma määränpää"><br><br>
-
     tarjoajanMaaranpaa =
     document.getElementById(
         "tarjoajanMaaranpaa"
@@ -350,6 +350,8 @@ async function aloitaTarjoaminen() {
 
     document.getElementById("autonTuntomerkki").disabled = false;
 
+    document.getElementById("autonTuntomerkki").value = "";
+      
     document.getElementById("tarjoajanMaaranpaa").disabled = false;
 
     document.getElementById("tarjoajanMaaranpaa").value = "";
@@ -521,6 +523,12 @@ async function haeTarjoajanMaaranpaanKoordinaatit() {
     tarjoajanMaaranpaaLongitude =
         parseFloat(tulokset[0].lon);
 
+    console.log(
+        "Tarjoajan määränpään koordinaatit:",
+        tarjoajanMaaranpaaLatitude,
+        tarjoajanMaaranpaaLongitude
+    );
+  
     return true;
 }
 

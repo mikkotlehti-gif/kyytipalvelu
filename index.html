@@ -258,17 +258,13 @@ async function haeKyytipyynnot() {
 
     snapshot.forEach((doc) => {
 
-        console.log(doc.id, doc.data());
-      
-        const pyynto = doc.data();
+    const pyynto = doc.data();
 
-        document.getElementById("havaittukyytipyynto").innerHTML =
-            "Määränpää: " + pyynto.maaranpaa +
-            "<br>Lähtöpaikka: " + pyynto.lahtopaikka;
+    document.getElementById("havaittukyytipyynto").innerHTML =
+        "Määränpää: " + pyynto.maaranpaa +
+        "<br>Lähtöpaikka: " + pyynto.lahtopaikka;
 
-    });
-
-}
+});
 
 window.naytaMaaranpaa = naytaMaaranpaa;
 window.luoKyytipyynto = luoKyytipyynto;

@@ -52,7 +52,10 @@ import {
   getDocs,
   deleteDoc,
   doc,
-  onSnapshot
+  onSnapshot,
+  updateDoc,
+  query,
+  where
 } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
   
 const firebaseConfig = {
@@ -271,9 +274,14 @@ async function testaaFirebase() {
 
 function haeKyytipyynnot() {
 
-    unsubscribeKyytipyynnot = onSnapshot(
-        collection(db, "kyytipyynnot"),
-        (snapshot) => {
+    unsubscribeKyytipyynnot = const aktiivisetPyynnot = query(
+    collection(db, "kyytipyynnot"),
+    where("status", "==", "aktiivinen")
+);
+
+unsubscribeKyytipyynnot = onSnapshot(
+    aktiivisetPyynnot,
+    (snapshot) => {
 
             console.log(
                 "Kyytipyyntöjä löytyi:",

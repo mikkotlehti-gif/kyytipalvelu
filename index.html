@@ -256,15 +256,23 @@ async function haeKyytipyynnot() {
     document.getElementById("lahellaolevatpyynnot").innerHTML =
         "Lähellä olevat kyytipyynnöt: " + snapshot.size;
 
+    let html = "";
+
     snapshot.forEach((doc) => {
 
-    const pyynto = doc.data();
+        const pyynto = doc.data();
 
-    document.getElementById("havaittukyytipyynto").innerHTML =
-        "Määränpää: " + pyynto.maaranpaa +
-        "<br>Lähtöpaikka: " + pyynto.lahtopaikka;
+        html +=
+            "<hr>" +
+            "<b>Määränpää:</b> " + pyynto.maaranpaa +
+            "<br><b>Lähtöpaikka:</b> " + pyynto.lahtopaikka +
+            "<br><b>Status:</b> " + pyynto.status +
+            "<br>";
 
-});
+    });
+
+    document.getElementById("havaittukyytipyynto").innerHTML = html;
+}
 
 window.naytaMaaranpaa = naytaMaaranpaa;
 window.luoKyytipyynto = luoKyytipyynto;

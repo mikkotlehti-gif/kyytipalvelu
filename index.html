@@ -371,8 +371,9 @@ function kuunteleOmaaKyytia() {
                 document.getElementById(
                     "kyytiSaapunut"
                 ).innerHTML =
-                    "🚕 Kyyti on saapunut";
-
+                    "🚕 Kyyti on saapunut" +
+                    "<br><button onclick='hylkaaKyyti()'>Hylkää kyyti</button>";
+              
             } else {
 
                 document.getElementById(
@@ -384,6 +385,21 @@ function kuunteleOmaaKyytia() {
         }
     );
 }
+
+async function hylkaaKyyti() {
+
+    await updateDoc(
+        doc(
+            db,
+            "kyytipyynnot",
+            firestoreKyytipyyntoId
+        ),
+        {
+            status: "aktiivinen"
+        }
+    );
+
+}
   
 window.naytaMaaranpaa = naytaMaaranpaa;
 window.luoKyytipyynto = luoKyytipyynto;
@@ -393,5 +409,6 @@ window.lopetaTarjoaminen = lopetaTarjoaminen;
 window.testaaFirebase = testaaFirebase;
 window.haeKyytipyynnot = haeKyytipyynnot;
 window.olenPaikalla = olenPaikalla;
+window.hylkaaKyyti = hylkaaKyyti;
   
 </script>

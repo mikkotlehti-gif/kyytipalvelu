@@ -37,6 +37,8 @@
        type="text"
        placeholder="Anna oma määränpää"><br><br>
 
+<p id="tarjoajanKoordinaatit"></p>
+
 <button id="aloitatarjoaminen" onclick="aloitaTarjoaminen()">Aloita kyydin tarjoaminen</button>
 
 <button id="lopetatarjoaminen" onclick="lopetaTarjoaminen()" disabled>Lopeta kyydin tarjoaminen</button>
@@ -361,7 +363,11 @@ async function aloitaTarjoaminen() {
     tarjoajanMaaranpaa = "";
     tarjoajanMaaranpaaLatitude = null;    
     tarjoajanMaaranpaaLongitude = null;
-        
+
+       document.getElementById(
+           "tarjoajanKoordinaatit"
+       ).innerHTML = "";
+           
 }
 
 function haeKyytipyynnot() {
@@ -523,6 +529,16 @@ async function haeTarjoajanMaaranpaanKoordinaatit() {
     tarjoajanMaaranpaaLongitude =
         parseFloat(tulokset[0].lon);
 
+       document.getElementById(
+           "tarjoajanKoordinaatit"
+       ).innerHTML =
+           "<b>Tarjoajan määränpään koordinaatit</b>" +
+           "<br>Lat: " +
+           tarjoajanMaaranpaaLatitude +
+           "<br>Lon: " +
+           tarjoajanMaaranpaaLongitude;
+
+       
     console.log(
         "Tarjoajan määränpään koordinaatit:",
         tarjoajanMaaranpaaLatitude,

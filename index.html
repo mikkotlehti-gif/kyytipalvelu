@@ -49,9 +49,11 @@ import {
   getFirestore,
   addDoc,
   collection,
-  getDocs
+  getDocs,
+  deleteDoc,
+  doc
 } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
-
+  
 const firebaseConfig = {
   apiKey: "AIzaSyCRvr7AuJEp_bQzaXQo506Y2CQfArewjtM",
   authDomain: "kyytipalvelu-c03b1.firebaseapp.com",
@@ -166,7 +168,20 @@ firestoreKyytipyyntoId = docRef.id;
     
     }
 
-function peruKyytipyynto() {
+async function peruKyytipyynto() {
+
+    if (firestoreKyytipyyntoId != "") {
+
+        await deleteDoc(
+            doc(
+                db,
+                "kyytipyynnot",
+                firestoreKyytipyyntoId
+            )
+        );
+
+        firestoreKyytipyyntoId = "";
+    }
 
     document.getElementById("kyytipyynto").innerHTML =
         "Ei aktiivista kyytipyyntöä";
@@ -179,16 +194,15 @@ function peruKyytipyynto() {
 
     kyytipyyntoAktiivinen = false;
 
-    document.getElementById("tallennanappi").disabled = true;    
+    document.getElementById("tallennanappi").disabled = true;
 
     document.getElementById("poistanappi").disabled = true;
 
     document.getElementById("luonappi").disabled = true;
 
     document.getElementById("maaranpaa").disabled = false;
-    
 }
-
+  
 function aloitaTarjoaminen() {
 
     haeKyytipyynnot();

@@ -3,17 +3,43 @@
 <p>Rooli:</p>
 
 <button id="roolitarvitsija">Kyydin tarvitsija</button>
-
 <button id="roolitarjoaja">Kyydin tarjoaja</button>
-<br><br>
-<input id="maaranpaa" type="text" placeholder="Anna määränpää" size="30" oninput="document.getElementById('tallennanappi').disabled = (this.value=='')">
-
-<button id="tallennanappi" onclick="naytaMaaranpaa()" disabled>Tallenna määränpää</button>
 
 <br><br>
 
-<button id="luonappi" onclick="luoKyytipyynto()" disabled>Luo kyytipyyntö</button>
-<button id="poistanappi" onclick="peruKyytipyynto()" disabled>Poista kyytipyyntö</button>
+<input
+    id="maaranpaa"
+    type="text"
+    placeholder="Anna määränpää"
+    size="30"
+    oninput="document.getElementById('tallennanappi').disabled = (this.value == '')"
+>
+
+<button
+    id="tallennanappi"
+    onclick="naytaMaaranpaa()"
+    disabled
+>
+    Tallenna määränpää
+</button>
+
+<br><br>
+
+<button
+    id="luonappi"
+    onclick="luoKyytipyynto()"
+    disabled
+>
+    Luo kyytipyyntö
+</button>
+
+<button
+    id="poistanappi"
+    onclick="peruKyytipyynto()"
+    disabled
+>
+    Poista kyytipyyntö
+</button>
 
 <hr>
 
@@ -26,103 +52,213 @@
 <p id="valittumaaranpaa"></p>
 
 <p><b>Sijaintisi:</b></p>
+
 <p id="sijainti">Haetaan sijaintia...</p>
+
 <p id="viimeksipaivitetty"></p>
 
-<label for="autonTuntomerkki">Auton tuntomerkki:</label><br>
-<input id="autonTuntomerkki" type="text" placeholder="Anna autosi tuntomerkki"><br><br>
+<label for="autonTuntomerkki">
+    Auton tuntomerkki:
+</label>
 
-<label for="tarjoajanMaaranpaa">Oma määränpää:</label><br>
-<input id="tarjoajanMaaranpaa"
-       type="text"
-       placeholder="Anna oma määränpää"><br><br>
+<br>
+
+<input
+    id="autonTuntomerkki"
+    type="text"
+    placeholder="Anna autosi tuntomerkki"
+>
+
+<br><br>
+
+<label for="tarjoajanMaaranpaa">
+    Oma määränpää:
+</label>
+
+<br>
+
+<input
+    id="tarjoajanMaaranpaa"
+    type="text"
+    placeholder="Anna oma määränpää"
+>
+
+<br><br>
 
 <p id="tarjoajanKoordinaatit"></p>
 
 <p id="reittiAB"></p>
 
-<button id="aloitatarjoaminen" onclick="aloitaTarjoaminen()">Aloita kyydin tarjoaminen</button>
+<button
+    id="aloitatarjoaminen"
+    onclick="aloitaTarjoaminen()"
+>
+    Aloita kyydin tarjoaminen
+</button>
 
-<button id="lopetatarjoaminen" onclick="lopetaTarjoaminen()" disabled>Lopeta kyydin tarjoaminen</button>
+<button
+    id="lopetatarjoaminen"
+    onclick="lopetaTarjoaminen()"
+    disabled
+>
+    Lopeta kyydin tarjoaminen
+</button>
 
-<p id="tarjoajantila">En tarjoa kyytiä</p>
+<p id="tarjoajantila">
+    En tarjoa kyytiä
+</p>
 
-<p id="lahellaolevatpyynnot">Lähellä olevat kyytipyynnöt: 0</p>
+<p id="lahellaolevatpyynnot">
+    Lähellä olevat kyytipyynnöt: 0
+</p>
 
 <p id="havaittukyytipyynto"></p>
 
-<button id="hyvaksyyyyti" disabled>Ota matkustaja kyytiin</button>
+<button id="hyvaksyyyyti" disabled>
+    Ota matkustaja kyytiin
+</button>
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js";
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js";
 
 import {
-  getFirestore,
-  addDoc,
-  collection,
-  getDocs,
-  deleteDoc,
-  doc,
-  onSnapshot,
-  updateDoc,
-  query,
-  where
+    getFirestore,
+    addDoc,
+    collection,
+    deleteDoc,
+    doc,
+    onSnapshot,
+    updateDoc,
+    query,
+    where
 } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-firestore.js";
-  
+
+
 const firebaseConfig = {
-  apiKey: "AIzaSyCRvr7AuJEp_bQzaXQo506Y2CQfArewjtM",
-  authDomain: "kyytipalvelu-c03b1.firebaseapp.com",
-  projectId: "kyytipalvelu-c03b1",
-  storageBucket: "kyytipalvelu-c03b1.firebasestorage.app",
-  messagingSenderId: "1087195218441",
-  appId: "1:1087195218441:web:2731bd7fea44daa316eed8"
+    apiKey: "AIzaSyCRvr7AuJEp_bQzaXQo506Y2CQfArewjtM",
+    authDomain: "kyytipalvelu-c03b1.firebaseapp.com",
+    projectId: "kyytipalvelu-c03b1",
+    storageBucket: "kyytipalvelu-c03b1.firebasestorage.app",
+    messagingSenderId: "1087195218441",
+    appId: "1:1087195218441:web:2731bd7fea44daa316eed8"
 };
-    
-    const app = initializeApp(firebaseConfig);
 
-    const db = getFirestore(app);
 
-    console.log("Firebase OK");
-  
-var nykyinenSijainti = "";
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+console.log("Firebase OK");
+
+
+/*
+ * Käyttäjän nykyinen GPS-sijainti
+ *
+ * Sama GPS-sijainti toimii käyttäjän roolin mukaan joko
+ * matkustajan lähtöpaikkana tai tarjoajan nykyisenä sijaintina.
+ */
+
+var kayttajanNykyinenSijaintiTeksti = "";
+
+var kayttajanNykyinenLatitude = null;
+
+var kayttajanNykyinenLongitude = null;
+
+
+/*
+ * Matkustajan tiedot
+ */
+
 var kyytipyyntoAktiivinen = false;
-var tallennettuMaaranpaa = "";
+
+var matkustajanMaaranpaa = "";
+
+var matkustajanMaaranpaaLatitude = null;
+
+var matkustajanMaaranpaaLongitude = null;
+
+
+/*
+ * Tarjoajan tiedot
+ */
+
 var tarjoaKyytia = false;
+
 var tarjoaminenAloitettu = "";
-var firestoreKyytipyyntoId = "";
-var unsubscribeKyytipyynnot = null;
-var unsubscribeOmaKyyti = null;
+
 var autonTuntomerkki = "";
-var maaranpaaLatitude = null;
-var maaranpaaLongitude = null;
+
 var tarjoajanMaaranpaa = "";
+
 var tarjoajanMaaranpaaLatitude = null;
+
 var tarjoajanMaaranpaaLongitude = null;
-var tarjoajanNykyinenLatitude = null;
-var tarjoajanNykyinenLongitude = null;
-  
+
+
+/*
+ * Firestore-kuuntelijoiden ja dokumentin tunnisteet
+ */
+
+var firestoreKyytipyyntoId = "";
+
+var unsubscribeKyytipyynnot = null;
+
+var unsubscribeOmaKyyti = null;
+
+
+/*
+ * GPS-sijainnin seuranta
+ */
+
 navigator.geolocation.watchPosition(
+
     function(sijainti) {
 
-       tarjoajanNykyinenLatitude = sijainti.coords.latitude;
-       tarjoajanNykyinenLongitude = sijainti.coords.longitude;
-           
-        nykyinenSijainti =
-            sijainti.coords.latitude + ", " +
+        kayttajanNykyinenLatitude =
+            sijainti.coords.latitude;
+
+        kayttajanNykyinenLongitude =
             sijainti.coords.longitude;
 
-        document.getElementById("sijainti").innerHTML =
-            "Leveysaste: " + sijainti.coords.latitude +
-            "<br>Pituusaste: " + sijainti.coords.longitude;
-        document.getElementById("viimeksipaivitetty").innerHTML =
-            "Viimeksi päivitetty: " + new Date().toLocaleTimeString();
+        kayttajanNykyinenSijaintiTeksti =
+            kayttajanNykyinenLatitude +
+            ", " +
+            kayttajanNykyinenLongitude;
+
+        document.getElementById(
+            "sijainti"
+        ).innerHTML =
+            "Leveysaste: " +
+            kayttajanNykyinenLatitude +
+            "<br>Pituusaste: " +
+            kayttajanNykyinenLongitude;
+
+        document.getElementById(
+            "viimeksipaivitetty"
+        ).innerHTML =
+            "Viimeksi päivitetty: " +
+            new Date().toLocaleTimeString();
+
     },
+
     function(virhe) {
-        document.getElementById("sijainti").innerHTML =
+
+        document.getElementById(
+            "sijainti"
+        ).innerHTML =
             virhe.message;
+
     }
+
 );
+
+
+/*
+ * Matkustajan määränpään tallentaminen
+ */
 
 function naytaMaaranpaa() {
 
@@ -130,265 +266,475 @@ function naytaMaaranpaa() {
         return;
     }
 
-    tallennettuMaaranpaa = document.getElementById("maaranpaa").value;
+    matkustajanMaaranpaa =
+        document.getElementById(
+            "maaranpaa"
+        ).value;
 
-    document.getElementById("maaranpaa").value = "";
+    document.getElementById(
+        "maaranpaa"
+    ).value = "";
 
-    document.getElementById("tallennanappi").disabled = true;
-    
-    document.getElementById("valittumaaranpaa").innerHTML =
+    document.getElementById(
+        "tallennanappi"
+    ).disabled = true;
+
+    document.getElementById(
+        "valittumaaranpaa"
+    ).innerHTML =
         "Tallennettu määränpää: " +
-        tallennettuMaaranpaa;
+        matkustajanMaaranpaa;
 
-    document.getElementById("luonappi").disabled = false;
+    document.getElementById(
+        "luonappi"
+    ).disabled = false;
+
 }
 
-async function haeMaaranpaanKoordinaatit() {
+
+/*
+ * Matkustajan määränpään geokoodaus
+ */
+
+async function haeMatkustajanMaaranpaanKoordinaatit() {
 
     const vastaus = await fetch(
         "https://nominatim.openstreetmap.org/search?format=json&q=" +
-        encodeURIComponent(tallennettuMaaranpaa)
+        encodeURIComponent(
+            matkustajanMaaranpaa
+        )
     );
 
-    const tulokset = await vastaus.json();
+    const tulokset =
+        await vastaus.json();
 
     if (tulokset.length == 0) {
 
-        alert("Määränpäätä ei löytynyt");
+        alert(
+            "Matkustajan määränpäätä ei löytynyt"
+        );
 
-        maaranpaaLatitude = null;
-        maaranpaaLongitude = null;
+        matkustajanMaaranpaaLatitude = null;
+
+        matkustajanMaaranpaaLongitude = null;
 
         return false;
+
     }
 
-    maaranpaaLatitude =
-        parseFloat(tulokset[0].lat);
+    matkustajanMaaranpaaLatitude =
+        parseFloat(
+            tulokset[0].lat
+        );
 
-    maaranpaaLongitude =
-        parseFloat(tulokset[0].lon);
+    matkustajanMaaranpaaLongitude =
+        parseFloat(
+            tulokset[0].lon
+        );
 
     console.log(
-        "Määränpään koordinaatit:",
-        maaranpaaLatitude,
-        maaranpaaLongitude
+        "Matkustajan määränpään koordinaatit:",
+        matkustajanMaaranpaaLatitude,
+        matkustajanMaaranpaaLongitude
     );
 
     return true;
+
 }
-  
+
+
+/*
+ * Kyytipyynnön luonti
+ */
+
 async function luoKyytipyynto() {
 
-    console.log("luoKyytipyynto käynnistyi");
-  
-    if (nykyinenSijainti == "") {
-        document.getElementById("kyytipyynto").innerHTML =
-            "Odottaa sijaintiasi.<br>Paina Luo kyytipyyntö -nappia pian uudestaan.";
+    console.log(
+        "luoKyytipyynto käynnistyi"
+    );
+
+    if (
+        kayttajanNykyinenLatitude == null ||
+        kayttajanNykyinenLongitude == null
+    ) {
+
+        document.getElementById(
+            "kyytipyynto"
+        ).innerHTML =
+            "Odottaa sijaintiasi." +
+            "<br>Paina Luo kyytipyyntö -nappia pian uudestaan.";
+
         return;
+
     }
-    
-    var aika = new Date().toLocaleString();
 
-    if (tallennettuMaaranpaa == "") {
+    if (matkustajanMaaranpaa == "") {
 
-        document.getElementById("kyytipyynto").innerHTML =
+        document.getElementById(
+            "kyytipyynto"
+        ).innerHTML =
             "Anna ensin määränpää";
 
         return;
-    }
-    
-    const loytyi = await haeMaaranpaanKoordinaatit();
-    
-    if (!loytyi) {
-        return;
+
     }
 
     if (kyytipyyntoAktiivinen) {
         return;
     }
 
-    kyytipyyntoAktiivinen = true;
+    const loytyi =
+        await haeMatkustajanMaaranpaanKoordinaatit();
+
+    if (!loytyi) {
+        return;
+    }
+
+    const aika =
+        new Date().toLocaleString();
 
     const docRef = await addDoc(
-    collection(db, "kyytipyynnot"),
-   {
-        lahtopaikka: nykyinenSijainti,
-        maaranpaa: tallennettuMaaranpaa,
-        maaranpaaLatitude: maaranpaaLatitude,
-        maaranpaaLongitude: maaranpaaLongitude,
-        luotu: new Date().toISOString(),
-        status: "aktiivinen"
-    }
-);
 
-firestoreKyytipyyntoId = docRef.id;
+        collection(
+            db,
+            "kyytipyynnot"
+        ),
 
-kuunteleOmaaKyytia();
-  
-    document.getElementById("kyytipyynto").innerHTML =
-        "Lähtöpaikka: " + nykyinenSijainti +
+        {
+            matkustajanLahtopaikka:
+                kayttajanNykyinenSijaintiTeksti,
+
+            matkustajanLahtopaikkaLatitude:
+                kayttajanNykyinenLatitude,
+
+            matkustajanLahtopaikkaLongitude:
+                kayttajanNykyinenLongitude,
+
+            matkustajanMaaranpaa:
+                matkustajanMaaranpaa,
+
+            matkustajanMaaranpaaLatitude:
+                matkustajanMaaranpaaLatitude,
+
+            matkustajanMaaranpaaLongitude:
+                matkustajanMaaranpaaLongitude,
+
+            luotu:
+                new Date().toISOString(),
+
+            status:
+                "aktiivinen"
+        }
+
+    );
+
+    firestoreKyytipyyntoId =
+        docRef.id;
+
+    kyytipyyntoAktiivinen =
+        true;
+
+    kuunteleOmaaKyytia();
+
+    document.getElementById(
+        "kyytipyynto"
+    ).innerHTML =
+        "Lähtöpaikka: " +
+        kayttajanNykyinenSijaintiTeksti +
         "<br>Määränpää: " +
-        tallennettuMaaranpaa +
-        "<br>Luotu: " + aika;
+        matkustajanMaaranpaa +
+        "<br>Luotu: " +
+        aika;
 
-    document.getElementById("valittumaaranpaa").innerHTML = "";
+    document.getElementById(
+        "valittumaaranpaa"
+    ).innerHTML = "";
 
-    document.getElementById("poistanappi").disabled = false;
-    
-    document.getElementById("luonappi").disabled = true;
+    document.getElementById(
+        "poistanappi"
+    ).disabled = false;
 
-    document.getElementById("tallennanappi").disabled = true;
+    document.getElementById(
+        "luonappi"
+    ).disabled = true;
 
-    document.getElementById("maaranpaa").disabled = true;
-    
-    }
+    document.getElementById(
+        "tallennanappi"
+    ).disabled = true;
+
+    document.getElementById(
+        "maaranpaa"
+    ).disabled = true;
+
+}
+
+
+/*
+ * Kyytipyynnön poistaminen
+ */
 
 async function peruKyytipyynto() {
 
     if (unsubscribeOmaKyyti) {
-    unsubscribeOmaKyyti();
-    unsubscribeOmaKyyti = null;
+
+        unsubscribeOmaKyyti();
+
+        unsubscribeOmaKyyti = null;
+
     }
-  
+
     if (firestoreKyytipyyntoId != "") {
 
         await deleteDoc(
+
             doc(
                 db,
                 "kyytipyynnot",
                 firestoreKyytipyyntoId
             )
+
         );
 
         firestoreKyytipyyntoId = "";
+
     }
 
-    document.getElementById("kyytipyynto").innerHTML =
+    document.getElementById(
+        "kyytipyynto"
+    ).innerHTML =
         "Ei aktiivista kyytipyyntöä";
 
-    document.getElementById("valittumaaranpaa").innerHTML = "";
+    document.getElementById(
+        "valittumaaranpaa"
+    ).innerHTML = "";
 
-    document.getElementById("kyytiSaapunut").innerHTML = "";
+    document.getElementById(
+        "kyytiSaapunut"
+    ).innerHTML = "";
 
-    tallennettuMaaranpaa = "";
+    matkustajanMaaranpaa = "";
 
-    document.getElementById("maaranpaa").value = "";
+    matkustajanMaaranpaaLatitude = null;
+
+    matkustajanMaaranpaaLongitude = null;
+
+    document.getElementById(
+        "maaranpaa"
+    ).value = "";
 
     kyytipyyntoAktiivinen = false;
 
-    document.getElementById("tallennanappi").disabled = true;
+    document.getElementById(
+        "tallennanappi"
+    ).disabled = true;
 
-    document.getElementById("poistanappi").disabled = true;
+    document.getElementById(
+        "poistanappi"
+    ).disabled = true;
 
-    document.getElementById("luonappi").disabled = true;
+    document.getElementById(
+        "luonappi"
+    ).disabled = true;
 
-    document.getElementById("maaranpaa").disabled = false;
+    document.getElementById(
+        "maaranpaa"
+    ).disabled = false;
+
 }
-  
+
+
+/*
+ * Tarjoamisen aloittaminen
+ */
+
 async function aloitaTarjoaminen() {
-  
+
     autonTuntomerkki =
-    document.getElementById("autonTuntomerkki").value;
+        document.getElementById(
+            "autonTuntomerkki"
+        ).value;
 
     if (autonTuntomerkki == "") {
-        alert("Anna auton tuntomerkki");
+
+        alert(
+            "Anna auton tuntomerkki"
+        );
+
         return;
+
     }
 
     tarjoajanMaaranpaa =
-    document.getElementById(
-        "tarjoajanMaaranpaa"
-    ).value;
+        document.getElementById(
+            "tarjoajanMaaranpaa"
+        ).value;
 
     if (tarjoajanMaaranpaa == "") {
-    
-        alert("Anna määränpää");
-    
+
+        alert(
+            "Anna tarjoajan määränpää"
+        );
+
         return;
+
+    }
+
+    if (
+        kayttajanNykyinenLatitude == null ||
+        kayttajanNykyinenLongitude == null
+    ) {
+
+        alert(
+            "Odotetaan tarjoajan sijaintitietoa"
+        );
+
+        return;
+
     }
 
     const loytyi =
-    await haeTarjoajanMaaranpaanKoordinaatit();
+        await haeTarjoajanMaaranpaanKoordinaatit();
 
     if (!loytyi) {
         return;
     }
 
     await laskeReittiAB();
-       
+
     haeKyytipyynnot();
-  
-    console.log("Tarjoaminen käynnistyi");
-  
-    tarjoaminenAloitettu = new Date().toLocaleTimeString();
-    
-    tarjoaKyytia = true;
 
-    document.getElementById("tarjoajantila").innerHTML =
-    "Tarjoan kyytiä<br>Aloitettu: " +
-    tarjoaminenAloitettu;
-    
-    document.getElementById("aloitatarjoaminen").disabled = true;
+    tarjoaminenAloitettu =
+        new Date().toLocaleTimeString();
 
-    document.getElementById("lopetatarjoaminen").disabled = false;
+    tarjoaKyytia =
+        true;
 
-    document.getElementById("autonTuntomerkki").disabled = true;
+    document.getElementById(
+        "tarjoajantila"
+    ).innerHTML =
+        "Tarjoan kyytiä" +
+        "<br>Aloitettu: " +
+        tarjoaminenAloitettu;
 
-    document.getElementById("tarjoajanMaaranpaa").disabled = true;
-    
+    document.getElementById(
+        "aloitatarjoaminen"
+    ).disabled = true;
+
+    document.getElementById(
+        "lopetatarjoaminen"
+    ).disabled = false;
+
+    document.getElementById(
+        "autonTuntomerkki"
+    ).disabled = true;
+
+    document.getElementById(
+        "tarjoajanMaaranpaa"
+    ).disabled = true;
+
 }
 
-    function lopetaTarjoaminen() {
+
+/*
+ * Tarjoamisen lopettaminen
+ */
+
+function lopetaTarjoaminen() {
 
     if (unsubscribeKyytipyynnot) {
+
         unsubscribeKyytipyynnot();
+
         unsubscribeKyytipyynnot = null;
+
     }
-      
+
     tarjoaKyytia = false;
 
-    document.getElementById("tarjoajantila").innerHTML =
+    document.getElementById(
+        "tarjoajantila"
+    ).innerHTML =
         "En tarjoa kyytiä";
 
-    document.getElementById("aloitatarjoaminen").disabled = false;
+    document.getElementById(
+        "aloitatarjoaminen"
+    ).disabled = false;
 
-    document.getElementById("lopetatarjoaminen").disabled = true;
+    document.getElementById(
+        "lopetatarjoaminen"
+    ).disabled = true;
 
-    document.getElementById("lahellaolevatpyynnot").innerHTML =
-    "Lähellä olevat kyytipyynnöt: 0";
+    document.getElementById(
+        "lahellaolevatpyynnot"
+    ).innerHTML =
+        "Lähellä olevat kyytipyynnöt: 0";
 
-    document.getElementById("havaittukyytipyynto").innerHTML = "";
+    document.getElementById(
+        "havaittukyytipyynto"
+    ).innerHTML = "";
 
-    document.getElementById("autonTuntomerkki").disabled = false;
+    document.getElementById(
+        "autonTuntomerkki"
+    ).disabled = false;
 
-    document.getElementById("autonTuntomerkki").value = "";
-      
-    document.getElementById("tarjoajanMaaranpaa").disabled = false;
+    document.getElementById(
+        "autonTuntomerkki"
+    ).value = "";
 
-    document.getElementById("tarjoajanMaaranpaa").value = "";
-      
+    document.getElementById(
+        "tarjoajanMaaranpaa"
+    ).disabled = false;
+
+    document.getElementById(
+        "tarjoajanMaaranpaa"
+    ).value = "";
+
+    document.getElementById(
+        "tarjoajanKoordinaatit"
+    ).innerHTML = "";
+
+    document.getElementById(
+        "reittiAB"
+    ).innerHTML = "";
+
     autonTuntomerkki = "";
 
     tarjoajanMaaranpaa = "";
-    tarjoajanMaaranpaaLatitude = null;    
+
+    tarjoajanMaaranpaaLatitude = null;
+
     tarjoajanMaaranpaaLongitude = null;
 
-       document.getElementById(
-           "tarjoajanKoordinaatit"
-       ).innerHTML = "";
-           
 }
+
+
+/*
+ * Aktiivisten kyytipyyntöjen kuuntelu
+ */
 
 function haeKyytipyynnot() {
 
     const aktiivisetPyynnot = query(
-        collection(db, "kyytipyynnot"),
-        where("status", "==", "aktiivinen")
+
+        collection(
+            db,
+            "kyytipyynnot"
+        ),
+
+        where(
+            "status",
+            "==",
+            "aktiivinen"
+        )
+
     );
 
     unsubscribeKyytipyynnot = onSnapshot(
+
         aktiivisetPyynnot,
+
         (snapshot) => {
+
             console.log(
                 "Kyytipyyntöjä löytyi:",
                 snapshot.size
@@ -404,58 +750,95 @@ function haeKyytipyynnot() {
 
             snapshot.forEach((doc) => {
 
-                const pyynto = doc.data();
+                const pyynto =
+                    doc.data();
 
-            html +=
-                "<hr>" +
-                "<b>ID:</b> " + doc.id +
-                "<br><b>Määränpää:</b> " +
-                pyynto.maaranpaa +
-                
-                "<br><b>Määränpään lat:</b> " +
-                pyynto.maaranpaaLatitude +
-                
-                "<br><b>Määränpään lon:</b> " +
-                pyynto.maaranpaaLongitude +
+                html +=
+                    "<hr>" +
 
-                "<br><b>Lähtöpaikka:</b> " +
-                pyynto.lahtopaikka +
-                "<br><b>Luotu:</b> " +
-                new Date(
-                    pyynto.luotu
-                ).toLocaleString() +
-                "<br><b>Status:</b> " +
-                pyynto.status +
-                "<br>" +
-                "<button onclick=\"olenPaikalla('" +
-                doc.id +
-                "')\">Olen paikalla</button><br>";
+                    "<b>ID:</b> " +
+                    doc.id +
+
+                    "<br><b>Määränpää:</b> " +
+                    pyynto.matkustajanMaaranpaa +
+
+                    "<br><b>Määränpään lat:</b> " +
+                    pyynto.matkustajanMaaranpaaLatitude +
+
+                    "<br><b>Määränpään lon:</b> " +
+                    pyynto.matkustajanMaaranpaaLongitude +
+
+                    "<br><b>Lähtöpaikka:</b> " +
+                    pyynto.matkustajanLahtopaikka +
+
+                    "<br><b>Lähtöpaikan lat:</b> " +
+                    pyynto.matkustajanLahtopaikkaLatitude +
+
+                    "<br><b>Lähtöpaikan lon:</b> " +
+                    pyynto.matkustajanLahtopaikkaLongitude +
+
+                    "<br><b>Luotu:</b> " +
+                    new Date(
+                        pyynto.luotu
+                    ).toLocaleString() +
+
+                    "<br><b>Status:</b> " +
+                    pyynto.status +
+
+                    "<br>" +
+
+                    "<button onclick=\"olenPaikalla('" +
+                    doc.id +
+                    "')\">" +
+                    "Olen paikalla" +
+                    "</button>" +
+
+                    "<br>";
 
             });
 
             document.getElementById(
                 "havaittukyytipyynto"
-            ).innerHTML = html;
+            ).innerHTML =
+                html;
 
         }
+
     );
+
 }
+
+
+/*
+ * Tarjoaja ilmoittaa olevansa paikalla
+ */
 
 async function olenPaikalla(id) {
 
     await updateDoc(
+
         doc(
             db,
             "kyytipyynnot",
             id
         ),
+
         {
-            status: "tarjoaja_paikalla",
-            autonTuntomerkki: autonTuntomerkki
+            status:
+                "tarjoaja_paikalla",
+
+            autonTuntomerkki:
+                autonTuntomerkki
         }
+
     );
 
 }
+
+
+/*
+ * Matkustajan oman kyytipyynnön kuuntelu
+ */
 
 function kuunteleOmaaKyytia() {
 
@@ -464,30 +847,41 @@ function kuunteleOmaaKyytia() {
     }
 
     unsubscribeOmaKyyti = onSnapshot(
+
         doc(
             db,
             "kyytipyynnot",
             firestoreKyytipyyntoId
         ),
-      
+
         (snapshot) => {
 
             if (!snapshot.exists()) {
                 return;
             }
 
-            const pyynto = snapshot.data();
+            const pyynto =
+                snapshot.data();
 
-            if (pyynto.status == "tarjoaja_paikalla") {
+            if (
+                pyynto.status ==
+                "tarjoaja_paikalla"
+            ) {
 
                 document.getElementById(
                     "kyytiSaapunut"
                 ).innerHTML =
                     "🚕 Kyyti on saapunut" +
+
                     "<br><b>Auton tuntomerkki:</b> " +
                     pyynto.autonTuntomerkki +
-                    "<br><button onclick='hylkaaKyyti()'>Hylkää kyyti</button>";
-              
+
+                    "<br>" +
+
+                    "<button onclick='hylkaaKyyti()'>" +
+                    "Hylkää kyyti" +
+                    "</button>";
+
             } else {
 
                 document.getElementById(
@@ -497,91 +891,133 @@ function kuunteleOmaaKyytia() {
             }
 
         }
+
     );
+
 }
+
+
+/*
+ * Matkustaja hylkää paikalle saapuneen tarjoajan
+ */
 
 async function hylkaaKyyti() {
 
     await updateDoc(
+
         doc(
             db,
             "kyytipyynnot",
             firestoreKyytipyyntoId
         ),
+
         {
-            status: "aktiivinen",
-            autonTuntomerkki: ""
+            status:
+                "aktiivinen",
+
+            autonTuntomerkki:
+                ""
         }
+
     );
 
 }
+
+
+/*
+ * Tarjoajan määränpään geokoodaus
+ */
 
 async function haeTarjoajanMaaranpaanKoordinaatit() {
 
     const vastaus = await fetch(
         "https://nominatim.openstreetmap.org/search?format=json&q=" +
-        encodeURIComponent(tarjoajanMaaranpaa)
+        encodeURIComponent(
+            tarjoajanMaaranpaa
+        )
     );
 
-    const tulokset = await vastaus.json();
+    const tulokset =
+        await vastaus.json();
 
     if (tulokset.length == 0) {
 
-        alert("Tarjoajan määränpäätä ei löytynyt");
+        alert(
+            "Tarjoajan määränpäätä ei löytynyt"
+        );
+
+        tarjoajanMaaranpaaLatitude = null;
+
+        tarjoajanMaaranpaaLongitude = null;
 
         return false;
+
     }
 
     tarjoajanMaaranpaaLatitude =
-        parseFloat(tulokset[0].lat);
+        parseFloat(
+            tulokset[0].lat
+        );
 
     tarjoajanMaaranpaaLongitude =
-        parseFloat(tulokset[0].lon);
+        parseFloat(
+            tulokset[0].lon
+        );
 
-       document.getElementById(
-           "tarjoajanKoordinaatit"
-       ).innerHTML =
-           "<b>Tarjoajan määränpään koordinaatit</b>" +
-           "<br>Lat: " +
-           tarjoajanMaaranpaaLatitude +
-           "<br>Lon: " +
-           tarjoajanMaaranpaaLongitude;
+    document.getElementById(
+        "tarjoajanKoordinaatit"
+    ).innerHTML =
+        "<b>Tarjoajan määränpään koordinaatit</b>" +
+        "<br>Lat: " +
+        tarjoajanMaaranpaaLatitude +
+        "<br>Lon: " +
+        tarjoajanMaaranpaaLongitude;
 
-       
     console.log(
         "Tarjoajan määränpään koordinaatit:",
         tarjoajanMaaranpaaLatitude,
         tarjoajanMaaranpaaLongitude
     );
-  
+
     return true;
+
 }
+
+
+/*
+ * Tarjoajan normaali reitti A → B
+ */
 
 async function laskeReittiAB() {
 
     const url =
         "https://router.project-osrm.org/route/v1/driving/" +
 
-        tarjoajanNykyinenLongitude + "," +
-        tarjoajanNykyinenLatitude +
+        kayttajanNykyinenLongitude +
+        "," +
+        kayttajanNykyinenLatitude +
 
         ";" +
 
-        tarjoajanMaaranpaaLongitude + "," +
+        tarjoajanMaaranpaaLongitude +
+        "," +
         tarjoajanMaaranpaaLatitude +
 
         "?overview=false";
 
-    const vastaus = await fetch(url);
+    const vastaus =
+        await fetch(url);
 
     const data =
         await vastaus.json();
 
     const matkaKm =
-        data.routes[0].distance / 1000;
+        data.routes[0].distance /
+        1000;
 
     const aikaMin =
-        data.routes[0].duration / 60;
+        data.routes[0].duration /
+        60;
 
     document.getElementById(
         "reittiAB"
@@ -593,15 +1029,36 @@ async function laskeReittiAB() {
         "<br>Aika: " +
         aikaMin.toFixed(0) +
         " min";
+
 }
-       
-window.naytaMaaranpaa = naytaMaaranpaa;
-window.luoKyytipyynto = luoKyytipyynto;
-window.peruKyytipyynto = peruKyytipyynto;
-window.aloitaTarjoaminen = aloitaTarjoaminen;
-window.lopetaTarjoaminen = lopetaTarjoaminen;
-window.haeKyytipyynnot = haeKyytipyynnot;
-window.olenPaikalla = olenPaikalla;
-window.hylkaaKyyti = hylkaaKyyti;
-  
+
+
+/*
+ * Moduulin funktiot HTML:n onclick-kutsuille
+ */
+
+window.naytaMaaranpaa =
+    naytaMaaranpaa;
+
+window.luoKyytipyynto =
+    luoKyytipyynto;
+
+window.peruKyytipyynto =
+    peruKyytipyynto;
+
+window.aloitaTarjoaminen =
+    aloitaTarjoaminen;
+
+window.lopetaTarjoaminen =
+    lopetaTarjoaminen;
+
+window.haeKyytipyynnot =
+    haeKyytipyynnot;
+
+window.olenPaikalla =
+    olenPaikalla;
+
+window.hylkaaKyyti =
+    hylkaaKyyti;
+
 </script>

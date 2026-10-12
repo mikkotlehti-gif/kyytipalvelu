@@ -39,6 +39,8 @@
 
 <p id="tarjoajanKoordinaatit"></p>
 
+<p id="reittiAB"></p>
+
 <button id="aloitatarjoaminen" onclick="aloitaTarjoaminen()">Aloita kyydin tarjoaminen</button>
 
 <button id="lopetatarjoaminen" onclick="lopetaTarjoaminen()" disabled>Lopeta kyydin tarjoaminen</button>
@@ -97,10 +99,15 @@ var maaranpaaLongitude = null;
 var tarjoajanMaaranpaa = "";
 var tarjoajanMaaranpaaLatitude = null;
 var tarjoajanMaaranpaaLongitude = null;
+var tarjoajanNykyinenLatitude = null;
+var tarjoajanNykyinenLongitude = null;
   
 navigator.geolocation.watchPosition(
     function(sijainti) {
 
+       tarjoajanNykyinenLatitude = sijainti.coords.latitude;
+       tarjoajanNykyinenLongitude = sijainti.coords.longitude;
+           
         nykyinenSijainti =
             sijainti.coords.latitude + ", " +
             sijainti.coords.longitude;
@@ -306,7 +313,9 @@ async function aloitaTarjoaminen() {
     if (!loytyi) {
         return;
     }
-  
+
+    await laskeReittiAB();
+       
     haeKyytipyynnot();
   
     console.log("Tarjoaminen käynnistyi");
@@ -548,6 +557,44 @@ async function haeTarjoajanMaaranpaanKoordinaatit() {
     return true;
 }
 
+async function laskeReittiAB() {
+
+    const url =
+        "https://router.project-osrm.org/route/v1/driving/" +
+
+        tarjoajanNykyinenLongitude + "," +
+        tarjoajanNykyinenLatitude +
+
+        ";" +
+
+        tarjoajanMaaranpaaLongitude + "," +
+        tarjoajanMaaranpaaLatitude +
+
+        "?overview=false";
+
+    const vastaus = await fetch(url);
+
+    const data =
+        await vastaus.json();
+
+    const matkaKm =
+        data.routes[0].distance / 1000;
+
+    const aikaMin =
+        data.routes[0].duration / 60;
+
+    document.getElementById(
+        "reittiAB"
+    ).innerHTML =
+        "<b>Reitti A → B</b>" +
+        "<br>Matka: " +
+        matkaKm.toFixed(1) +
+        " km" +
+        "<br>Aika: " +
+        aikaMin.toFixed(0) +
+        " min";
+}
+       
 window.naytaMaaranpaa = naytaMaaranpaa;
 window.luoKyytipyynto = luoKyytipyynto;
 window.peruKyytipyynto = peruKyytipyynto;

@@ -87,6 +87,9 @@ var unsubscribeOmaKyyti = null;
 var autonTuntomerkki = "";
 var maaranpaaLatitude = null;
 var maaranpaaLongitude = null;
+var tarjoajanMaaranpaa = "";
+var tarjoajanMaaranpaaLatitude = null;
+var tarjoajanMaaranpaaLongitude = null;
   
 navigator.geolocation.watchPosition(
     function(sijainti) {
@@ -268,13 +271,37 @@ async function peruKyytipyynto() {
     document.getElementById("maaranpaa").disabled = false;
 }
   
-function aloitaTarjoaminen() {
-
+async function aloitaTarjoaminen() {
+  
     autonTuntomerkki =
     document.getElementById("autonTuntomerkki").value;
 
     if (autonTuntomerkki == "") {
         alert("Anna auton tuntomerkki");
+        return;
+    }
+
+    <label for="tarjoajanMaaranpaa">Oma määränpää:</label><br>
+    <input id="tarjoajanMaaranpaa"
+           type="text"
+           placeholder="Anna oma määränpää"><br><br>
+
+    tarjoajanMaaranpaa =
+    document.getElementById(
+        "tarjoajanMaaranpaa"
+    ).value;
+
+    if (tarjoajanMaaranpaa == "") {
+    
+        alert("Anna määränpää");
+    
+        return;
+    }
+
+    const loytyi =
+    await haeTarjoajanMaaranpaanKoordinaatit();
+
+    if (!loytyi) {
         return;
     }
   
@@ -295,6 +322,8 @@ function aloitaTarjoaminen() {
     document.getElementById("lopetatarjoaminen").disabled = false;
 
     document.getElementById("autonTuntomerkki").disabled = true;
+
+    document.getElementById("tarjoajanMaaranpaa").disabled = true;
     
 }
 
@@ -321,7 +350,15 @@ function aloitaTarjoaminen() {
 
     document.getElementById("autonTuntomerkki").disabled = false;
 
+    document.getElementById("tarjoajanMaaranpaa").disabled = false;
+
+    document.getElementById("tarjoajanMaaranpaa").value = "";
+      
     autonTuntomerkki = "";
+
+    tarjoajanMaaranpaa = "";
+    tarjoajanMaaranpaaLatitude = null;    
+    tarjoajanMaaranpaaLongitude = null;
         
 }
 
@@ -460,7 +497,32 @@ async function hylkaaKyyti() {
         }
     );
 
-} 
+}
+
+async function haeTarjoajanMaaranpaanKoordinaatit() {
+
+    const vastaus = await fetch(
+        "https://nominatim.openstreetmap.org/search?format=json&q=" +
+        encodeURIComponent(tarjoajanMaaranpaa)
+    );
+
+    const tulokset = await vastaus.json();
+
+    if (tulokset.length == 0) {
+
+        alert("Tarjoajan määränpäätä ei löytynyt");
+
+        return false;
+    }
+
+    tarjoajanMaaranpaaLatitude =
+        parseFloat(tulokset[0].lat);
+
+    tarjoajanMaaranpaaLongitude =
+        parseFloat(tulokset[0].lon);
+
+    return true;
+}
 
 window.naytaMaaranpaa = naytaMaaranpaa;
 window.luoKyytipyynto = luoKyytipyynto;

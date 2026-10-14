@@ -347,7 +347,38 @@ async function haeMatkustajanMaaranpaanKoordinaatit() {
 
 }
 
+async function haeMatkustajanLahtopaikanNimi(latitude, longitude) {
 
+    const vastaus = await fetch(
+        "https://nominatim.openstreetmap.org/reverse?format=json&lat=" +
+        latitude +
+        "&lon=" +
+        longitude +
+        "&addressdetails=1"
+    );
+
+    const tulos = await vastaus.json();
+
+    const osoite = tulos.address;
+    
+    const tarkkaPaikka =
+        (osoite.road || osoite.pedestrian || osoite.path || "") +
+        (osoite.house_number ? " " + osoite.house_number : "");
+    
+    const kaupunkiTaiKunta =
+        osoite.city ||
+        osoite.town ||
+        osoite.municipality ||
+        osoite.village ||
+        "";
+    
+    const lahtopaikanNimi =
+        tarkkaPaikka + ", " + kaupunkiTaiKunta;
+    
+    return lahtopaikanNimi;
+}
+
+    
 /*
  * Kyytipyynnön luonti
  */
@@ -396,7 +427,13 @@ async function luoKyytipyynto() {
     }
 
     const aika =
-        new Date().toLocaleString();
+    new Date().toLocaleString();
+
+    const lahtopaikanTiedot =
+        await haeMatkustajanLahtopaikanNimi(
+            kayttajanNykyinenLatitude,
+            kayttajanNykyinenLongitude
+        );
 
     const docRef = await addDoc(
 
@@ -407,14 +444,14 @@ async function luoKyytipyynto() {
 
         {
             matkustajanLahtopaikka:
-                kayttajanNykyinenSijaintiTeksti,
-
+                lahtopaikanTiedot,
+            
             matkustajanLahtopaikkaLatitude:
                 kayttajanNykyinenLatitude,
-
+            
             matkustajanLahtopaikkaLongitude:
                 kayttajanNykyinenLongitude,
-
+            
             matkustajanMaaranpaa:
                 matkustajanMaaranpaa,
 

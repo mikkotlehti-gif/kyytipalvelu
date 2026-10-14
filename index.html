@@ -210,6 +210,9 @@ var unsubscribeKyytipyynnot = null;
 
 var unsubscribeOmaKyyti = null;
 
+var reittiABMatkaKm = null;
+var reittiABAikaMin = null;
+
 
 /*
  * GPS-sijainnin seuranta
@@ -757,6 +760,20 @@ function haeKyytipyynnot() {
 
               laskeReittiACDB(pyynto)
                 .then((reittiACDB) => {
+
+                const lisamatkaKm =
+                    reittiACDB.matkaKm - reittiABMatkaKm;
+            
+                const lisaaikaMin =
+                    reittiACDB.aikaMin - reittiABAikaMin;
+
+                console.log(
+                    "Lisämatka:",
+                    lisamatkaKm.toFixed(1),
+                    "km, lisäaika:",
+                    lisaaikaMin.toFixed(0),
+                    "min"
+                );
             
                     document.getElementById(
                         "reitti_" + doc.id
@@ -1036,23 +1053,23 @@ async function laskeReittiAB() {
     const data =
         await vastaus.json();
 
-    const matkaKm =
+    reittiABMatkaKm =
         data.routes[0].distance /
         1000;
 
-    const aikaMin =
+    reittiABAikaMin =
         data.routes[0].duration /
         60;
-
+    
     document.getElementById(
         "reittiAB"
     ).innerHTML =
         "<b>Reitti A → B</b>" +
         "<br>Matka: " +
-        matkaKm.toFixed(1) +
+        reittiABMatkaKm.toFixed(1) +
         " km" +
         "<br>Aika: " +
-        aikaMin.toFixed(0) +
+        reittiABAikaMin.toFixed(0) +
         " min";
 
 }

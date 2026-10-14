@@ -791,43 +791,40 @@ function haeKyytipyynnot() {
                 const pyynto =
                     doc.data();
 
-                html +=
-                    "<hr>" +
+html += `
+    <hr>
 
-                    "<b>Kyytipyynnön ID:</b> " +
-                    doc.id +
+    <b>Kyytipyynnön ID:</b> ${doc.id}
 
-                    "<br><b>Lähtöpaikka:</b> " +
-                    pyynto.matkustajanLahtopaikka +
-                    " (" +
-                    pyynto.matkustajanLahtopaikkaLatitude +
-                    ", " +
-                    pyynto.matkustajanLahtopaikkaLongitude +
-                    ")" +
+    <br><b>Lähtöpaikka:</b>
+    ${pyynto.matkustajanLahtopaikka}
+    (${pyynto.matkustajanLahtopaikkaLatitude},
+    ${pyynto.matkustajanLahtopaikkaLongitude})
 
-                    "<br><b>Määränpää:</b> TESTI" +
+    <br><b>Määränpää:</b>
+    ${pyynto.matkustajanMaaranpaa}
+    (${pyynto.matkustajanMaaranpaaLatitude},
+    ${pyynto.matkustajanMaaranpaaLongitude})
 
-                    "<br><b>Luotu:</b> " +
-                    new Date(
-                        pyynto.luotu
-                    ).toLocaleString() +
+    <br><b>Luotu:</b>
+    ${new Date(pyynto.luotu).toLocaleString()}
 
-                    "<br><b>Status:</b> " +
-                    pyynto.status +
+    <br><b>Status:</b>
+    ${pyynto.status}
 
-                    "<br><span id='reitti_" +
-                    doc.id +
-                    "'>Lasketaan A→C→D→B-reittiä...</span>" +
+    <br>
+    <span id="reitti_${doc.id}">
+        Lasketaan A→C→D→B-reittiä...
+    </span>
 
-                    "<br>" +
+    <br>
 
-                    "<button onclick=\"olenPaikalla('" +
-                    doc.id +
-                    "')\">" +
-                    "Olen paikalla" +
-                    "</button>" +
+    <button onclick="olenPaikalla('${doc.id}')">
+        Olen paikalla
+    </button>
 
-                    "<br>";
+    <br>
+`;
 
             });
 

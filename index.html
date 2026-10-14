@@ -774,6 +774,16 @@ function haeKyytipyynnot() {
                     lisaaikaMin.toFixed(0),
                     "min"
                 );
+                
+                document.getElementById(
+                    "reitti_" + doc.id
+                ).innerHTML +=
+                    "<br>Lisämatka: +" +
+                    lisamatkaKm.toFixed(1) +
+                    " km" +
+                    "<br>Lisäaika: +" +
+                    lisaaikaMin.toFixed(0) +
+                    " min";
             
                     document.getElementById(
                         "reitti_" + doc.id

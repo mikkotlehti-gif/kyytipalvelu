@@ -757,22 +757,18 @@ function lopetaTarjoaminen() {
 function haeKyytipyynnot() {
 
     const aktiivisetPyynnot = query(
-
         collection(
             db,
             "kyytipyynnot"
         ),
-
         where(
             "status",
             "==",
             "aktiivinen"
         )
-
     );
 
     unsubscribeKyytipyynnot = onSnapshot(
-
         aktiivisetPyynnot,
 
         (snapshot) => {
@@ -795,49 +791,20 @@ function haeKyytipyynnot() {
                 const pyynto =
                     doc.data();
 
-              laskeReittiACDB(pyynto)
-    .then((reittiACDB) => {
-
-        const lisamatkaKm =
-            reittiACDB.matkaKm - reittiABMatkaKm;
-
-        const lisaaikaMin =
-            reittiACDB.aikaMin - reittiABAikaMin;
-
-        document.getElementById(
-            "reitti_" + doc.id
-        ).innerHTML =
-            "A→C→D→B: " +
-            reittiACDB.matkaKm.toFixed(1) +
-            " km / " +
-            reittiACDB.aikaMin.toFixed(0) +
-            " min" +
-
-            "<br><b>Lisämatka: +" +
-            lisamatkaKm.toFixed(1) +
-            " km</b>" +
-
-            "<br><b>Lisäaika: +" +
-            lisaaikaMin.toFixed(0) +
-            " min</b>";
-
-    });
-                
                 html +=
                     "<hr>" +
 
                     "<b>Kyytipyynnön ID:</b> " +
                     doc.id +
-  
+
                     "<br><b>Lähtöpaikka:</b> " +
-                    
                     pyynto.matkustajanLahtopaikka +
                     " (" +
                     pyynto.matkustajanLahtopaikkaLatitude +
                     ", " +
                     pyynto.matkustajanLahtopaikkaLongitude +
                     ")" +
-                    
+
                     "<br><b>Määränpää:</b> " +
                     pyynto.matkustajanMaaranpaa +
                     " (" +
@@ -853,13 +820,13 @@ function haeKyytipyynnot() {
 
                     "<br><b>Status:</b> " +
                     pyynto.status +
-                    
+
                     "<br><span id='reitti_" +
                     doc.id +
                     "'>Lasketaan A→C→D→B-reittiä...</span>" +
-                    
+
                     "<br>" +
-                    
+
                     "<button onclick=\"olenPaikalla('" +
                     doc.id +
                     "')\">" +
@@ -875,8 +842,45 @@ function haeKyytipyynnot() {
             ).innerHTML =
                 html;
 
-        }
 
+            snapshot.forEach((doc) => {
+
+                const pyynto =
+                    doc.data();
+
+                laskeReittiACDB(pyynto)
+                    .then((reittiACDB) => {
+
+                        const lisamatkaKm =
+                            reittiACDB.matkaKm -
+                            reittiABMatkaKm;
+
+                        const lisaaikaMin =
+                            reittiACDB.aikaMin -
+                            reittiABAikaMin;
+
+                        document.getElementById(
+                            "reitti_" + doc.id
+                        ).innerHTML =
+                            "A→C→D→B: " +
+                            reittiACDB.matkaKm.toFixed(1) +
+                            " km / " +
+                            reittiACDB.aikaMin.toFixed(0) +
+                            " min" +
+
+                            "<br><b>Lisämatka: +" +
+                            lisamatkaKm.toFixed(1) +
+                            " km</b>" +
+
+                            "<br><b>Lisäaika: +" +
+                            lisaaikaMin.toFixed(0) +
+                            " min</b>";
+
+                    });
+
+            });
+
+        }
     );
 
 }

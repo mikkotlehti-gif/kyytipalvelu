@@ -759,47 +759,32 @@ function haeKyytipyynnot() {
                     doc.data();
 
               laskeReittiACDB(pyynto)
-                .then((reittiACDB) => {
+    .then((reittiACDB) => {
 
-                const lisamatkaKm =
-                    reittiACDB.matkaKm - reittiABMatkaKm;
-            
-                const lisaaikaMin =
-                    reittiACDB.aikaMin - reittiABAikaMin;
+        const lisamatkaKm =
+            reittiACDB.matkaKm - reittiABMatkaKm;
 
-                console.log(
-                    "Lisämatka:",
-                    lisamatkaKm.toFixed(1),
-                    "km, lisäaika:",
-                    lisaaikaMin.toFixed(0),
-                    "min"
-                );
-                
-                document.getElementById(
-                    "reitti_" + doc.id
-                ).innerHTML +=
-                    "<br>Lisämatka: +" +
-                    lisamatkaKm.toFixed(1) +
-                    " km" +
-                    "<br>Lisäaika: +" +
-                    lisaaikaMin.toFixed(0) +
-                    " min";
-            
-                    document.getElementById(
-                        "reitti_" + doc.id
-                    ).innerHTML =
-            
-                        "A→C→D→B: " +
-            
-                        reittiACDB.matkaKm.toFixed(1) +
-            
-                        " km / " +
-            
-                        reittiACDB.aikaMin.toFixed(0) +
-            
-                        " min";
-            
-                });
+        const lisaaikaMin =
+            reittiACDB.aikaMin - reittiABAikaMin;
+
+        document.getElementById(
+            "reitti_" + doc.id
+        ).innerHTML =
+            "A→C→D→B: " +
+            reittiACDB.matkaKm.toFixed(1) +
+            " km / " +
+            reittiACDB.aikaMin.toFixed(0) +
+            " min" +
+
+            "<br><b>Lisämatka: +" +
+            lisamatkaKm.toFixed(1) +
+            " km</b>" +
+
+            "<br><b>Lisäaika: +" +
+            lisaaikaMin.toFixed(0) +
+            " min</b>";
+
+    });
                 
                 html +=
                     "<hr>" +

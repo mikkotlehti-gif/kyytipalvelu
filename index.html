@@ -357,7 +357,7 @@ async function etsiMaaranpaa() {
 
     const vastaus =
         await fetch(
-            "https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=5&q=" +
+            "https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=20&countrycodes=fi&q=" +
             encodeURIComponent(hakuteksti)
         );
 
@@ -366,16 +366,25 @@ async function etsiMaaranpaa() {
 
     let html = "";
 
+    const loydetytOsoitteet =
+        new Set();
+
     tulokset.forEach((tulos) => {
 
         const osoite =
             tulos.address || {};
 
+        if (
+            !osoite.road ||
+            !osoite.house_number
+        ) {
+            return;
+        }
+
         const katuosoite =
-            (osoite.road || tulos.name || "") +
-            (osoite.house_number
-                ? " " + osoite.house_number
-                : "");
+            osoite.road +
+            " " +
+            osoite.house_number;
 
         const kuntaTaiKaupunki =
             osoite.city ||
@@ -384,11 +393,26 @@ async function etsiMaaranpaa() {
             osoite.village ||
             "";
 
-        html +=
-            "<div>" +
+        const osoiteTeksti =
             katuosoite +
             ", " +
-            kuntaTaiKaupunki +
+            kuntaTaiKaupunki;
+
+        if (
+            loydetytOsoitteet.has(
+                osoiteTeksti
+            )
+        ) {
+            return;
+        }
+
+        loydetytOsoitteet.add(
+            osoiteTeksti
+        );
+
+        html +=
+            "<div>" +
+            osoiteTeksti +
             "</div>";
 
     });

@@ -281,7 +281,7 @@ navigator.geolocation.watchPosition(
  * Matkustajan määränpään tallentaminen
  */
 
-function naytaMaaranpaa() {
+async function naytaMaaranpaa() {
 
     if (kyytipyyntoAktiivinen) {
         return;
@@ -300,11 +300,31 @@ function naytaMaaranpaa() {
         "tallennanappi"
     ).disabled = true;
 
+    const loytyi =
+        await haeMatkustajanMaaranpaanKoordinaatit();
+
+    if (!loytyi) {
+        return;
+    }
+
+    const matkustajanReitti =
+        await laskeMatkustajanReitti();
+
     document.getElementById(
         "valittumaaranpaa"
     ).innerHTML =
         "Tallennettu määränpää: " +
         matkustajanMaaranpaa;
+
+    document.getElementById(
+        "matkustajanReitti"
+    ).innerHTML =
+        "<b>Matka:</b> " +
+        matkustajanReitti.matkaKm.toFixed(1) +
+        " km" +
+        "<br><b>Matka-aika:</b> " +
+        matkustajanReitti.aikaMin.toFixed(0) +
+        " min";
 
     document.getElementById(
         "luonappi"

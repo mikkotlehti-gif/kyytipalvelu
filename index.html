@@ -45,6 +45,13 @@
 
 <h2>Kyytipyyntöni</h2>
 
+<div>
+    Sijaintisi:
+    <span id="sijainti">Haetaan sijaintia...</span>
+    <br>
+    <span id="viimeksipaivitetty"></span>
+</div>
+
 <p id="kyytipyynto">Ei aktiivista kyytipyyntöä</p>
 
 <div id="valittumaaranpaa"></div>
@@ -52,12 +59,6 @@
 <div id="matkustajanReitti"></div>
 
 <p id="kyytiSaapunut"></p>
-
-<p><b>Sijaintisi:</b></p>
-
-<p id="sijainti">Haetaan sijaintia...</p>
-
-<p id="viimeksipaivitetty"></p>
 
 <label for="autonTuntomerkki">
     Auton tuntomerkki:
@@ -319,10 +320,10 @@ async function naytaMaaranpaa() {
     document.getElementById(
         "matkustajanReitti"
     ).innerHTML =
-        "<b>Matka:</b> " +
+        "Matka: " +
         matkustajanReitti.matkaKm.toFixed(1) +
         " km" +
-        "<br><b>Matka-aika:</b> " +
+        "<br>Matka-aika: " +
         matkustajanReitti.aikaMin.toFixed(0) +
         " min";
 

@@ -169,6 +169,8 @@ var kayttajanNykyinenLatitude = null;
 
 var kayttajanNykyinenLongitude = null;
 
+var kayttajanNykyinenPaikka = "";
+
 
 /*
  * Matkustajan tiedot
@@ -233,13 +235,25 @@ navigator.geolocation.watchPosition(
             ", " +
             kayttajanNykyinenLongitude;
 
-        document.getElementById(
-            "sijainti"
-        ).innerHTML =
-            "Leveysaste: " +
-            kayttajanNykyinenLatitude +
-            "<br>Pituusaste: " +
-            kayttajanNykyinenLongitude;
+        haeMatkustajanLahtopaikanNimi(
+            kayttajanNykyinenLatitude,
+            kayttajanNykyinenLongitude
+        ).then((paikanNimi) => {
+        
+            kayttajanNykyinenPaikka =
+                paikanNimi;
+        
+            document.getElementById(
+                "sijainti"
+            ).innerHTML =
+                paikanNimi +
+                " (" +
+                kayttajanNykyinenLatitude +
+                ", " +
+                kayttajanNykyinenLongitude +
+                ")";
+        
+        });
 
         document.getElementById(
             "viimeksipaivitetty"

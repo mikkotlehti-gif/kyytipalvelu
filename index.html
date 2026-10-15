@@ -47,6 +47,8 @@
 
 <p id="kyytipyynto">Ei aktiivista kyytipyyntöä</p>
 
+<p id="matkustajanReitti"></p>
+
 <p id="kyytiSaapunut"></p>
 
 <p id="valittumaaranpaa"></p>
@@ -439,9 +441,22 @@ async function luoKyytipyynto() {
     if (!loytyi) {
         return;
     }
-
+    
+    const matkustajanReitti =
+        await laskeMatkustajanReitti();
+    
+    document.getElementById(
+        "matkustajanReitti"
+    ).innerHTML =
+        "<b>Matka:</b> " +
+        matkustajanReitti.matkaKm.toFixed(1) +
+        " km" +
+        "<br><b>Matka-aika:</b> " +
+        matkustajanReitti.aikaMin.toFixed(0) +
+        " min";
+    
     const aika =
-    new Date().toLocaleString();
+        new Date().toLocaleString();
 
     const lahtopaikanTiedot =
         await haeMatkustajanLahtopaikanNimi(
@@ -1159,6 +1174,36 @@ async function laskeReittiACDB(pyynto) {
     };
 }
 
+async function laskeMatkustajanReitti() {
+
+    const url =
+        "https://router.project-osrm.org/route/v1/driving/" +
+
+        kayttajanNykyinenLongitude + "," +
+        kayttajanNykyinenLatitude +
+
+        ";" +
+
+        matkustajanMaaranpaaLongitude + "," +
+        matkustajanMaaranpaaLatitude +
+
+        "?overview=false";
+
+    const vastaus =
+        await fetch(url);
+
+    const data =
+        await vastaus.json();
+
+    return {
+        matkaKm:
+            data.routes[0].distance / 1000,
+
+        aikaMin:
+            data.routes[0].duration / 60
+    };
+}
+    
 /*
  * Moduulin funktiot HTML:n onclick-kutsuille
  */

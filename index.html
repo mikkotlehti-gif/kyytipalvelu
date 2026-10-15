@@ -12,8 +12,18 @@
     type="text"
     placeholder="Anna määränpää"
     size="30"
-    oninput="document.getElementById('tallennanappi').disabled = (this.value == '')"
+    oninput="document.getElementById('etsinappi').disabled = (this.value == '')"
 >
+
+<button
+    id="etsinappi"
+    onclick="etsiMaaranpaa()"
+    disabled
+>
+    Etsi määränpää
+</button>
+
+<div id="maaranpaaHakutulokset"></div>
 
 <button
     id="tallennanappi"
@@ -338,6 +348,58 @@ async function naytaMaaranpaa() {
  * Matkustajan määränpään geokoodaus
  */
 
+async function etsiMaaranpaa() {
+
+    const hakuteksti =
+        document.getElementById(
+            "maaranpaa"
+        ).value;
+
+    const vastaus =
+        await fetch(
+            "https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=5&q=" +
+            encodeURIComponent(hakuteksti)
+        );
+
+    const tulokset =
+        await vastaus.json();
+
+    let html = "";
+
+    tulokset.forEach((tulos) => {
+
+        const osoite =
+            tulos.address || {};
+
+        const katuosoite =
+            (osoite.road || tulos.name || "") +
+            (osoite.house_number
+                ? " " + osoite.house_number
+                : "");
+
+        const kuntaTaiKaupunki =
+            osoite.city ||
+            osoite.town ||
+            osoite.municipality ||
+            osoite.village ||
+            "";
+
+        html +=
+            "<div>" +
+            katuosoite +
+            ", " +
+            kuntaTaiKaupunki +
+            "</div>";
+
+    });
+
+    document.getElementById(
+        "maaranpaaHakutulokset"
+    ).innerHTML =
+        html;
+
+}
+    
 async function haeMatkustajanMaaranpaanKoordinaatit() {
 
     const vastaus = await fetch(

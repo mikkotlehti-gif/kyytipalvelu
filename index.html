@@ -260,6 +260,8 @@ var unsubscribeOmaKyyti = null;
 var reittiABMatkaKm = null;
 var reittiABAikaMin = null;
 
+var reittiABKoordinaatit = [];
+
 var noutomatkaRajaKm = null;
 
 var noutoaikaRajaMin = null;
@@ -1430,13 +1432,16 @@ async function laskeReittiAB() {
         "," +
         tarjoajanMaaranpaaLatitude +
 
-        "?overview=false";
+        "?overview=full&geometries=geojson";
 
     const vastaus =
         await fetch(url);
 
     const data =
         await vastaus.json();
+
+    reittiABKoordinaatit =
+        data.routes[0].geometry.coordinates;
 
     reittiABMatkaKm =
         data.routes[0].distance /
@@ -1474,13 +1479,86 @@ tarjoaminenAloitettu +
         " min)";
 }
 
-    async function laskeReittiAC(pyynto) {
+function laskeEtaisyysMetreina(
+    lat1,
+    lon1,
+    lat2,
+    lon2
+) {
+
+    const R = 6371000;
+
+    const dLat =
+        (lat2 - lat1) *
+        Math.PI / 180;
+
+    const dLon =
+        (lon2 - lon1) *
+        Math.PI / 180;
+
+    const a =
+        Math.sin(dLat / 2) *
+        Math.sin(dLat / 2) +
+
+        Math.cos(
+            lat1 * Math.PI / 180
+        ) *
+
+        Math.cos(
+            lat2 * Math.PI / 180
+        ) *
+
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+
+    const c =
+        2 *
+        Math.atan2(
+            Math.sqrt(a),
+            Math.sqrt(1 - a)
+        );
+
+    return R * c;
+}
+    
+async function laskeReittiAC(pyynto) {
+
+    let lahinKoordinaatti = null;
+    let lyhinEtaisyys = Infinity;
+
+    reittiABKoordinaatit.forEach(
+        (koordinaatti) => {
+
+            const longitude =
+                koordinaatti[0];
+
+            const latitude =
+                koordinaatti[1];
+
+            const etaisyys =
+                laskeEtaisyysMetreina(
+                    latitude,
+                    longitude,
+                    pyynto.matkustajanLahtopaikkaLatitude,
+                    pyynto.matkustajanLahtopaikkaLongitude
+                );
+
+            if (etaisyys < lyhinEtaisyys) {
+
+                lyhinEtaisyys =
+                    etaisyys;
+
+                lahinKoordinaatti =
+                    koordinaatti;
+            }
+        }
+    );
 
     const url =
         "https://router.project-osrm.org/route/v1/driving/" +
 
-        kayttajanNykyinenLongitude + "," +
-        kayttajanNykyinenLatitude +
+        lahinKoordinaatti[0] + "," +
+        lahinKoordinaatti[1] +
 
         ";" +
 

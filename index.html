@@ -417,6 +417,7 @@ async function etsiMaaranpaa() {
         );
 
         html +=
+            "<div>" +
             "<button onclick=\"valitseMaaranpaa('" +
             osoiteTeksti.replace(/'/g, "\\'") +
             "', '" +
@@ -424,8 +425,10 @@ async function etsiMaaranpaa() {
             "', '" +
             tulos.lon +
             "')\">" +
+            "Valitse" +
+            "</button> " +
             osoiteTeksti +
-            "</button><br>";
+            "</div>";
 
     });
 

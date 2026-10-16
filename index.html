@@ -222,7 +222,10 @@ var kayttajanNykyinenLongitude = null;
  * Väliaikainen testisijainti PC-testausta varten
  */
 
-var kaytaTestisijaintia = true;
+var kaytaTestisijaintia =
+    new URLSearchParams(
+        window.location.search
+    ).get("testi") === "1";
 
 var testiLatitude = 60.2055;
 

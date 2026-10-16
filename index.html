@@ -1158,8 +1158,8 @@ function haeKyytipyynnot() {
                             const pyynto =
                                 docSnapshot.data();
 
-                            const reittiAC =
-                                await laskeReittiAC(
+                            const reittiNoutopaikkaan =
+                                await laskeReitiltaNoutopaikkaan(
                                     pyynto
                                 );
 
@@ -1183,8 +1183,8 @@ function haeKyytipyynnot() {
                                 pyynto:
                                     pyynto,
 
-                                reittiAC:
-                                    reittiAC,
+                                reittiNoutopaikkaan:
+                                    reittiNoutopaikkaan,
 
                                 reittiACDB:
                                     reittiACDB,
@@ -1210,28 +1210,28 @@ function haeKyytipyynnot() {
                 pyyntojenLaskelmat.filter(
                     (laskelma) => {
 
-return (
-    (
-        noutomatkaRajaKm == null ||
-        parseFloat(
-            laskelma.reittiAC.matkaKm.toFixed(1)
-        ) <= noutomatkaRajaKm
-    ) &&
+                        return (
+                            (
+                                noutomatkaRajaKm == null ||
+                                parseFloat(
+                                    laskelma.reittiNoutopaikkaan.matkaKm.toFixed(1)
+                                ) <= noutomatkaRajaKm
+                            ) &&
 
-    (
-        noutoaikaRajaMin == null ||
-        parseFloat(
-            laskelma.reittiAC.aikaMin.toFixed(0)
-        ) <= noutoaikaRajaMin
-    ) &&
+                            (
+                                noutoaikaRajaMin == null ||
+                                parseFloat(
+                                    laskelma.reittiNoutopaikkaan.aikaMin.toFixed(0)
+                                ) <= noutoaikaRajaMin
+                            ) &&
 
-    (
-        lisamatkaRajaKm == null ||
-        parseFloat(
-            laskelma.lisamatkaKm.toFixed(1)
-        ) <= lisamatkaRajaKm
-    )
-);
+                            (
+                                lisamatkaRajaKm == null ||
+                                parseFloat(
+                                    laskelma.lisamatkaKm.toFixed(1)
+                                ) <= lisamatkaRajaKm
+                            )
+                        );
                     }
                 );
 
@@ -1243,19 +1243,18 @@ return (
                     const pyynto =
                         laskelma.pyynto;
 
-html += `
-    <hr>
+                    html += `
+                        <hr>
 
-    <b>Lähtöpaikka:</b>
-    ${pyynto.matkustajanLahtopaikka}
+                        <b>Lähtöpaikka:</b>
+                        ${pyynto.matkustajanLahtopaikka}
 
-<br><b>Määränpää:</b>
-${pyynto.matkustajanMaaranpaa}
+                        <br><b>Määränpää:</b>
+                        ${pyynto.matkustajanMaaranpaa}
 
-<br><b>Lähtöpisteeseen:</b>
-
-${laskelma.reittiAC.matkaKm.toFixed(1)} km /
-${laskelma.reittiAC.aikaMin.toFixed(0)} min
+                        <br><b>Reitiltä noutopaikkaan:</b>
+                        ${laskelma.reittiNoutopaikkaan.matkaKm.toFixed(1)} km /
+                        ${laskelma.reittiNoutopaikkaan.aikaMin.toFixed(0)} min
 
                         <br><b>Luotu:</b>
                         ${new Date(
@@ -1521,7 +1520,7 @@ function laskeEtaisyysMetreina(
     return R * c;
 }
     
-async function laskeReittiAC(pyynto) {
+async function laskeReitiltaNoutopaikkaan(pyynto) {
 
     let lahinKoordinaatti = null;
     let lyhinEtaisyys = Infinity;

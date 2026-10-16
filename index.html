@@ -68,6 +68,54 @@
 
 <br><br>
 
+<label for="noutomatkaRajaKm">
+    Matka noutopaikkaan enintään:
+</label>
+
+<input
+    id="noutomatkaRajaKm"
+    type="number"
+    min="0"
+    step="1"
+    placeholder="X"
+    size="5"
+>
+km
+
+<br><br>
+
+<label for="noutoaikaRajaMin">
+    Aika noutopaikkaan enintään:
+</label>
+
+<input
+    id="noutoaikaRajaMin"
+    type="number"
+    min="0"
+    step="1"
+    placeholder="Y"
+    size="5"
+>
+min
+
+<br><br>
+
+<label for="lisamatkaRajaKm">
+    Lisämatka yhteensä enintään:
+</label>
+
+<input
+    id="lisamatkaRajaKm"
+    type="number"
+    min="0"
+    step="1"
+    placeholder="Z"
+    size="5"
+>
+km
+
+<br><br>
+
 <label for="tarjoajanMaaranpaa">
     Oma määränpää:
 </label>
@@ -220,6 +268,11 @@ var unsubscribeOmaKyyti = null;
 var reittiABMatkaKm = null;
 var reittiABAikaMin = null;
 
+var noutomatkaRajaKm = null;
+
+var noutoaikaRajaMin = null;
+
+var lisamatkaRajaKm = null;
 
 /*
  * GPS-sijainnin seuranta
@@ -1011,6 +1064,27 @@ async function aloitaTarjoaminen() {
         return;
     }
 
+    noutomatkaRajaKm =
+        parseFloat(
+            document.getElementById(
+                "noutomatkaRajaKm"
+            ).value
+        );
+
+    noutoaikaRajaMin =
+        parseFloat(
+            document.getElementById(
+                "noutoaikaRajaMin"
+            ).value
+        );
+
+    lisamatkaRajaKm =
+        parseFloat(
+            document.getElementById(
+                "lisamatkaRajaKm"
+            ).value
+        );
+
     if (
         tarjoajanMaaranpaa == "" ||
         tarjoajanMaaranpaaLatitude == null ||
@@ -1067,6 +1141,18 @@ async function aloitaTarjoaminen() {
 
     document.getElementById(
         "etsiTarjoajanMaaranpaaNappi"
+    ).disabled = true;
+
+    document.getElementById(
+        "noutomatkaRajaKm"
+    ).disabled = true;
+
+    document.getElementById(
+        "noutoaikaRajaMin"
+    ).disabled = true;
+
+    document.getElementById(
+        "lisamatkaRajaKm"
     ).disabled = true;
 
     document.getElementById(
@@ -1175,109 +1261,147 @@ function haeKyytipyynnot() {
     unsubscribeKyytipyynnot = onSnapshot(
         aktiivisetPyynnot,
 
-        (snapshot) => {
+        async (snapshot) => {
 
-            console.log(
-                "Kyytipyyntöjä löytyi:",
-                snapshot.size
-            );
+            const pyyntojenLaskelmat =
+                await Promise.all(
+
+                    snapshot.docs.map(
+                        async (docSnapshot) => {
+
+                            const pyynto =
+                                docSnapshot.data();
+
+                            const reittiAC =
+                                await laskeReittiAC(
+                                    pyynto
+                                );
+
+                            const reittiACDB =
+                                await laskeReittiACDB(
+                                    pyynto
+                                );
+
+                            const lisamatkaKm =
+                                reittiACDB.matkaKm -
+                                reittiABMatkaKm;
+
+                            const lisaaikaMin =
+                                reittiACDB.aikaMin -
+                                reittiABAikaMin;
+
+                            return {
+                                id:
+                                    docSnapshot.id,
+
+                                pyynto:
+                                    pyynto,
+
+                                reittiAC:
+                                    reittiAC,
+
+                                reittiACDB:
+                                    reittiACDB,
+
+                                lisamatkaKm:
+                                    lisamatkaKm,
+
+                                lisaaikaMin:
+                                    lisaaikaMin
+                            };
+                        }
+                    )
+                );
+
+            const suodatetutPyynnot =
+                pyyntojenLaskelmat.filter(
+                    (laskelma) => {
+
+                        return (
+                            laskelma.reittiAC.matkaKm <=
+                                noutomatkaRajaKm &&
+
+                            laskelma.reittiAC.aikaMin <=
+                                noutoaikaRajaMin
+                        );
+                    }
+                );
 
             document.getElementById(
                 "lahellaolevatpyynnot"
             ).innerHTML =
-                "Lähellä olevat kyytipyynnöt: " +
-                snapshot.size;
+                "Sopivia kyytipyyntöjä: " +
+                suodatetutPyynnot.length;
 
             let html = "";
 
-            snapshot.forEach((doc) => {
+            suodatetutPyynnot.forEach(
+                (laskelma) => {
 
-                const pyynto =
-                    doc.data();
+                    const pyynto =
+                        laskelma.pyynto;
 
-html += `
-    <hr>
+                    html += `
+                        <hr>
 
-    <b>Kyytipyynnön ID:</b> ${doc.id}
+                        <b>Kyytipyynnön ID:</b>
+                        ${laskelma.id}
 
-    <br><b>Lähtöpaikka:</b>
-    ${pyynto.matkustajanLahtopaikka}
-    (${pyynto.matkustajanLahtopaikkaLatitude},
-    ${pyynto.matkustajanLahtopaikkaLongitude})
+                        <br><b>Lähtöpaikka:</b>
+                        ${pyynto.matkustajanLahtopaikka}
+                        (${pyynto.matkustajanLahtopaikkaLatitude},
+                        ${pyynto.matkustajanLahtopaikkaLongitude})
 
-    <br><b>Määränpää:</b>
-    ${pyynto.matkustajanMaaranpaa}
-    (${pyynto.matkustajanMaaranpaaLatitude},
-    ${pyynto.matkustajanMaaranpaaLongitude})
+                        <br><b>Määränpää:</b>
+                        ${pyynto.matkustajanMaaranpaa}
+                        (${pyynto.matkustajanMaaranpaaLatitude},
+                        ${pyynto.matkustajanMaaranpaaLongitude})
 
-    <br><b>Luotu:</b>
-    ${new Date(pyynto.luotu).toLocaleString()}
+                        <br><b>Matka noutopaikkaan:</b>
+                        ${laskelma.reittiAC.matkaKm.toFixed(1)} km
 
-    <br><b>Status:</b>
-    ${pyynto.status}
+                        <br><b>Aika noutopaikkaan:</b>
+                        ${laskelma.reittiAC.aikaMin.toFixed(0)} min
 
-    <br>
-    <span id="reitti_${doc.id}">
-        Lasketaan A→C→D→B-reittiä...
-    </span>
+                        <br><b>Luotu:</b>
+                        ${new Date(
+                            pyynto.luotu
+                        ).toLocaleString()}
 
-    <br>
+                        <br><b>Status:</b>
+                        ${pyynto.status}
 
-    <button onclick="olenPaikalla('${doc.id}')">
-        Olen paikalla
-    </button>
+                        <br><b>A→C→D→B:</b>
+                        ${laskelma.reittiACDB.matkaKm.toFixed(1)}
+                        km /
+                        ${laskelma.reittiACDB.aikaMin.toFixed(0)}
+                        min
 
-    <br>
-`;
+                        <br><b>Lisämatka: +
+                        ${laskelma.lisamatkaKm.toFixed(1)}
+                        km</b>
 
-            });
+                        <br><b>Lisäaika: +
+                        ${laskelma.lisaaikaMin.toFixed(0)}
+                        min</b>
+
+                        <br>
+
+                        <button onclick="olenPaikalla('${laskelma.id}')">
+                            Olen paikalla
+                        </button>
+
+                        <br>
+                    `;
+                }
+            );
 
             document.getElementById(
                 "havaittukyytipyynto"
             ).innerHTML =
                 html;
-
-
-            snapshot.forEach((doc) => {
-
-                const pyynto =
-                    doc.data();
-
-                laskeReittiACDB(pyynto)
-                    .then((reittiACDB) => {
-
-                        const lisamatkaKm =
-                            reittiACDB.matkaKm -
-                            reittiABMatkaKm;
-
-                        const lisaaikaMin =
-                            reittiACDB.aikaMin -
-                            reittiABAikaMin;
-
-                        document.getElementById(
-                            "reitti_" + doc.id
-                        ).innerHTML =
-                            "A→C→D→B: " +
-                            reittiACDB.matkaKm.toFixed(1) +
-                            " km / " +
-                            reittiACDB.aikaMin.toFixed(0) +
-                            " min" +
-
-                            "<br><b>Lisämatka: +" +
-                            lisamatkaKm.toFixed(1) +
-                            " km</b>" +
-
-                            "<br><b>Lisäaika: +" +
-                            lisaaikaMin.toFixed(0) +
-                            " min</b>";
-
-                    });
-
-            });
-
         }
     );
-
 }
 
 
@@ -1502,6 +1626,36 @@ async function laskeReittiAB() {
         reittiABAikaMin.toFixed(0) +
         " min";
 
+}
+
+    async function laskeReittiAC(pyynto) {
+
+    const url =
+        "https://router.project-osrm.org/route/v1/driving/" +
+
+        kayttajanNykyinenLongitude + "," +
+        kayttajanNykyinenLatitude +
+
+        ";" +
+
+        pyynto.matkustajanLahtopaikkaLongitude + "," +
+        pyynto.matkustajanLahtopaikkaLatitude +
+
+        "?overview=false";
+
+    const vastaus =
+        await fetch(url);
+
+    const data =
+        await vastaus.json();
+
+    return {
+        matkaKm:
+            data.routes[0].distance / 1000,
+
+        aikaMin:
+            data.routes[0].duration / 60
+    };
 }
 
 async function laskeReittiACDB(pyynto) {

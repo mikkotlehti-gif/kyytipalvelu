@@ -360,7 +360,24 @@ async function etsiMaaranpaa() {
         document.getElementById(
             "maaranpaa"
         ).value.trim();
-
+    
+    const sisaltaaNumeron =
+        /\d/.test(hakuteksti);
+    
+    if (!sisaltaaNumeron) {
+    
+        document.getElementById(
+            "maaranpaaHakutulokset"
+        ).innerHTML =
+            "Anna katuosoite ja numero, esimerkiksi Perkiöntie 12.";
+    
+        document.getElementById(
+            "tallennanappi"
+        ).disabled = true;
+    
+        return;
+    }
+    
     const perusVastaus =
         await fetch(
             "https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=20&countrycodes=fi&q=" +

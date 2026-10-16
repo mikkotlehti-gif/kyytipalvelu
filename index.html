@@ -723,20 +723,43 @@ async function luoKyytipyynto() {
 
     kuunteleOmaaKyytia();
 
-    document.getElementById(
-        "kyytipyynto"
-    ).innerHTML =
-        "Lähtöpaikka: " +
-        lahtopaikanTiedot +
-        " (" +
-        kayttajanNykyinenLatitude +
-        ", " +
-        kayttajanNykyinenLongitude +
-        ")" +
-        "<br>Määränpää: " +
-        matkustajanMaaranpaa +
-        "<br>Luotu: " +
-        aika;
+const matkaAikaTunnit =
+    Math.floor(
+        matkustajanReitti.aikaMin / 60
+    );
+
+const matkaAikaMinuutit =
+    Math.round(
+        matkustajanReitti.aikaMin % 60
+    );
+
+document.getElementById(
+    "kyytipyynto"
+).innerHTML =
+    "Lähtöpaikka: " +
+    lahtopaikanTiedot +
+    " (" +
+    kayttajanNykyinenLatitude +
+    ", " +
+    kayttajanNykyinenLongitude +
+    ")" +
+
+    "<br>Määränpää: " +
+    matkustajanMaaranpaa +
+    " (" +
+    matkustajanReitti.matkaKm.toFixed(1) +
+    " km, " +
+    matkaAikaTunnit +
+    " h " +
+    matkaAikaMinuutit +
+    " min)" +
+
+    "<br>Luotu: " +
+    aika;
+
+document.getElementById(
+    "matkustajanReitti"
+).innerHTML = "";
 
     document.getElementById(
         "valittumaaranpaa"

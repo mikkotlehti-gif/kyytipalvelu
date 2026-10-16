@@ -117,6 +117,7 @@
     min="0"
     step="1"
     style="width: 45px;"
+    oninput="paivitaSuodataNappi()"
     disabled
 >
 
@@ -128,6 +129,7 @@
     min="0"
     step="1"
     style="width: 45px;"
+    oninput="paivitaSuodataNappi()"
     disabled
 >
 
@@ -145,6 +147,7 @@
     min="0"
     step="1"
     style="width: 45px;"
+    oninput="paivitaSuodataNappi()"
     disabled
 >
 
@@ -994,9 +997,7 @@ async function aloitaTarjoaminen() {
         "lopetatarjoaminen"
     ).disabled = false;
 
-    document.getElementById(
-    "suodataNappi"
-).disabled = false;
+paivitaSuodataNappi();
 
     document.getElementById(
     "noutomatkaRajaKm"
@@ -1210,20 +1211,23 @@ function haeKyytipyynnot() {
 return (
     (
         noutomatkaRajaKm == null ||
-        laskelma.reittiAC.matkaKm <=
-            noutomatkaRajaKm
+        parseFloat(
+            laskelma.reittiAC.matkaKm.toFixed(1)
+        ) <= noutomatkaRajaKm
     ) &&
 
     (
         noutoaikaRajaMin == null ||
-        laskelma.reittiAC.aikaMin <=
-            noutoaikaRajaMin
+        parseFloat(
+            laskelma.reittiAC.aikaMin.toFixed(0)
+        ) <= noutoaikaRajaMin
     ) &&
 
     (
         lisamatkaRajaKm == null ||
-        laskelma.lisamatkaKm <=
-            lisamatkaRajaKm
+        parseFloat(
+            laskelma.lisamatkaKm.toFixed(1)
+        ) <= lisamatkaRajaKm
     )
 );
                     }
@@ -1570,6 +1574,28 @@ async function laskeMatkustajanReitti() {
     };
 }
 
+function paivitaSuodataNappi() {
+
+    const kaikkiTyhjia =
+        document.getElementById(
+            "noutomatkaRajaKm"
+        ).value === "" &&
+
+        document.getElementById(
+            "noutoaikaRajaMin"
+        ).value === "" &&
+
+        document.getElementById(
+            "lisamatkaRajaKm"
+        ).value === "";
+
+    document.getElementById(
+        "suodataNappi"
+    ).disabled =
+        !tarjoaKyytia ||
+        kaikkiTyhjia;
+}
+    
 function suodataKyytipyynnot() {
 
     const noutomatkaArvo =
@@ -1652,9 +1678,7 @@ function poistaSuodatus() {
         "lisamatkaRajaKm"
     ).disabled = false;
 
-    document.getElementById(
-        "suodataNappi"
-    ).disabled = false;
+paivitaSuodataNappi();
 
     document.getElementById(
         "poistaSuodatusNappi"
@@ -1703,5 +1727,8 @@ window.suodataKyytipyynnot =
 
 window.poistaSuodatus =
     poistaSuodatus;
+
+window.paivitaSuodataNappi =
+    paivitaSuodataNappi;
     
 </script>

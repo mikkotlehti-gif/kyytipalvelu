@@ -359,23 +359,76 @@ async function etsiMaaranpaa() {
     const hakuteksti =
         document.getElementById(
             "maaranpaa"
-        ).value;
+        ).value.trim();
 
-    const vastaus =
+    const perusVastaus =
         await fetch(
             "https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=20&countrycodes=fi&q=" +
             encodeURIComponent(hakuteksti)
         );
 
-    const tulokset =
-        await vastaus.json();
+    const perusTulokset =
+        await perusVastaus.json();
+
+    const hakutekstiPienella =
+        hakuteksti.toLowerCase();
+
+    const kadunnimiMukana =
+        perusTulokset.some((tulos) => {
+
+            const kadunnimi =
+                tulos.address?.road;
+
+            return (
+                kadunnimi &&
+                hakutekstiPienella.includes(
+                    kadunnimi.toLowerCase()
+                )
+            );
+
+        });
+
+    let kaikkiTulokset =
+        perusTulokset;
+
+    if (!kadunnimiMukana) {
+
+        const paakohteet = [
+            "rautatieasema",
+            "linja-autoasema",
+            "keskusta"
+        ];
+
+        for (const paakohde of paakohteet) {
+
+            await new Promise((resolve) =>
+                setTimeout(resolve, 1100)
+            );
+
+            const vastaus =
+                await fetch(
+                    "https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=5&countrycodes=fi&q=" +
+                    encodeURIComponent(
+                        paakohde + " " + hakuteksti
+                    )
+                );
+
+            const tulokset =
+                await vastaus.json();
+
+            kaikkiTulokset =
+                kaikkiTulokset.concat(
+                    tulokset
+                );
+        }
+    }
 
     let html = "";
 
-    const loydetytOsoitteet =
+    const loydetytTulokset =
         new Set();
 
-    tulokset.forEach((tulos) => {
+    kaikkiTulokset.forEach((tulos) => {
 
         const osoite =
             tulos.address || {};
@@ -399,44 +452,72 @@ async function etsiMaaranpaa() {
             osoite.village ||
             "";
 
-        const osoiteTeksti =
-            katuosoite +
-            ", " +
-            kuntaTaiKaupunki;
+        let osoiteTeksti = "";
+
+        if (kadunnimiMukana) {
+
+            osoiteTeksti =
+                katuosoite +
+                ", " +
+                kuntaTaiKaupunki;
+
+        } else {
+
+            const kohteenNimi =
+                tulos.name || "";
+
+            osoiteTeksti =
+                (kohteenNimi
+                    ? kohteenNimi + ", "
+                    : "") +
+                katuosoite +
+                ", " +
+                kuntaTaiKaupunki;
+        }
 
         if (
-            loydetytOsoitteet.has(
+            loydetytTulokset.has(
                 osoiteTeksti
             )
         ) {
             return;
         }
 
-        loydetytOsoitteet.add(
+        loydetytTulokset.add(
             osoiteTeksti
         );
 
+        const koodattuOsoite =
+            encodeURIComponent(
+                osoiteTeksti
+            );
+
         html +=
             "<div style='margin-bottom: 8px;'>" +
-            "<button onclick=\"valitseMaaranpaa('" +
-            osoiteTeksti.replace(/'/g, "\\'") +
-            "', '" +
+
+            "<button onclick=\"valitseMaaranpaa(" +
+            "decodeURIComponent('" +
+            koodattuOsoite +
+            "'), '" +
             tulos.lat +
             "', '" +
             tulos.lon +
             "')\">" +
-            "Valitse" +
-            "</button> " +
-            osoiteTeksti +
-            "</div>";
 
+            "Valitse" +
+
+            "</button> " +
+
+            osoiteTeksti +
+
+            "</div>";
     });
 
     document.getElementById(
         "maaranpaaHakutulokset"
     ).innerHTML =
-        html;
-
+        html ||
+        "Sopivia osoitteita ei löytynyt.";
 }
     
 async function haeMatkustajanMaaranpaanKoordinaatit() {

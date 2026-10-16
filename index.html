@@ -106,15 +106,17 @@
 <h3>Kyytipyyntöjen suodatus</h3>
 
 <label>
-    Reitiltä noutopaikkaan (km / minuuttia):
+    Reitiltä noutopaikkaan enint. (km/minuuttia):
 </label>
+
+<br>
 
 <input
     id="noutomatkaRajaKm"
     type="number"
     min="0"
     step="1"
-    size="5"
+    style="width: 45px;"
 >
 
 /
@@ -124,21 +126,23 @@
     type="number"
     min="0"
     step="1"
-    size="5"
+    style="width: 45px;"
 >
 
 <br><br>
 
 <label for="lisamatkaRajaKm">
-    Lisämatka (km):
+    Kokonaislisämatka enint. (km):
 </label>
+
+<br>
 
 <input
     id="lisamatkaRajaKm"
     type="number"
     min="0"
     step="1"
-    size="5"
+    style="width: 45px;"
 >
 
 <br><br>
@@ -257,6 +261,8 @@ var noutoaikaRajaMin = null;
 var lisamatkaRajaKm = null;
 
 var kyytipyyntojenReititPaivitettyViimeksi = 0;
+
+var kyytipyyntojenHakuversio = 0;
 
 /*
  * GPS-sijainnin seuranta
@@ -1067,6 +1073,11 @@ function lopetaTarjoaminen() {
 
 function haeKyytipyynnot() {
 
+    kyytipyyntojenHakuversio++;
+
+    const tamanHaunVersio =
+        kyytipyyntojenHakuversio;
+
     const aktiivisetPyynnot = query(
         collection(
             db,
@@ -1133,6 +1144,13 @@ function haeKyytipyynnot() {
                         }
                     )
                 );
+
+            if (
+                tamanHaunVersio !==
+                kyytipyyntojenHakuversio
+            ) {
+                return;
+            }
 
             const suodatetutPyynnot =
                 pyyntojenLaskelmat.filter(

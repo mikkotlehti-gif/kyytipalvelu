@@ -537,7 +537,7 @@ async function etsiMaaranpaa() {
         "Sopivia osoitteita ei löytynyt.";
 }
 
-function valitseMaaranpaa(
+async function valitseMaaranpaa(
     nimi,
     latitude,
     longitude
@@ -566,10 +566,9 @@ function valitseMaaranpaa(
     ).value =
         valittuMaaranpaa;
 
-    document.getElementById(
-        "tallennanappi"
-    ).disabled =
-        false;
+    await naytaMaaranpaa();
+
+    await luoKyytipyynto();
 }
     
 async function haeMatkustajanMaaranpaanKoordinaatit() {

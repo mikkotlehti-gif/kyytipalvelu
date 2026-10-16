@@ -113,25 +113,23 @@
 
 <input
     id="noutomatkaRajaKm"
-    type="number"
-    min="0"
-    step="1"
+    type="text"
+    inputmode="numeric"
+    maxlength="3"
     style="width: 45px;"
-    onkeydown="if (event.key === '.' || event.key === ',') event.preventDefault();"
-oninput="paivitaSuodataNappi()"
+    oninput="this.value = this.value.replace(/[^0-9]/g, ''); paivitaSuodataNappi();"
     disabled
 >
 
 /
 
 <input
-    id="noutoaikaRajaMin"
-    type="number"
-    min="0"
-    step="1"
+    id="lisamatkaRajaKm"
+    type="text"
+    inputmode="numeric"
+    maxlength="3"
     style="width: 45px;"
-    onkeydown="if (event.key === '.' || event.key === ',') event.preventDefault();"
-oninput="paivitaSuodataNappi()"
+    oninput="this.value = this.value.replace(/[^0-9]/g, ''); paivitaSuodataNappi();"
     disabled
 >
 

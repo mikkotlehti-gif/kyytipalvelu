@@ -468,30 +468,31 @@ if (!sisaltaaNumeron) {
             osoiteTeksti
         );
 
-        const koodattuOsoite =
-            encodeURIComponent(
-                osoiteTeksti
-            );
+const koodattuOsoite =
+    encodeURIComponent(
+        osoiteTeksti
+    );
 
-        html +=
-            "<div style='margin-bottom: 8px;'>" +
+html +=
+    "<div style='margin-bottom: 8px;'>" +
 
-            "<button onclick=\"valitseMaaranpaa(" +
-            "decodeURIComponent('" +
-            koodattuOsoite +
-            "'), '" +
-            tulos.lat +
-            "', '" +
-            tulos.lon +
-            "')\">" +
+    "<button class='luoKyytipyyntoHakutulos' onclick=\"valitseMaaranpaa(" +
+    "decodeURIComponent('" +
+    koodattuOsoite +
+    "'), '" +
+    tulos.lat +
+    "', '" +
+    tulos.lon +
+    "')\">" +
 
-            "Luo kyytipyyntö" +
+    "Luo kyytipyyntö" +
 
-            "</button> " +
+    "</button> " +
 
-            osoiteTeksti +
+    osoiteTeksti +
 
-            "</div>";
+    "</div>";
+        
     });
 
     document.getElementById(
@@ -506,6 +507,15 @@ async function valitseMaaranpaa(
     latitude,
     longitude
 ) {
+
+    const luoNapit =
+        document.querySelectorAll(
+            ".luoKyytipyyntoHakutulos"
+        );
+
+    luoNapit.forEach((nappi) => {
+        nappi.disabled = true;
+    });
 
     valittuMaaranpaa =
         nimi;

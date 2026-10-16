@@ -328,20 +328,20 @@ async function etsiMaaranpaa() {
         document.getElementById(
             "maaranpaa"
         ).value.trim();
-
+    
     const sisaltaaNumeron =
         /\d/.test(hakuteksti);
+    
+if (!sisaltaaNumeron) {
 
-    if (!sisaltaaNumeron) {
+    document.getElementById(
+        "maaranpaaHakutulokset"
+    ).innerHTML =
+        "Anna katuosoite ja numero, esimerkiksi Perkiöntie 12.";
 
-        document.getElementById(
-            "maaranpaaHakutulokset"
-        ).innerHTML =
-            "Anna katuosoite ja numero, esimerkiksi Perkiöntie 12.";
-
-        return;
-    }
-
+    return;
+}
+    
     const perusVastaus =
         await fetch(
             "https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=20&countrycodes=fi&q=" +
@@ -409,7 +409,97 @@ async function etsiMaaranpaa() {
     const loydetytTulokset =
         new Set();
 
-    kaikkiTulokset
+    kaikkiTulokset.forEach((tulos) => {
+
+        const osoite =
+            tulos.address || {};
+
+        if (
+            !osoite.road ||
+            !osoite.house_number
+        ) {
+            return;
+        }
+
+        const katuosoite =
+            osoite.road +
+            " " +
+            osoite.house_number;
+
+        const kuntaTaiKaupunki =
+            osoite.city ||
+            osoite.town ||
+            osoite.municipality ||
+            osoite.village ||
+            "";
+
+        let osoiteTeksti = "";
+
+        if (kadunnimiMukana) {
+
+            osoiteTeksti =
+                katuosoite +
+                ", " +
+                kuntaTaiKaupunki;
+
+        } else {
+
+            const kohteenNimi =
+                tulos.name || "";
+
+            osoiteTeksti =
+                (kohteenNimi
+                    ? kohteenNimi + ", "
+                    : "") +
+                katuosoite +
+                ", " +
+                kuntaTaiKaupunki;
+        }
+
+        if (
+            loydetytTulokset.has(
+                osoiteTeksti
+            )
+        ) {
+            return;
+        }
+
+        loydetytTulokset.add(
+            osoiteTeksti
+        );
+
+        const koodattuOsoite =
+            encodeURIComponent(
+                osoiteTeksti
+            );
+
+        html +=
+            "<div style='margin-bottom: 8px;'>" +
+
+            "<button onclick=\"valitseMaaranpaa(" +
+            "decodeURIComponent('" +
+            koodattuOsoite +
+            "'), '" +
+            tulos.lat +
+            "', '" +
+            tulos.lon +
+            "')\">" +
+
+            "Luo kyytipyyntö" +
+
+            "</button> " +
+
+            osoiteTeksti +
+
+            "</div>";
+    });
+
+    document.getElementById(
+        "maaranpaaHakutulokset"
+    ).innerHTML =
+        html ||
+        "Sopivia osoitteita ei löytynyt.";
+}
 
 async function valitseMaaranpaa(
     nimi,

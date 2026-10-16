@@ -67,21 +67,6 @@
 
 <br><br>
 
-<label for="lisamatkaRajaKm">
-    Lisämatka yhteensä enintään:
-</label>
-
-<input
-    id="lisamatkaRajaKm"
-    type="number"
-    min="0"
-    step="1"
-    size="5"
->
-km
-
-<br><br>
-
 <label for="tarjoajanMaaranpaa">
     Oma määränpää:
 </label>
@@ -155,6 +140,24 @@ km
     step="1"
     size="5"
 >
+
+<br><br>
+
+<button
+    id="suodataNappi"
+    onclick="suodataKyytipyynnot()"
+    disabled
+>
+    Suodata
+</button>
+
+<button
+    id="poistaSuodatusNappi"
+    onclick="poistaSuodatus()"
+    disabled
+>
+    Poista suodatus
+</button>
 
 <div id="havaittukyytipyynto"></div>
 
@@ -927,36 +930,6 @@ async function aloitaTarjoaminen() {
         return;
     }
 
-const noutomatkaArvo =
-    document.getElementById(
-        "noutomatkaRajaKm"
-    ).value;
-
-const noutoaikaArvo =
-    document.getElementById(
-        "noutoaikaRajaMin"
-    ).value;
-
-const lisamatkaArvo =
-    document.getElementById(
-        "lisamatkaRajaKm"
-    ).value;
-
-noutomatkaRajaKm =
-    noutomatkaArvo === ""
-        ? null
-        : parseFloat(noutomatkaArvo);
-
-noutoaikaRajaMin =
-    noutoaikaArvo === ""
-        ? null
-        : parseFloat(noutoaikaArvo);
-
-lisamatkaRajaKm =
-    lisamatkaArvo === ""
-        ? null
-        : parseFloat(lisamatkaArvo);
-
     if (
         tarjoajanMaaranpaa == "" ||
         tarjoajanMaaranpaaLatitude == null ||
@@ -982,19 +955,23 @@ lisamatkaRajaKm =
         return;
     }
 
-tarjoaminenAloitettu =
-    new Date().toLocaleString();
+    tarjoaminenAloitettu =
+        new Date().toLocaleString();
 
-await laskeReittiAB();
+    await laskeReittiAB();
 
-haeKyytipyynnot();
+    haeKyytipyynnot();
 
-tarjoaKyytia =
-    true;
+    tarjoaKyytia =
+        true;
 
     document.getElementById(
         "lopetatarjoaminen"
     ).disabled = false;
+
+    document.getElementById(
+    "suodataNappi"
+).disabled = false;
 
     document.getElementById(
         "autonTuntomerkki"
@@ -1009,22 +986,9 @@ tarjoaKyytia =
     ).disabled = true;
 
     document.getElementById(
-        "noutomatkaRajaKm"
-    ).disabled = true;
-
-    document.getElementById(
-        "noutoaikaRajaMin"
-    ).disabled = true;
-
-    document.getElementById(
-        "lisamatkaRajaKm"
-    ).disabled = true;
-
-    document.getElementById(
         "tarjoajanMaaranpaaHakutulokset"
     ).innerHTML = "";
 }
-
 
 /*
  * Tarjoamisen lopettaminen
@@ -1072,30 +1036,6 @@ function lopetaTarjoaminen() {
     document.getElementById(
         "tarjoajanMaaranpaaHakutulokset"
     ).innerHTML = "";
-
-    document.getElementById(
-        "noutomatkaRajaKm"
-    ).disabled = false;
-
-    document.getElementById(
-        "noutomatkaRajaKm"
-    ).value = "";
-
-    document.getElementById(
-        "noutoaikaRajaMin"
-    ).disabled = false;
-
-    document.getElementById(
-        "noutoaikaRajaMin"
-    ).value = "";
-
-    document.getElementById(
-        "lisamatkaRajaKm"
-    ).disabled = false;
-
-    document.getElementById(
-        "lisamatkaRajaKm"
-    ).value = "";
 
     document.getElementById(
         "reittiAB"
@@ -1560,6 +1500,106 @@ async function laskeMatkustajanReitti() {
             data.routes[0].duration / 60
     };
 }
+
+function suodataKyytipyynnot() {
+
+    const noutomatkaArvo =
+        document.getElementById(
+            "noutomatkaRajaKm"
+        ).value;
+
+    const noutoaikaArvo =
+        document.getElementById(
+            "noutoaikaRajaMin"
+        ).value;
+
+    const lisamatkaArvo =
+        document.getElementById(
+            "lisamatkaRajaKm"
+        ).value;
+
+    noutomatkaRajaKm =
+        noutomatkaArvo === ""
+            ? null
+            : parseFloat(noutomatkaArvo);
+
+    noutoaikaRajaMin =
+        noutoaikaArvo === ""
+            ? null
+            : parseFloat(noutoaikaArvo);
+
+    lisamatkaRajaKm =
+        lisamatkaArvo === ""
+            ? null
+            : parseFloat(lisamatkaArvo);
+
+    document.getElementById(
+        "noutomatkaRajaKm"
+    ).disabled = true;
+
+    document.getElementById(
+        "noutoaikaRajaMin"
+    ).disabled = true;
+
+    document.getElementById(
+        "lisamatkaRajaKm"
+    ).disabled = true;
+
+    document.getElementById(
+        "suodataNappi"
+    ).disabled = true;
+
+    document.getElementById(
+        "poistaSuodatusNappi"
+    ).disabled = false;
+
+    if (unsubscribeKyytipyynnot) {
+
+        unsubscribeKyytipyynnot();
+
+        unsubscribeKyytipyynnot = null;
+    }
+
+    haeKyytipyynnot();
+}
+
+function poistaSuodatus() {
+
+    noutomatkaRajaKm = null;
+
+    noutoaikaRajaMin = null;
+
+    lisamatkaRajaKm = null;
+
+    document.getElementById(
+        "noutomatkaRajaKm"
+    ).disabled = false;
+
+    document.getElementById(
+        "noutoaikaRajaMin"
+    ).disabled = false;
+
+    document.getElementById(
+        "lisamatkaRajaKm"
+    ).disabled = false;
+
+    document.getElementById(
+        "suodataNappi"
+    ).disabled = false;
+
+    document.getElementById(
+        "poistaSuodatusNappi"
+    ).disabled = true;
+
+    if (unsubscribeKyytipyynnot) {
+
+        unsubscribeKyytipyynnot();
+
+        unsubscribeKyytipyynnot = null;
+    }
+
+    haeKyytipyynnot();
+}
     
 /*
  * Moduulin funktiot HTML:n onclick-kutsuille
@@ -1589,4 +1629,10 @@ window.olenPaikalla =
 window.hylkaaKyyti =
     hylkaaKyyti;
 
+window.suodataKyytipyynnot =
+    suodataKyytipyynnot;
+
+window.poistaSuodatus =
+    poistaSuodatus;
+    
 </script>

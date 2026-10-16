@@ -116,9 +116,8 @@
     type="text"
     inputmode="numeric"
     maxlength="3"
-    pattern="[0-9]*"
     style="width: 45px;"
-    oninput="paivitaSuodataNappi()"
+    oninput="this.value = this.value.replace(/\D/g, ''); paivitaSuodataNappi();"
     disabled
 >
 
@@ -129,9 +128,8 @@
     type="text"
     inputmode="numeric"
     maxlength="3"
-    pattern="[0-9]*"
     style="width: 45px;"
-    oninput="paivitaSuodataNappi()"
+    oninput="this.value = this.value.replace(/\D/g, ''); paivitaSuodataNappi();"
     disabled
 >
 
@@ -148,9 +146,8 @@
     type="text"
     inputmode="numeric"
     maxlength="3"
-    pattern="[0-9]*"
     style="width: 45px;"
-    oninput="paivitaSuodataNappi()"
+    oninput="this.value = this.value.replace(/\D/g, ''); paivitaSuodataNappi();"
     disabled
 >
 

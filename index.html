@@ -117,6 +117,7 @@
     min="0"
     step="1"
     style="width: 45px;"
+    disabled
 >
 
 /
@@ -127,6 +128,7 @@
     min="0"
     step="1"
     style="width: 45px;"
+    disabled
 >
 
 <br><br>
@@ -143,6 +145,7 @@
     min="0"
     step="1"
     style="width: 45px;"
+    disabled
 >
 
 <br><br>
@@ -262,6 +265,8 @@ var lisamatkaRajaKm = null;
 
 var kyytipyyntojenReititPaivitettyViimeksi = 0;
 
+var sijaintiPaivitettyViimeksi = 0;
+
 var kyytipyyntojenHakuversio = 0;
 
 /*
@@ -272,6 +277,20 @@ navigator.geolocation.watchPosition(
 
     function(sijainti) {
 
+const sijainninNykyinenAika =
+    Date.now();
+
+if (
+    sijainninNykyinenAika -
+        sijaintiPaivitettyViimeksi <
+        15000
+) {
+    return;
+}
+
+sijaintiPaivitettyViimeksi =
+    sijainninNykyinenAika;
+        
         kayttajanNykyinenLatitude =
             sijainti.coords.latitude;
 
@@ -980,6 +999,18 @@ async function aloitaTarjoaminen() {
 ).disabled = false;
 
     document.getElementById(
+    "noutomatkaRajaKm"
+).disabled = false;
+
+document.getElementById(
+    "noutoaikaRajaMin"
+).disabled = false;
+
+document.getElementById(
+    "lisamatkaRajaKm"
+).disabled = false;
+
+    document.getElementById(
         "autonTuntomerkki"
     ).disabled = true;
 
@@ -1014,6 +1045,26 @@ function lopetaTarjoaminen() {
     document.getElementById(
         "lopetatarjoaminen"
     ).disabled = true;
+
+    document.getElementById(
+    "noutomatkaRajaKm"
+).disabled = true;
+
+document.getElementById(
+    "noutoaikaRajaMin"
+).disabled = true;
+
+document.getElementById(
+    "lisamatkaRajaKm"
+).disabled = true;
+
+document.getElementById(
+    "suodataNappi"
+).disabled = true;
+
+document.getElementById(
+    "poistaSuodatusNappi"
+).disabled = true;
 
     document.getElementById(
         "havaittukyytipyynto"

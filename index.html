@@ -1403,23 +1403,17 @@ return (
                     const pyynto =
                         laskelma.pyynto;
 
-                    html += `
-                        <hr>
+html += `
+    <hr>
 
-                        <b>Kyytipyynnön ID:</b>
-                        ${laskelma.id}
+    <b>Lähtöpaikka:</b>
+    ${pyynto.matkustajanLahtopaikka}
 
-                        <br><b>Lähtöpaikka:</b>
-                        ${pyynto.matkustajanLahtopaikka}
-                        (${pyynto.matkustajanLahtopaikkaLatitude},
-                        ${pyynto.matkustajanLahtopaikkaLongitude})
-
-                        <br><b>Määränpää:</b>
-                        ${pyynto.matkustajanMaaranpaa}
-                        (${pyynto.matkustajanMaaranpaaLatitude},
-                        ${pyynto.matkustajanMaaranpaaLongitude})
+<br><b>Määränpää:</b>
+${pyynto.matkustajanMaaranpaa}
 
 <br><b>Lähtöpisteeseen:</b>
+
 ${laskelma.reittiAC.matkaKm.toFixed(1)} km /
 ${laskelma.reittiAC.aikaMin.toFixed(0)} min
 

@@ -197,6 +197,12 @@ var matkustajanMaaranpaaLatitude = null;
 
 var matkustajanMaaranpaaLongitude = null;
 
+var valittuMaaranpaa = "";
+
+var valittuMaaranpaaLatitude = null;
+
+var valittuMaaranpaaLongitude = null;
+
 
 /*
  * Tarjoajan tiedot
@@ -411,9 +417,15 @@ async function etsiMaaranpaa() {
         );
 
         html +=
-            "<div>" +
+            "<button onclick=\"valitseMaaranpaa('" +
+            osoiteTeksti.replace(/'/g, "\\'") +
+            "', '" +
+            tulos.lat +
+            "', '" +
+            tulos.lon +
+            "')\">" +
             osoiteTeksti +
-            "</div>";
+            "</button><br>";
 
     });
 
@@ -1318,9 +1330,12 @@ async function laskeMatkustajanReitti() {
 window.etsiMaaranpaa =
     etsiMaaranpaa;
 
+window.valitseMaaranpaa =
+    valitseMaaranpaa;
+
 window.naytaMaaranpaa =
     naytaMaaranpaa;
-
+    
 window.luoKyytipyynto =
     luoKyytipyynto;
 

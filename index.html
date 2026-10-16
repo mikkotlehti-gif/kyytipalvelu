@@ -219,6 +219,16 @@ var kayttajanNykyinenLatitude = null;
 var kayttajanNykyinenLongitude = null;
 
 /*
+ * Väliaikainen testisijainti PC-testausta varten
+ */
+
+var kaytaTestisijaintia = true;
+
+var testiLatitude = 60.2055;
+
+var testiLongitude = 24.6559;
+
+/*
  * Matkustajan tiedot
  */
 
@@ -278,6 +288,39 @@ var kyytipyyntojenHakuversio = 0;
  * GPS-sijainnin seuranta
  */
 
+if (kaytaTestisijaintia) {
+
+    kayttajanNykyinenLatitude =
+        testiLatitude;
+
+    kayttajanNykyinenLongitude =
+        testiLongitude;
+
+    haeMatkustajanLahtopaikanNimi(
+        kayttajanNykyinenLatitude,
+        kayttajanNykyinenLongitude
+    ).then((paikanNimi) => {
+
+        document.getElementById(
+            "sijainti"
+        ).innerHTML =
+            "TESTI: " +
+            paikanNimi +
+            " (" +
+            kayttajanNykyinenLatitude +
+            ", " +
+            kayttajanNykyinenLongitude +
+            ")";
+
+    });
+
+    document.getElementById(
+        "viimeksipaivitetty"
+    ).innerHTML =
+        "Viimeksi päivitetty: " +
+        new Date().toLocaleTimeString();
+}
+    
 navigator.geolocation.watchPosition(
 
     function(sijainti) {

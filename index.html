@@ -536,6 +536,41 @@ async function etsiMaaranpaa() {
         html ||
         "Sopivia osoitteita ei löytynyt.";
 }
+
+function valitseMaaranpaa(
+    nimi,
+    latitude,
+    longitude
+) {
+
+    valittuMaaranpaa =
+        nimi;
+
+    valittuMaaranpaaLatitude =
+        parseFloat(latitude);
+
+    valittuMaaranpaaLongitude =
+        parseFloat(longitude);
+
+    matkustajanMaaranpaa =
+        valittuMaaranpaa;
+
+    matkustajanMaaranpaaLatitude =
+        valittuMaaranpaaLatitude;
+
+    matkustajanMaaranpaaLongitude =
+        valittuMaaranpaaLongitude;
+
+    document.getElementById(
+        "maaranpaa"
+    ).value =
+        valittuMaaranpaa;
+
+    document.getElementById(
+        "tallennanappi"
+    ).disabled =
+        false;
+}
     
 async function haeMatkustajanMaaranpaanKoordinaatit() {
 

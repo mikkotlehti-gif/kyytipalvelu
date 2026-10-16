@@ -23,7 +23,10 @@
     Etsi määränpää
 </button>
 
-<div id="maaranpaaHakutulokset"></div>
+<div
+    id="maaranpaaHakutulokset"
+    style="margin-top: 10px;"
+></div>
 
 <br>
 
@@ -77,7 +80,6 @@
     type="number"
     min="0"
     step="1"
-    placeholder="X"
     size="5"
 >
 km
@@ -93,7 +95,6 @@ km
     type="number"
     min="0"
     step="1"
-    placeholder="Y"
     size="5"
 >
 min
@@ -109,7 +110,6 @@ min
     type="number"
     min="0"
     step="1"
-    placeholder="Z"
     size="5"
 >
 km
@@ -137,7 +137,10 @@ km
     Etsi määränpää
 </button>
 
-<div id="tarjoajanMaaranpaaHakutulokset"></div>
+<div
+    id="tarjoajanMaaranpaaHakutulokset"
+    style="margin-top: 10px;"
+></div>
 
 <p id="tarjoajanKoordinaatit"></p>
 
@@ -274,6 +277,8 @@ var noutoaikaRajaMin = null;
 
 var lisamatkaRajaKm = null;
 
+var kyytipyyntojenReititPaivitettyViimeksi = 0;
+
 /*
  * GPS-sijainnin seuranta
  */
@@ -297,10 +302,10 @@ navigator.geolocation.watchPosition(
             kayttajanNykyinenLatitude,
             kayttajanNykyinenLongitude
         ).then((paikanNimi) => {
-        
+
             kayttajanNykyinenPaikka =
                 paikanNimi;
-        
+
             document.getElementById(
                 "sijainti"
             ).innerHTML =
@@ -310,7 +315,7 @@ navigator.geolocation.watchPosition(
                 ", " +
                 kayttajanNykyinenLongitude +
                 ")";
-        
+
         });
 
         document.getElementById(
@@ -318,6 +323,30 @@ navigator.geolocation.watchPosition(
         ).innerHTML =
             "Viimeksi päivitetty: " +
             new Date().toLocaleTimeString();
+
+        const nykyinenAika =
+            Date.now();
+
+        if (
+            tarjoaKyytia &&
+            nykyinenAika -
+                kyytipyyntojenReititPaivitettyViimeksi >=
+                15000
+        ) {
+
+            kyytipyyntojenReititPaivitettyViimeksi =
+                nykyinenAika;
+
+            if (unsubscribeKyytipyynnot) {
+
+                unsubscribeKyytipyynnot();
+
+                unsubscribeKyytipyynnot =
+                    null;
+            }
+
+            haeKyytipyynnot();
+        }
 
     },
 
@@ -1219,6 +1248,30 @@ function lopetaTarjoaminen() {
     ).innerHTML = "";
 
     document.getElementById(
+        "noutomatkaRajaKm"
+    ).disabled = false;
+
+    document.getElementById(
+        "noutomatkaRajaKm"
+    ).value = "";
+
+    document.getElementById(
+        "noutoaikaRajaMin"
+    ).disabled = false;
+
+    document.getElementById(
+        "noutoaikaRajaMin"
+    ).value = "";
+
+    document.getElementById(
+        "lisamatkaRajaKm"
+    ).disabled = false;
+
+    document.getElementById(
+        "lisamatkaRajaKm"
+    ).value = "";
+
+    document.getElementById(
         "tarjoajanKoordinaatit"
     ).innerHTML = "";
 
@@ -1233,6 +1286,12 @@ function lopetaTarjoaminen() {
     tarjoajanMaaranpaaLatitude = null;
 
     tarjoajanMaaranpaaLongitude = null;
+
+    noutomatkaRajaKm = null;
+
+    noutoaikaRajaMin = null;
+
+    lisamatkaRajaKm = null;
 
     reittiABMatkaKm = null;
 
@@ -1317,13 +1376,16 @@ function haeKyytipyynnot() {
                 pyyntojenLaskelmat.filter(
                     (laskelma) => {
 
-                        return (
-                            laskelma.reittiAC.matkaKm <=
-                                noutomatkaRajaKm &&
+return (
+    laskelma.reittiAC.matkaKm <=
+        noutomatkaRajaKm &&
 
-                            laskelma.reittiAC.aikaMin <=
-                                noutoaikaRajaMin
-                        );
+    laskelma.reittiAC.aikaMin <=
+        noutoaikaRajaMin &&
+
+    laskelma.lisamatkaKm <=
+        lisamatkaRajaKm
+);
                     }
                 );
 
@@ -1357,11 +1419,9 @@ function haeKyytipyynnot() {
                         (${pyynto.matkustajanMaaranpaaLatitude},
                         ${pyynto.matkustajanMaaranpaaLongitude})
 
-                        <br><b>Matka noutopaikkaan:</b>
-                        ${laskelma.reittiAC.matkaKm.toFixed(1)} km
-
-                        <br><b>Aika noutopaikkaan:</b>
-                        ${laskelma.reittiAC.aikaMin.toFixed(0)} min
+<br><b>Lähtöpisteeseen:</b>
+${laskelma.reittiAC.matkaKm.toFixed(1)} km /
+${laskelma.reittiAC.aikaMin.toFixed(0)} min
 
                         <br><b>Luotu:</b>
                         ${new Date(

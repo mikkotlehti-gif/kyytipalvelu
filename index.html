@@ -612,7 +612,7 @@ async function etsiTarjoajanMaaranpaa() {
         "Sopivia osoitteita ei löytynyt.";
 }
 
-    async function valitseTarjoajanMaaranpaa(
+async function valitseTarjoajanMaaranpaa(
     nimi,
     latitude,
     longitude
@@ -631,6 +631,10 @@ async function etsiTarjoajanMaaranpaa() {
         "tarjoajanMaaranpaa"
     ).value =
         tarjoajanMaaranpaa;
+
+    document.getElementById(
+        "tarjoajanMaaranpaaHakutulokset"
+    ).innerHTML = "";
 
     await aloitaTarjoaminen();
 }
@@ -1050,10 +1054,6 @@ async function aloitaTarjoaminen() {
         tarjoaminenAloitettu;
 
     document.getElementById(
-        "aloitatarjoaminen"
-    ).disabled = true;
-
-    document.getElementById(
         "lopetatarjoaminen"
     ).disabled = false;
 
@@ -1086,7 +1086,6 @@ function lopetaTarjoaminen() {
         unsubscribeKyytipyynnot();
 
         unsubscribeKyytipyynnot = null;
-
     }
 
     tarjoaKyytia = false;
@@ -1095,10 +1094,6 @@ function lopetaTarjoaminen() {
         "tarjoajantila"
     ).innerHTML =
         "En tarjoa kyytiä";
-
-    document.getElementById(
-        "aloitatarjoaminen"
-    ).disabled = false;
 
     document.getElementById(
         "lopetatarjoaminen"
@@ -1130,6 +1125,14 @@ function lopetaTarjoaminen() {
     ).value = "";
 
     document.getElementById(
+        "etsiTarjoajanMaaranpaaNappi"
+    ).disabled = true;
+
+    document.getElementById(
+        "tarjoajanMaaranpaaHakutulokset"
+    ).innerHTML = "";
+
+    document.getElementById(
         "tarjoajanKoordinaatit"
     ).innerHTML = "";
 
@@ -1145,6 +1148,9 @@ function lopetaTarjoaminen() {
 
     tarjoajanMaaranpaaLongitude = null;
 
+    reittiABMatkaKm = null;
+
+    reittiABAikaMin = null;
 }
 
 

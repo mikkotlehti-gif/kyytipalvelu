@@ -78,9 +78,18 @@
     id="tarjoajanMaaranpaa"
     type="text"
     placeholder="Anna oma määränpää"
+    oninput="document.getElementById('etsiTarjoajanMaaranpaaNappi').disabled = (this.value == '')"
 >
 
-<br><br>
+<button
+    id="etsiTarjoajanMaaranpaaNappi"
+    onclick="etsiTarjoajanMaaranpaa()"
+    disabled
+>
+    Etsi määränpää
+</button>
+
+<div id="tarjoajanMaaranpaaHakutulokset"></div>
 
 <p id="tarjoajanKoordinaatit"></p>
 
@@ -502,6 +511,137 @@ html +=
         "Sopivia osoitteita ei löytynyt.";
 }
 
+async function etsiTarjoajanMaaranpaa() {
+
+    const hakuteksti =
+        document.getElementById(
+            "tarjoajanMaaranpaa"
+        ).value.trim();
+
+    const sisaltaaNumeron =
+        /\d/.test(hakuteksti);
+
+    if (!sisaltaaNumeron) {
+
+        document.getElementById(
+            "tarjoajanMaaranpaaHakutulokset"
+        ).innerHTML =
+            "Anna katuosoite ja numero, esimerkiksi Perkiöntie 12.";
+
+        return;
+    }
+
+    const vastaus =
+        await fetch(
+            "https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=20&countrycodes=fi&q=" +
+            encodeURIComponent(hakuteksti)
+        );
+
+    const tulokset =
+        await vastaus.json();
+
+    let html = "";
+
+    const loydetytOsoitteet =
+        new Set();
+
+    tulokset.forEach((tulos) => {
+
+        const osoite =
+            tulos.address || {};
+
+        if (
+            !osoite.road ||
+            !osoite.house_number
+        ) {
+            return;
+        }
+
+        const katuosoite =
+            osoite.road +
+            " " +
+            osoite.house_number;
+
+        const kuntaTaiKaupunki =
+            osoite.city ||
+            osoite.town ||
+            osoite.municipality ||
+            osoite.village ||
+            "";
+
+        const osoiteTeksti =
+            katuosoite +
+            ", " +
+            kuntaTaiKaupunki;
+
+        if (
+            loydetytOsoitteet.has(
+                osoiteTeksti
+            )
+        ) {
+            return;
+        }
+
+        loydetytOsoitteet.add(
+            osoiteTeksti
+        );
+
+        const koodattuOsoite =
+            encodeURIComponent(
+                osoiteTeksti
+            );
+
+        html +=
+            "<div style='margin-bottom: 8px;'>" +
+
+            "<button onclick=\"valitseTarjoajanMaaranpaa(" +
+            "decodeURIComponent('" +
+            koodattuOsoite +
+            "'), '" +
+            tulos.lat +
+            "', '" +
+            tulos.lon +
+            "')\">" +
+
+            "Aloita kyydin tarjoaminen" +
+
+            "</button> " +
+
+            osoiteTeksti +
+
+            "</div>";
+    });
+
+    document.getElementById(
+        "tarjoajanMaaranpaaHakutulokset"
+    ).innerHTML =
+        html ||
+        "Sopivia osoitteita ei löytynyt.";
+}
+
+    async function valitseTarjoajanMaaranpaa(
+    nimi,
+    latitude,
+    longitude
+) {
+
+    tarjoajanMaaranpaa =
+        nimi;
+
+    tarjoajanMaaranpaaLatitude =
+        parseFloat(latitude);
+
+    tarjoajanMaaranpaaLongitude =
+        parseFloat(longitude);
+
+    document.getElementById(
+        "tarjoajanMaaranpaa"
+    ).value =
+        tarjoajanMaaranpaa;
+
+    await aloitaTarjoaminen();
+}
+    
 async function valitseMaaranpaa(
     nimi,
     latitude,
@@ -872,22 +1012,19 @@ async function aloitaTarjoaminen() {
         );
 
         return;
-
     }
 
-    tarjoajanMaaranpaa =
-        document.getElementById(
-            "tarjoajanMaaranpaa"
-        ).value;
-
-    if (tarjoajanMaaranpaa == "") {
+    if (
+        tarjoajanMaaranpaa == "" ||
+        tarjoajanMaaranpaaLatitude == null ||
+        tarjoajanMaaranpaaLongitude == null
+    ) {
 
         alert(
-            "Anna tarjoajan määränpää"
+            "Valitse ensin tarjoajan määränpää hakutuloksista"
         );
 
         return;
-
     }
 
     if (
@@ -899,14 +1036,6 @@ async function aloitaTarjoaminen() {
             "Odotetaan tarjoajan sijaintitietoa"
         );
 
-        return;
-
-    }
-
-    const loytyi =
-        await haeTarjoajanMaaranpaanKoordinaatit();
-
-    if (!loytyi) {
         return;
     }
 
@@ -943,6 +1072,13 @@ async function aloitaTarjoaminen() {
         "tarjoajanMaaranpaa"
     ).disabled = true;
 
+    document.getElementById(
+        "etsiTarjoajanMaaranpaaNappi"
+    ).disabled = true;
+
+    document.getElementById(
+        "tarjoajanMaaranpaaHakutulokset"
+    ).innerHTML = "";
 }
 
 

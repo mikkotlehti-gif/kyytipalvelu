@@ -67,36 +67,6 @@
 
 <br><br>
 
-<label for="noutomatkaRajaKm">
-    Matka noutopaikkaan enintään:
-</label>
-
-<input
-    id="noutomatkaRajaKm"
-    type="number"
-    min="0"
-    step="1"
-    size="5"
->
-km
-
-<br><br>
-
-<label for="noutoaikaRajaMin">
-    Aika noutopaikkaan enintään:
-</label>
-
-<input
-    id="noutoaikaRajaMin"
-    type="number"
-    min="0"
-    step="1"
-    size="5"
->
-min
-
-<br><br>
-
 <label for="lisamatkaRajaKm">
     Lisämatka yhteensä enintään:
 </label>
@@ -147,6 +117,44 @@ km
 >
     Lopeta kyydin tarjoaminen
 </button>
+
+<h3>Kyytipyyntöjen suodatus</h3>
+
+<label>
+    Reitiltä noutopaikkaan (km / minuuttia):
+</label>
+
+<input
+    id="noutomatkaRajaKm"
+    type="number"
+    min="0"
+    step="1"
+    size="5"
+>
+
+/
+
+<input
+    id="noutoaikaRajaMin"
+    type="number"
+    min="0"
+    step="1"
+    size="5"
+>
+
+<br><br>
+
+<label for="lisamatkaRajaKm">
+    Lisämatka (km):
+</label>
+
+<input
+    id="lisamatkaRajaKm"
+    type="number"
+    min="0"
+    step="1"
+    size="5"
+>
 
 <div id="havaittukyytipyynto"></div>
 
@@ -919,26 +927,35 @@ async function aloitaTarjoaminen() {
         return;
     }
 
-    noutomatkaRajaKm =
-        parseFloat(
-            document.getElementById(
-                "noutomatkaRajaKm"
-            ).value
-        );
+const noutomatkaArvo =
+    document.getElementById(
+        "noutomatkaRajaKm"
+    ).value;
 
-    noutoaikaRajaMin =
-        parseFloat(
-            document.getElementById(
-                "noutoaikaRajaMin"
-            ).value
-        );
+const noutoaikaArvo =
+    document.getElementById(
+        "noutoaikaRajaMin"
+    ).value;
 
-    lisamatkaRajaKm =
-        parseFloat(
-            document.getElementById(
-                "lisamatkaRajaKm"
-            ).value
-        );
+const lisamatkaArvo =
+    document.getElementById(
+        "lisamatkaRajaKm"
+    ).value;
+
+noutomatkaRajaKm =
+    noutomatkaArvo === ""
+        ? null
+        : parseFloat(noutomatkaArvo);
+
+noutoaikaRajaMin =
+    noutoaikaArvo === ""
+        ? null
+        : parseFloat(noutoaikaArvo);
+
+lisamatkaRajaKm =
+    lisamatkaArvo === ""
+        ? null
+        : parseFloat(lisamatkaArvo);
 
     if (
         tarjoajanMaaranpaa == "" ||
@@ -1182,14 +1199,23 @@ function haeKyytipyynnot() {
                     (laskelma) => {
 
 return (
-    laskelma.reittiAC.matkaKm <=
-        noutomatkaRajaKm &&
+    (
+        noutomatkaRajaKm == null ||
+        laskelma.reittiAC.matkaKm <=
+            noutomatkaRajaKm
+    ) &&
 
-    laskelma.reittiAC.aikaMin <=
-        noutoaikaRajaMin &&
+    (
+        noutoaikaRajaMin == null ||
+        laskelma.reittiAC.aikaMin <=
+            noutoaikaRajaMin
+    ) &&
 
-    laskelma.lisamatkaKm <=
-        lisamatkaRajaKm
+    (
+        lisamatkaRajaKm == null ||
+        laskelma.lisamatkaKm <=
+            lisamatkaRajaKm
+    )
 );
                     }
                 );

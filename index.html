@@ -116,20 +116,22 @@
     type="text"
     inputmode="numeric"
     maxlength="3"
+    pattern="[0-9]*"
     style="width: 45px;"
-    oninput="this.value = this.value.replace(/[^0-9]/g, ''); paivitaSuodataNappi();"
+    oninput="paivitaSuodataNappi()"
     disabled
 >
 
 /
 
 <input
-    id="lisamatkaRajaKm"
+    id="noutoaikaRajaMin"
     type="text"
     inputmode="numeric"
     maxlength="3"
+    pattern="[0-9]*"
     style="width: 45px;"
-    oninput="this.value = this.value.replace(/[^0-9]/g, ''); paivitaSuodataNappi();"
+    oninput="paivitaSuodataNappi()"
     disabled
 >
 
@@ -143,12 +145,12 @@
 
 <input
     id="lisamatkaRajaKm"
-    type="number"
-    min="0"
-    step="1"
+    type="text"
+    inputmode="numeric"
+    maxlength="3"
+    pattern="[0-9]*"
     style="width: 45px;"
-    onkeydown="if (event.key === '.' || event.key === ',') event.preventDefault();"
-oninput="paivitaSuodataNappi()"
+    oninput="paivitaSuodataNappi()"
     disabled
 >
 

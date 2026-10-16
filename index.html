@@ -142,11 +142,7 @@ km
     style="margin-top: 10px;"
 ></div>
 
-<p id="tarjoajanKoordinaatit"></p>
-
 <p id="reittiAB"></p>
-
-<p id="reittiACDB"></p>
 
 <button
     id="lopetatarjoaminen"
@@ -156,19 +152,11 @@ km
     Lopeta kyydin tarjoaminen
 </button>
 
-<p id="tarjoajantila">
-    En tarjoa kyytiä
-</p>
+<div id="tarjoajantila" style="display: none;"></div>
 
-<p id="lahellaolevatpyynnot">
-    Lähellä olevat kyytipyynnöt: 0
-</p>
+<div id="lahellaolevatpyynnot" style="display: none;"></div>
 
 <div id="havaittukyytipyynto"></div>
-
-<button id="hyvaksyyyyti" disabled>
-    Ota matkustaja kyytiin
-</button>
 
 <script type="module">
 
@@ -334,10 +322,12 @@ navigator.geolocation.watchPosition(
                 15000
         ) {
 
-            kyytipyyntojenReititPaivitettyViimeksi =
-                nykyinenAika;
+kyytipyyntojenReititPaivitettyViimeksi =
+    nykyinenAika;
 
-            if (unsubscribeKyytipyynnot) {
+laskeReittiAB();
+
+if (unsubscribeKyytipyynnot) {
 
                 unsubscribeKyytipyynnot();
 
@@ -1139,15 +1129,15 @@ async function aloitaTarjoaminen() {
         return;
     }
 
-    await laskeReittiAB();
+tarjoaminenAloitettu =
+    new Date().toLocaleString();
 
-    haeKyytipyynnot();
+await laskeReittiAB();
 
-    tarjoaminenAloitettu =
-        new Date().toLocaleTimeString();
+haeKyytipyynnot();
 
-    tarjoaKyytia =
-        true;
+tarjoaKyytia =
+    true;
 
     document.getElementById(
         "tarjoajantila"
@@ -1668,18 +1658,33 @@ async function laskeReittiAB() {
     reittiABAikaMin =
         data.routes[0].duration /
         60;
-    
+
+    const tunnit =
+        Math.floor(
+            reittiABAikaMin / 60
+        );
+
+    const minuutit =
+        Math.round(
+            reittiABAikaMin % 60
+        );
+
     document.getElementById(
         "reittiAB"
     ).innerHTML =
-        "<b>Reitti A → B</b>" +
-        "<br>Matka: " +
-        reittiABMatkaKm.toFixed(1) +
-        " km" +
-        "<br>Aika: " +
-        reittiABAikaMin.toFixed(0) +
-        " min";
+"<b>Kyydin tarjoaminen on päällä (" +
+tarjoaminenAloitettu +
+")</b>" +
 
+        "<br>Määränpää: " +
+        tarjoajanMaaranpaa +
+        " (" +
+        reittiABMatkaKm.toFixed(1) +
+        " km, " +
+        tunnit +
+        " h " +
+        minuutit +
+        " min)";
 }
 
     async function laskeReittiAC(pyynto) {

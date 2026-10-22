@@ -1208,12 +1208,17 @@ function haeKyytipyynnot() {
                                 await laskeMatkaNoutopaikalle(
                                     pyynto
                                 );
-                            
+
+                            const kuljetettavaMatka =
+                                await laskeKuljetettavaMatka(
+                                    pyynto
+                                );
+
                             const reittiNoutopaikkaan =
                                 await laskeReitiltaNoutopaikkaan(
                                     pyynto
                                 );
-                            
+
                             const reittiACDB =
                                 await laskeReittiACDB(
                                     pyynto
@@ -1230,22 +1235,25 @@ function haeKyytipyynnot() {
                             return {
                                 id:
                                     docSnapshot.id,
-                            
+
                                 pyynto:
                                     pyynto,
-                            
+
                                 matkaNoutopaikalle:
                                     matkaNoutopaikalle,
-                            
+
+                                kuljetettavaMatka:
+                                    kuljetettavaMatka,
+
                                 reittiNoutopaikkaan:
                                     reittiNoutopaikkaan,
-                            
+
                                 reittiACDB:
                                     reittiACDB,
-                            
+
                                 lisamatkaKm:
                                     lisamatkaKm,
-                            
+
                                 lisaaikaMin:
                                     lisaaikaMin
                             };
@@ -1310,6 +1318,10 @@ function haeKyytipyynnot() {
                         ${laskelma.matkaNoutopaikalle.matkaKm.toFixed(1)} km /
                         ${laskelma.matkaNoutopaikalle.aikaMin.toFixed(0)} min
                         
+                        <br><b>Kuljetettava matka:</b>
+                        ${laskelma.kuljetettavaMatka.matkaKm.toFixed(1)} km /
+                        ${laskelma.kuljetettavaMatka.aikaMin.toFixed(0)} min
+                        
                         <br><b>Reitiltä noutopaikkaan:</b>
                         ${laskelma.reittiNoutopaikkaan.matkaKm.toFixed(1)} km /
                         ${laskelma.reittiNoutopaikkaan.aikaMin.toFixed(0)} min
@@ -1322,19 +1334,13 @@ function haeKyytipyynnot() {
                         <br><b>Status:</b>
                         ${pyynto.status}
 
-                        <br><b>A→C→D→B:</b>
-                        ${laskelma.reittiACDB.matkaKm.toFixed(1)}
-                        km /
-                        ${laskelma.reittiACDB.aikaMin.toFixed(0)}
-                        min
+                        <br><b>Kokonaismatka:</b>
+                        ${laskelma.reittiACDB.matkaKm.toFixed(1)} km /
+                        ${laskelma.reittiACDB.aikaMin.toFixed(0)} min
 
-                        <br><b>Lisämatka: +
-                        ${laskelma.lisamatkaKm.toFixed(1)}
-                        km</b>
-
-                        <br><b>Lisäaika: +
-                        ${laskelma.lisaaikaMin.toFixed(0)}
-                        min</b>
+                        <br><b>Lisämatka:</b>
+                        +${laskelma.lisamatkaKm.toFixed(1)} km /
+                        +${laskelma.lisaaikaMin.toFixed(0)} min
 
                         <br>
 
@@ -1578,6 +1584,36 @@ function laskeEtaisyysMetreina(
     return R * c;
 }
 
+async function laskeKuljetettavaMatka(pyynto) {
+
+    const url =
+        "https://router.project-osrm.org/route/v1/driving/" +
+
+        pyynto.matkustajanLahtopaikkaLongitude + "," +
+        pyynto.matkustajanLahtopaikkaLatitude +
+
+        ";" +
+
+        pyynto.matkustajanMaaranpaaLongitude + "," +
+        pyynto.matkustajanMaaranpaaLatitude +
+
+        "?overview=false";
+
+    const vastaus =
+        await fetch(url);
+
+    const data =
+        await vastaus.json();
+
+    return {
+        matkaKm:
+            data.routes[0].distance / 1000,
+
+        aikaMin:
+            data.routes[0].duration / 60
+    };
+}
+    
 async function laskeMatkaNoutopaikalle(pyynto) {
 
     const url =

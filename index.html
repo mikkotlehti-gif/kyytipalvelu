@@ -1171,6 +1171,32 @@ document.getElementById(
  * Aktiivisten kyytipyyntöjen kuuntelu
  */
 
+function muotoileLuontiaika(aika) {
+
+    const paivamaara =
+        new Date(aika);
+
+    const pvm =
+        paivamaara.toLocaleDateString(
+            "fi-FI"
+        );
+
+    const kellonaika =
+        paivamaara.toLocaleTimeString(
+            "fi-FI",
+            {
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+        ).replace(":", ".");
+
+    return (
+        pvm +
+        " klo " +
+        kellonaika
+    );
+}
+    
 function haeKyytipyynnot() {
 
     kyytipyyntojenHakuversio++;
@@ -1308,41 +1334,37 @@ function haeKyytipyynnot() {
                     html += `
                         <hr>
 
-                        <b>Lähtöpaikka:</b>
+                        <b>Pyyntö luotu:</b>
+                        ${muotoileLuontiaika(pyynto.luotu)} /
+                        ${pyynto.status}
+
+                        <br><b>Lähtöpaikka:</b>
                         ${pyynto.matkustajanLahtopaikka}
+                        (${laskelma.matkaNoutopaikalle.matkaKm.toFixed(1)} km /
+                        ${laskelma.matkaNoutopaikalle.aikaMin.toFixed(0)} min)
 
                         <br><b>Määränpää:</b>
                         ${pyynto.matkustajanMaaranpaa}
 
-                        <br><b>Matka noutopaikalle:</b>
-                        ${laskelma.matkaNoutopaikalle.matkaKm.toFixed(1)} km /
-                        ${laskelma.matkaNoutopaikalle.aikaMin.toFixed(0)} min
-                        
-                        <br><b>Kuljetettava matka:</b>
+                        <br><b>Matka:</b>
                         ${laskelma.kuljetettavaMatka.matkaKm.toFixed(1)} km /
                         ${laskelma.kuljetettavaMatka.aikaMin.toFixed(0)} min
-                        
-                        <br><b>Reitiltä noutopaikkaan:</b>
+
+                        <br><br>
+
+                        <b>Reitiltä noutopaikkaan:</b>
                         ${laskelma.reittiNoutopaikkaan.matkaKm.toFixed(1)} km /
                         ${laskelma.reittiNoutopaikkaan.aikaMin.toFixed(0)} min
 
-                        <br><b>Luotu:</b>
-                        ${new Date(
-                            pyynto.luotu
-                        ).toLocaleString()}
-
-                        <br><b>Status:</b>
-                        ${pyynto.status}
+                        <br><b>Lisämatka sinulle:</b>
+                        +${laskelma.lisamatkaKm.toFixed(1)} km /
+                        +${laskelma.lisaaikaMin.toFixed(0)} min
 
                         <br><b>Kokonaismatka:</b>
                         ${laskelma.reittiACDB.matkaKm.toFixed(1)} km /
                         ${laskelma.reittiACDB.aikaMin.toFixed(0)} min
 
-                        <br><b>Lisämatka:</b>
-                        +${laskelma.lisamatkaKm.toFixed(1)} km /
-                        +${laskelma.lisaaikaMin.toFixed(0)} min
-
-                        <br>
+                        <br><br>
 
                         <button onclick="olenPaikalla('${laskelma.id}')">
                             Olen paikalla

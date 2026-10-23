@@ -1380,12 +1380,12 @@ function haeKyytipyynnot() {
                         Math.floor(
                             laskelma.matkaNoutopaikalle.aikaMin / 60
                         );
-
+                    
                     const noutoaikaMinuutit =
                         Math.round(
                             laskelma.matkaNoutopaikalle.aikaMin % 60
                         );
-
+                    
                     const noutoaikaTeksti =
                         noutoaikaTunnit > 0
                             ? noutoaikaTunnit +
@@ -1394,7 +1394,107 @@ function haeKyytipyynnot() {
                                 " min"
                             : noutoaikaMinuutit +
                                 " min";
-
+                    
+                    
+                    const reitiltaNoutoaikaTunnit =
+                        Math.floor(
+                            laskelma.reittiNoutopaikkaan.aikaMin / 60
+                        );
+                    
+                    const reitiltaNoutoaikaMinuutit =
+                        Math.round(
+                            laskelma.reittiNoutopaikkaan.aikaMin % 60
+                        );
+                    
+                    const reitiltaNoutoaikaTeksti =
+                        reitiltaNoutoaikaTunnit > 0
+                            ? reitiltaNoutoaikaTunnit +
+                                " h " +
+                                reitiltaNoutoaikaMinuutit +
+                                " min"
+                            : reitiltaNoutoaikaMinuutit +
+                                " min";
+                    
+                                        
+                    const lisaAikaTunnit =
+                        Math.floor(
+                            laskelma.lisaaikaMin / 60
+                        );
+                    
+                    const lisaAikaMinuutit =
+                        Math.round(
+                            laskelma.lisaaikaMin % 60
+                        );
+                    
+                    const lisaAikaTeksti =
+                        lisaAikaTunnit > 0
+                            ? lisaAikaTunnit +
+                                " h " +
+                                lisaAikaMinuutit +
+                                " min"
+                            : lisaAikaMinuutit +
+                                " min";
+                    
+                    
+                    const omaReittiAikaTunnit =
+                        Math.floor(
+                            reittiABAikaMin / 60
+                        );
+                    
+                    const omaReittiAikaMinuutit =
+                        Math.round(
+                            reittiABAikaMin % 60
+                        );
+                    
+                    const omaReittiAikaTeksti =
+                        omaReittiAikaTunnit > 0
+                            ? omaReittiAikaTunnit +
+                                " h " +
+                                omaReittiAikaMinuutit +
+                                " min"
+                            : omaReittiAikaMinuutit +
+                                " min";
+                    
+                    
+                    const kokonaisAikaTunnit =
+                        Math.floor(
+                            laskelma.reittiACDB.aikaMin / 60
+                        );
+                    
+                    const kokonaisAikaMinuutit =
+                        Math.round(
+                            laskelma.reittiACDB.aikaMin % 60
+                        );
+                    
+                    const kokonaisAikaTeksti =
+                        kokonaisAikaTunnit > 0
+                            ? kokonaisAikaTunnit +
+                                " h " +
+                                kokonaisAikaMinuutit +
+                                " min"
+                            : kokonaisAikaMinuutit +
+                                " min";
+                    
+                    
+                    const pyydettyAikaTunnit =
+                        Math.floor(
+                            laskelma.kuljetettavaMatka.aikaMin / 60
+                        );
+                    
+                    const pyydettyAikaMinuutit =
+                        Math.round(
+                            laskelma.kuljetettavaMatka.aikaMin % 60
+                        );
+                    
+                    const pyydettyAikaTeksti =
+                        pyydettyAikaTunnit > 0
+                            ? pyydettyAikaTunnit +
+                                " h " +
+                                pyydettyAikaMinuutit +
+                                " min"
+                            : pyydettyAikaMinuutit +
+                                " min";
+                    
                     const lahtokaupunki =
                         haeKaupunkiTaiKunta(
                             pyynto.matkustajanLahtopaikka
@@ -1456,21 +1556,20 @@ function haeKyytipyynnot() {
 
                         <b>Reitiltä noutopaikkaan:</b>
                         ${laskelma.reittiNoutopaikkaan.matkaKm.toFixed(1)} km /
-                        ${laskelma.reittiNoutopaikkaan.aikaMin.toFixed(0)} min
+                        ${reitiltaNoutoaikaTeksti}
 
                         <br><b>Vaikutus matkasi pituuteen:</b>
                         <br>
                         +${laskelma.lisamatkaKm.toFixed(1)} km
-                        (${reittiABMatkaKm.toFixed(1)}→${laskelma.reittiACDB.matkaKm.toFixed(1)} km)
-
+                        (${reittiABMatkaKm.toFixed(1)} → ${laskelma.reittiACDB.matkaKm.toFixed(1)} km)
+                        
                         <br>
-                        +${laskelma.lisaaikaMin.toFixed(0)} min
-                        (${reittiABAikaMin.toFixed(0)}→${laskelma.reittiACDB.aikaMin.toFixed(0)} min)
+                        +${lisaAikaTeksti}
+                        (${omaReittiAikaTeksti} → ${kokonaisAikaTeksti})
 
-                        <br><b>Pyydetyn matkan pituus:</b>
-                        <br><b>Pyydetyn matkan pituus:</b>
+                        <b>Pyydetyn matkan pituus:</b>
                         ${laskelma.kuljetettavaMatka.matkaKm.toFixed(1)} km /
-                        ${laskelma.kuljetettavaMatka.aikaMin.toFixed(0)} min
+                        ${pyydettyAikaTeksti}
                         
                         <br><br>
                         

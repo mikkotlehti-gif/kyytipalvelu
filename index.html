@@ -287,7 +287,7 @@ var sijaintiPaivitettyViimeksi = 0;
 
 var kyytipyyntojenHakuversio = 0;
 
-var tiivistetytKyytipyynnot =
+var laajatOsoitetiedot =
     new Set();
 
 /*
@@ -1211,34 +1211,34 @@ function haeKaupunkiTaiKunta(osoite) {
 }
 
 
-function naytaKyytipyynto(id) {
+function naytaOsoitetiedot(id) {
 
-    tiivistetytKyytipyynnot.delete(
+    laajatOsoitetiedot.add(
         id
     );
 
     document.getElementById(
-        "kyytiTiivis-" + id
+        "osoitteetTiivis-" + id
     ).style.display = "none";
 
     document.getElementById(
-        "kyytiLaaja-" + id
+        "osoitteetLaaja-" + id
     ).style.display = "block";
 }
 
 
-function tiivistaKyytipyynto(id) {
+function piilotaOsoitetiedot(id) {
 
-    tiivistetytKyytipyynnot.add(
+    laajatOsoitetiedot.delete(
         id
     );
 
     document.getElementById(
-        "kyytiLaaja-" + id
+        "osoitteetLaaja-" + id
     ).style.display = "none";
 
     document.getElementById(
-        "kyytiTiivis-" + id
+        "osoitteetTiivis-" + id
     ).style.display = "block";
 }
     
@@ -1396,40 +1396,37 @@ function haeKyytipyynnot() {
                             pyynto.matkustajanMaaranpaa
                         );
 
-                    const onTiivistetty =
-                        tiivistetytKyytipyynnot.has(
+                    const osoitetiedotNakyvissa =
+                        laajatOsoitetiedot.has(
                             laskelma.id
                         );
 
                     html += `
                         <hr>
 
-                        <div
-                            id="kyytiTiivis-${laskelma.id}"
-                            style="display: ${onTiivistetty ? "block" : "none"};"
-                        >
-                            <b>
-                                ${lahtokaupunki}
-                                →
-                                ${maaranpaakaupunki}
-                            </b>
+                        ${muotoileLuontiaika(pyynto.luotu)} /
+                        ${pyynto.status}
 
-                            <br><br>
+                        <div
+                            id="osoitteetTiivis-${laskelma.id}"
+                            style="display: ${osoitetiedotNakyvissa ? "none" : "block"};"
+                        >
+                            <br>
+                            <b>${lahtokaupunki} → ${maaranpaakaupunki}</b>
+
+                            <br>
 
                             <button
-                                onclick="naytaKyytipyynto('${laskelma.id}')"
+                                onclick="naytaOsoitetiedot('${laskelma.id}')"
                             >
                                 Näytä
                             </button>
                         </div>
 
                         <div
-                            id="kyytiLaaja-${laskelma.id}"
-                            style="display: ${onTiivistetty ? "none" : "block"};"
+                            id="osoitteetLaaja-${laskelma.id}"
+                            style="display: ${osoitetiedotNakyvissa ? "block" : "none"};"
                         >
-                            ${muotoileLuontiaika(pyynto.luotu)} /
-                            ${pyynto.status}
-
                             <br>
                             ${pyynto.matkustajanLahtopaikka}
                             (${laskelma.matkaNoutopaikalle.matkaKm.toFixed(1)} km /
@@ -1439,39 +1436,41 @@ function haeKyytipyynnot() {
                             <br>
                             ${pyynto.matkustajanMaaranpaa}
 
-                            <br><br>
-
-                            <b>Reitiltä noutopaikkaan:</b>
-                            ${laskelma.reittiNoutopaikkaan.matkaKm.toFixed(1)} km /
-                            ${laskelma.reittiNoutopaikkaan.aikaMin.toFixed(0)} min
-
-                            <br><b>Vaikutus matkasi pituuteen:</b>
                             <br>
-                            +${laskelma.lisamatkaKm.toFixed(1)} km
-                            (${reittiABMatkaKm.toFixed(1)}→${laskelma.reittiACDB.matkaKm.toFixed(1)} km)
-
-                            <br>
-                            +${laskelma.lisaaikaMin.toFixed(0)} min
-                            (${reittiABAikaMin.toFixed(0)}→${laskelma.reittiACDB.aikaMin.toFixed(0)} min)
-
-                            <br><b>Pyydetyn matkan pituus:</b>
-                            ${laskelma.kuljetettavaMatka.matkaKm.toFixed(1)} km /
-                            ${laskelma.kuljetettavaMatka.aikaMin.toFixed(0)} min
-
-                            <br><br>
 
                             <button
-                                onclick="tiivistaKyytipyynto('${laskelma.id}')"
+                                onclick="piilotaOsoitetiedot('${laskelma.id}')"
                             >
-                                Tiivistä
-                            </button>
-
-                            <button
-                                onclick="olenPaikalla('${laskelma.id}')"
-                            >
-                                Olen paikalla
+                                Piilota
                             </button>
                         </div>
+
+                        <br>
+
+                        <b>Reitiltä noutopaikkaan:</b>
+                        ${laskelma.reittiNoutopaikkaan.matkaKm.toFixed(1)} km /
+                        ${laskelma.reittiNoutopaikkaan.aikaMin.toFixed(0)} min
+
+                        <br><b>Vaikutus matkasi pituuteen:</b>
+                        <br>
+                        +${laskelma.lisamatkaKm.toFixed(1)} km
+                        (${reittiABMatkaKm.toFixed(1)}→${laskelma.reittiACDB.matkaKm.toFixed(1)} km)
+
+                        <br>
+                        +${laskelma.lisaaikaMin.toFixed(0)} min
+                        (${reittiABAikaMin.toFixed(0)}→${laskelma.reittiACDB.aikaMin.toFixed(0)} min)
+
+                        <br><b>Pyydetyn matkan pituus:</b>
+                        ${laskelma.kuljetettavaMatka.matkaKm.toFixed(1)} km /
+                        ${laskelma.kuljetettavaMatka.aikaMin.toFixed(0)} min
+
+                        <br><br>
+
+                        <button
+                            onclick="olenPaikalla('${laskelma.id}')"
+                        >
+                            Olen paikalla
+                        </button>
 
                         <br>
                     `;
@@ -2057,10 +2056,10 @@ window.poistaSuodatus =
 window.paivitaSuodataNappi =
     paivitaSuodataNappi;
 
-window.naytaKyytipyynto =
-    naytaKyytipyynto;
+window.naytaOsoitetiedot =
+    naytaOsoitetiedot;
 
-window.tiivistaKyytipyynto =
-    tiivistaKyytipyynto;
+window.piilotaOsoitetiedot =
+    piilotaOsoitetiedot;
     
 </script>

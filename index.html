@@ -1356,13 +1356,14 @@ function haeKyytipyynnot() {
                         ${laskelma.reittiNoutopaikkaan.matkaKm.toFixed(1)} km /
                         ${laskelma.reittiNoutopaikkaan.aikaMin.toFixed(0)} min
 
-                        <br><b>Lisämatka:</b>
-                        ${reittiABMatkaKm.toFixed(1)} →
-                        ${laskelma.reittiACDB.matkaKm.toFixed(1)}
-                        km (+${laskelma.lisamatkaKm.toFixed(1)} km) /
-                        ${reittiABAikaMin.toFixed(0)} →
-                        ${laskelma.reittiACDB.aikaMin.toFixed(0)}
-                        min (+${laskelma.lisaaikaMin.toFixed(0)} min)
+                        <br><b>Vaikutus matkasi pituuteen:</b>
+                        <br>
+                        +${laskelma.lisamatkaKm.toFixed(1)} km
+                        (${reittiABMatkaKm.toFixed(1)} →
+                        ${laskelma.reittiACDB.matkaKm.toFixed(1)} km) /
+                        +${laskelma.lisaaikaMin.toFixed(0)} min
+                        (${reittiABAikaMin.toFixed(0)} →
+                        ${laskelma.reittiACDB.aikaMin.toFixed(0)} min)
 
                         <br><br>
 

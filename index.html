@@ -287,6 +287,9 @@ var sijaintiPaivitettyViimeksi = 0;
 
 var kyytipyyntojenHakuversio = 0;
 
+var tiivistetytKyytipyynnot =
+    new Set();
+
 /*
  * GPS-sijainnin seuranta
  */
@@ -1196,6 +1199,48 @@ function muotoileLuontiaika(aika) {
         kellonaika
     );
 }
+
+function haeKaupunkiTaiKunta(osoite) {
+
+    const osat =
+        osoite.split(",");
+
+    return osat[
+        osat.length - 1
+    ].trim();
+}
+
+
+function naytaKyytipyynto(id) {
+
+    tiivistetytKyytipyynnot.delete(
+        id
+    );
+
+    document.getElementById(
+        "kyytiTiivis-" + id
+    ).style.display = "none";
+
+    document.getElementById(
+        "kyytiLaaja-" + id
+    ).style.display = "block";
+}
+
+
+function tiivistaKyytipyynto(id) {
+
+    tiivistetytKyytipyynnot.add(
+        id
+    );
+
+    document.getElementById(
+        "kyytiLaaja-" + id
+    ).style.display = "none";
+
+    document.getElementById(
+        "kyytiTiivis-" + id
+    ).style.display = "block";
+}
     
 function haeKyytipyynnot() {
 
@@ -1341,45 +1386,92 @@ function haeKyytipyynnot() {
                             laskelma.matkaNoutopaikalle.aikaMin % 60
                         );
 
+                    const lahtokaupunki =
+                        haeKaupunkiTaiKunta(
+                            pyynto.matkustajanLahtopaikka
+                        );
+
+                    const maaranpaakaupunki =
+                        haeKaupunkiTaiKunta(
+                            pyynto.matkustajanMaaranpaa
+                        );
+
+                    const onTiivistetty =
+                        tiivistetytKyytipyynnot.has(
+                            laskelma.id
+                        );
+
                     html += `
                         <hr>
 
-                        <b>Pyyntö luotu:</b>
-                        ${muotoileLuontiaika(pyynto.luotu)} /
-                        ${pyynto.status}
+                        <div
+                            id="kyytiTiivis-${laskelma.id}"
+                            style="display: ${onTiivistetty ? "block" : "none"};"
+                        >
+                            <b>
+                                ${lahtokaupunki}
+                                →
+                                ${maaranpaakaupunki}
+                            </b>
 
-                        <br><b>Lähtöpaikka:</b>
-                        ${pyynto.matkustajanLahtopaikka}
-                        (${laskelma.matkaNoutopaikalle.matkaKm.toFixed(1)} km /
-                        ${noutoaikaTunnit} h
-                        ${noutoaikaMinuutit} min)
+                            <br><br>
 
-                        <br><b>Määränpää:</b>
-                        ${pyynto.matkustajanMaaranpaa}
+                            <button
+                                onclick="naytaKyytipyynto('${laskelma.id}')"
+                            >
+                                Näytä
+                            </button>
+                        </div>
 
-                        <br><br>
+                        <div
+                            id="kyytiLaaja-${laskelma.id}"
+                            style="display: ${onTiivistetty ? "none" : "block"};"
+                        >
+                            ${muotoileLuontiaika(pyynto.luotu)} /
+                            ${pyynto.status}
 
-                        <b>Reitiltä noutopaikkaan:</b>
-                        ${laskelma.reittiNoutopaikkaan.matkaKm.toFixed(1)} km /
-                        ${laskelma.reittiNoutopaikkaan.aikaMin.toFixed(0)} min
+                            <br>
+                            ${pyynto.matkustajanLahtopaikka}
+                            (${laskelma.matkaNoutopaikalle.matkaKm.toFixed(1)} km /
+                            ${noutoaikaTunnit} h
+                            ${noutoaikaMinuutit} min)
 
-                        <br><b>Vaikutus matkasi pituuteen:</b>
-                        <br>
-                        +${laskelma.lisamatkaKm.toFixed(1)} km
-                        (${reittiABMatkaKm.toFixed(1)}→${laskelma.reittiACDB.matkaKm.toFixed(1)} km)
-                        <br>
-                        +${laskelma.lisaaikaMin.toFixed(0)} min
-                        (${reittiABAikaMin.toFixed(0)}→${laskelma.reittiACDB.aikaMin.toFixed(0)} min)
+                            <br>
+                            ${pyynto.matkustajanMaaranpaa}
 
-                        <br><b>Pyydetyn matkan pituus:</b>
-                        ${laskelma.kuljetettavaMatka.matkaKm.toFixed(1)} km /
-                        ${laskelma.kuljetettavaMatka.aikaMin.toFixed(0)} min
+                            <br><br>
 
-                        <br><br>
+                            <b>Reitiltä noutopaikkaan:</b>
+                            ${laskelma.reittiNoutopaikkaan.matkaKm.toFixed(1)} km /
+                            ${laskelma.reittiNoutopaikkaan.aikaMin.toFixed(0)} min
 
-                        <button onclick="olenPaikalla('${laskelma.id}')">
-                            Olen paikalla
-                        </button>
+                            <br><b>Vaikutus matkasi pituuteen:</b>
+                            <br>
+                            +${laskelma.lisamatkaKm.toFixed(1)} km
+                            (${reittiABMatkaKm.toFixed(1)}→${laskelma.reittiACDB.matkaKm.toFixed(1)} km)
+
+                            <br>
+                            +${laskelma.lisaaikaMin.toFixed(0)} min
+                            (${reittiABAikaMin.toFixed(0)}→${laskelma.reittiACDB.aikaMin.toFixed(0)} min)
+
+                            <br><b>Pyydetyn matkan pituus:</b>
+                            ${laskelma.kuljetettavaMatka.matkaKm.toFixed(1)} km /
+                            ${laskelma.kuljetettavaMatka.aikaMin.toFixed(0)} min
+
+                            <br><br>
+
+                            <button
+                                onclick="tiivistaKyytipyynto('${laskelma.id}')"
+                            >
+                                Tiivistä
+                            </button>
+
+                            <button
+                                onclick="olenPaikalla('${laskelma.id}')"
+                            >
+                                Olen paikalla
+                            </button>
+                        </div>
 
                         <br>
                     `;
@@ -1964,5 +2056,11 @@ window.poistaSuodatus =
 
 window.paivitaSuodataNappi =
     paivitaSuodataNappi;
+
+window.naytaKyytipyynto =
+    naytaKyytipyynto;
+
+window.tiivistaKyytipyynto =
+    tiivistaKyytipyynto;
     
 </script>

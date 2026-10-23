@@ -1380,12 +1380,12 @@ function haeKyytipyynnot() {
                         Math.floor(
                             laskelma.matkaNoutopaikalle.aikaMin / 60
                         );
-                    
+
                     const noutoaikaMinuutit =
                         Math.round(
                             laskelma.matkaNoutopaikalle.aikaMin % 60
                         );
-                    
+
                     const noutoaikaTeksti =
                         noutoaikaTunnit > 0
                             ? noutoaikaTunnit +
@@ -1394,18 +1394,18 @@ function haeKyytipyynnot() {
                                 " min"
                             : noutoaikaMinuutit +
                                 " min";
-                    
-                    
+
+
                     const reitiltaNoutoaikaTunnit =
                         Math.floor(
                             laskelma.reittiNoutopaikkaan.aikaMin / 60
                         );
-                    
+
                     const reitiltaNoutoaikaMinuutit =
                         Math.round(
                             laskelma.reittiNoutopaikkaan.aikaMin % 60
                         );
-                    
+
                     const reitiltaNoutoaikaTeksti =
                         reitiltaNoutoaikaTunnit > 0
                             ? reitiltaNoutoaikaTunnit +
@@ -1414,18 +1414,18 @@ function haeKyytipyynnot() {
                                 " min"
                             : reitiltaNoutoaikaMinuutit +
                                 " min";
-                    
-                                        
+
+
                     const lisaAikaTunnit =
                         Math.floor(
                             laskelma.lisaaikaMin / 60
                         );
-                    
+
                     const lisaAikaMinuutit =
                         Math.round(
                             laskelma.lisaaikaMin % 60
                         );
-                    
+
                     const lisaAikaTeksti =
                         lisaAikaTunnit > 0
                             ? lisaAikaTunnit +
@@ -1434,18 +1434,18 @@ function haeKyytipyynnot() {
                                 " min"
                             : lisaAikaMinuutit +
                                 " min";
-                    
-                    
+
+
                     const omaReittiAikaTunnit =
                         Math.floor(
                             reittiABAikaMin / 60
                         );
-                    
+
                     const omaReittiAikaMinuutit =
                         Math.round(
                             reittiABAikaMin % 60
                         );
-                    
+
                     const omaReittiAikaTeksti =
                         omaReittiAikaTunnit > 0
                             ? omaReittiAikaTunnit +
@@ -1454,18 +1454,18 @@ function haeKyytipyynnot() {
                                 " min"
                             : omaReittiAikaMinuutit +
                                 " min";
-                    
-                    
+
+
                     const kokonaisAikaTunnit =
                         Math.floor(
                             laskelma.reittiACDB.aikaMin / 60
                         );
-                    
+
                     const kokonaisAikaMinuutit =
                         Math.round(
                             laskelma.reittiACDB.aikaMin % 60
                         );
-                    
+
                     const kokonaisAikaTeksti =
                         kokonaisAikaTunnit > 0
                             ? kokonaisAikaTunnit +
@@ -1474,18 +1474,18 @@ function haeKyytipyynnot() {
                                 " min"
                             : kokonaisAikaMinuutit +
                                 " min";
-                    
-                    
+
+
                     const pyydettyAikaTunnit =
                         Math.floor(
                             laskelma.kuljetettavaMatka.aikaMin / 60
                         );
-                    
+
                     const pyydettyAikaMinuutit =
                         Math.round(
                             laskelma.kuljetettavaMatka.aikaMin % 60
                         );
-                    
+
                     const pyydettyAikaTeksti =
                         pyydettyAikaTunnit > 0
                             ? pyydettyAikaTunnit +
@@ -1494,7 +1494,8 @@ function haeKyytipyynnot() {
                                 " min"
                             : pyydettyAikaMinuutit +
                                 " min";
-                    
+
+
                     const lahtokaupunki =
                         haeKaupunkiTaiKunta(
                             pyynto.matkustajanLahtopaikka
@@ -1504,6 +1505,20 @@ function haeKyytipyynnot() {
                         haeKaupunkiTaiKunta(
                             pyynto.matkustajanMaaranpaa
                         );
+
+                    const lahtoOsoite =
+                        pyynto.matkustajanLahtopaikka
+                            .split(",")
+                            .slice(0, -1)
+                            .join(",")
+                            .trim();
+
+                    const maaranpaaOsoite =
+                        pyynto.matkustajanMaaranpaa
+                            .split(",")
+                            .slice(0, -1)
+                            .join(",")
+                            .trim();
 
                     const osoitetiedotNakyvissa =
                         laajatOsoitetiedot.has(
@@ -1533,15 +1548,15 @@ function haeKyytipyynnot() {
 
                         <div
                             id="osoitteetLaaja-${laskelma.id}"
-                            style="display: ${osoitetiedotNakyvissa ? "block" : "none"};"
+                            style="display: ${osoitetiedotNakyvissa ? "inline" : "none"};"
                         >
-                            📍 ${pyynto.matkustajanLahtopaikka}
-                        
+                            📍 ${lahtoOsoite}, <b>${lahtokaupunki}</b>
+
                             <br>
-                            🏁 ${pyynto.matkustajanMaaranpaa}
-                        
+                            🏁 ${maaranpaaOsoite}, <b>${maaranpaakaupunki}</b>
+
                             <br>
-                        
+
                             <button
                                 onclick="piilotaOsoitetiedot('${laskelma.id}')"
                             >
@@ -1559,7 +1574,7 @@ function haeKyytipyynnot() {
                         <br>
                         +${laskelma.lisamatkaKm.toFixed(1)} km
                         (${reittiABMatkaKm.toFixed(1)} → ${laskelma.reittiACDB.matkaKm.toFixed(1)} km)
-                        
+
                         <br>
                         +${lisaAikaTeksti}
                         (${omaReittiAikaTeksti} → ${kokonaisAikaTeksti})
@@ -1568,15 +1583,15 @@ function haeKyytipyynnot() {
                         <b>Pyydetyn matkan pituus:</b>
                         ${laskelma.kuljetettavaMatka.matkaKm.toFixed(1)} km /
                         ${pyydettyAikaTeksti}
-                        
+
                         <br><br>
-                        
+
                         <b>Noutopaikkaan:</b>
                         ${laskelma.matkaNoutopaikalle.matkaKm.toFixed(1)} km /
                         ${noutoaikaTeksti}
-                        
+
                         <br>
-                        
+
                         <button
                             onclick="olenPaikalla('${laskelma.id}')"
                         >

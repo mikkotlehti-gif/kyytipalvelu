@@ -1535,16 +1535,13 @@ function haeKyytipyynnot() {
                             id="osoitteetLaaja-${laskelma.id}"
                             style="display: ${osoitetiedotNakyvissa ? "block" : "none"};"
                         >
+                            📍 ${pyynto.matkustajanLahtopaikka}
+                        
                             <br>
-                            ${pyynto.matkustajanLahtopaikka}
-                            (${laskelma.matkaNoutopaikalle.matkaKm.toFixed(1)} km /
-                            ${noutoaikaTeksti})
-
+                            🏁 ${pyynto.matkustajanMaaranpaa}
+                        
                             <br>
-                            ${pyynto.matkustajanMaaranpaa}
-
-                            <br>
-
+                        
                             <button
                                 onclick="piilotaOsoitetiedot('${laskelma.id}')"
                             >
@@ -1567,6 +1564,7 @@ function haeKyytipyynnot() {
                         +${lisaAikaTeksti}
                         (${omaReittiAikaTeksti} → ${kokonaisAikaTeksti})
 
+                        <br>
                         <b>Pyydetyn matkan pituus:</b>
                         ${laskelma.kuljetettavaMatka.matkaKm.toFixed(1)} km /
                         ${pyydettyAikaTeksti}

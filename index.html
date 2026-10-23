@@ -1386,6 +1386,15 @@ function haeKyytipyynnot() {
                             laskelma.matkaNoutopaikalle.aikaMin % 60
                         );
 
+                    const noutoaikaTeksti =
+                        noutoaikaTunnit > 0
+                            ? noutoaikaTunnit +
+                                " h " +
+                                noutoaikaMinuutit +
+                                " min"
+                            : noutoaikaMinuutit +
+                                " min";
+
                     const lahtokaupunki =
                         haeKaupunkiTaiKunta(
                             pyynto.matkustajanLahtopaikka
@@ -1411,7 +1420,6 @@ function haeKyytipyynnot() {
                             id="osoitteetTiivis-${laskelma.id}"
                             style="display: ${osoitetiedotNakyvissa ? "none" : "block"};"
                         >
-                            <br>
                             <b>${lahtokaupunki} → ${maaranpaakaupunki}</b>
 
                             <br>
@@ -1430,8 +1438,7 @@ function haeKyytipyynnot() {
                             <br>
                             ${pyynto.matkustajanLahtopaikka}
                             (${laskelma.matkaNoutopaikalle.matkaKm.toFixed(1)} km /
-                            ${noutoaikaTunnit} h
-                            ${noutoaikaMinuutit} min)
+                            ${noutoaikaTeksti})
 
                             <br>
                             ${pyynto.matkustajanMaaranpaa}
@@ -1461,11 +1468,18 @@ function haeKyytipyynnot() {
                         (${reittiABAikaMin.toFixed(0)}→${laskelma.reittiACDB.aikaMin.toFixed(0)} min)
 
                         <br><b>Pyydetyn matkan pituus:</b>
+                        <br><b>Pyydetyn matkan pituus:</b>
                         ${laskelma.kuljetettavaMatka.matkaKm.toFixed(1)} km /
                         ${laskelma.kuljetettavaMatka.aikaMin.toFixed(0)} min
-
+                        
                         <br><br>
-
+                        
+                        <b>Noutopaikkaan:</b>
+                        ${laskelma.matkaNoutopaikalle.matkaKm.toFixed(1)} km /
+                        ${noutoaikaTeksti}
+                        
+                        <br>
+                        
                         <button
                             onclick="olenPaikalla('${laskelma.id}')"
                         >

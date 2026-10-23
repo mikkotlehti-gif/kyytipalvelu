@@ -1331,6 +1331,16 @@ function haeKyytipyynnot() {
                     const pyynto =
                         laskelma.pyynto;
 
+                    const noutoaikaTunnit =
+                        Math.floor(
+                            laskelma.matkaNoutopaikalle.aikaMin / 60
+                        );
+
+                    const noutoaikaMinuutit =
+                        Math.round(
+                            laskelma.matkaNoutopaikalle.aikaMin % 60
+                        );
+
                     html += `
                         <hr>
 
@@ -1341,14 +1351,11 @@ function haeKyytipyynnot() {
                         <br><b>Lähtöpaikka:</b>
                         ${pyynto.matkustajanLahtopaikka}
                         (${laskelma.matkaNoutopaikalle.matkaKm.toFixed(1)} km /
-                        ${laskelma.matkaNoutopaikalle.aikaMin.toFixed(0)} min)
+                        ${noutoaikaTunnit} h
+                        ${noutoaikaMinuutit} min)
 
                         <br><b>Määränpää:</b>
                         ${pyynto.matkustajanMaaranpaa}
-
-                        <br><b>Matka:</b>
-                        ${laskelma.kuljetettavaMatka.matkaKm.toFixed(1)} km /
-                        ${laskelma.kuljetettavaMatka.aikaMin.toFixed(0)} min
 
                         <br><br>
 
@@ -1358,9 +1365,15 @@ function haeKyytipyynnot() {
 
                         <br><b>Vaikutus matkasi pituuteen:</b>
                         <br>
-                        +${laskelma.lisamatkaKm.toFixed(1)} km (${reittiABMatkaKm.toFixed(1)}→${laskelma.reittiACDB.matkaKm.toFixed(1)} km)
+                        +${laskelma.lisamatkaKm.toFixed(1)} km
+                        (${reittiABMatkaKm.toFixed(1)}→${laskelma.reittiACDB.matkaKm.toFixed(1)} km)
                         <br>
-                        +${laskelma.lisaaikaMin.toFixed(0)} min (${reittiABAikaMin.toFixed(0)}→${laskelma.reittiACDB.aikaMin.toFixed(0)} min)
+                        +${laskelma.lisaaikaMin.toFixed(0)} min
+                        (${reittiABAikaMin.toFixed(0)}→${laskelma.reittiACDB.aikaMin.toFixed(0)} min)
+
+                        <br><b>Pyydetyn matkan pituus:</b>
+                        ${laskelma.kuljetettavaMatka.matkaKm.toFixed(1)} km /
+                        ${laskelma.kuljetettavaMatka.aikaMin.toFixed(0)} min
 
                         <br><br>
 

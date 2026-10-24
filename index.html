@@ -101,19 +101,18 @@
 >
     📍 <span id="tarjoajanValittuMaaranpaaTeksti"></span>
 
-    <br>
-    <span
-        id="tarjoajanValittuReitti"
-        style="margin-left: 24px;"
-    ></span>
-    
-    <br>
-    
     <button
         onclick="vaihdaTarjoajanMaaranpaa()"
     >
         Vaihda
     </button>
+
+    <br>
+
+    <span
+        id="tarjoajanValittuReitti"
+        style="margin-left: 24px;"
+    ></span>
 </div>
 
 <br>
@@ -142,7 +141,7 @@
     type="datetime-local"
 >
 
-<br><br>
+<br>
 
 <p id="reittiAB"></p>
 
@@ -409,8 +408,6 @@ var matkustajanMaaranpaaLongitude = null;
  */
 
 var tarjoaKyytia = false;
-
-var tarjoaminenAloitettu = "";
 
 var autonTuntomerkki = "";
 
@@ -1359,10 +1356,6 @@ if (autonTuntomerkki == "") {
         }
     }
 
-
-    tarjoaminenAloitettu =
-        new Date().toLocaleString();
-
     haeKyytipyynnot();
 
     tarjoaKyytia = true;
@@ -2288,13 +2281,12 @@ async function laskeReittiAB() {
         reittiABMatkaKm.toFixed(1) +
         " km / " +
         reittiABAikaTeksti;
-    
+        
     document.getElementById(
         "reittiAB"
     ).innerHTML =
-        "<b>Kyytien etsiminen on päällä (" +
-        tarjoaminenAloitettu +
-        ")</b>";
+        "<b>Kyytien etsiminen on päällä</b>";
+
 }
 
 function laskeEtaisyysMetreina(

@@ -100,7 +100,7 @@
     onclick="lopetaTarjoaminen()"
     disabled
 >
-    Lopeta kyydin tarjoaminen
+    Lopeta kyytien etsiminen
 </button>
 
 <h3>Kyytipyyntöjen suodatus</h3>
@@ -268,7 +268,7 @@
 <br><br>
 
 <b>Kyytipyynnöt:</b>
-<span id="kyytipyyntojenMaara">0</span>
+<span id="kyytipyyntojenMaara">0/0</span>
 
 <div id="havaittukyytipyynto"></div>
 
@@ -397,6 +397,8 @@ var kyytipyyntojenReititPaivitettyViimeksi = 0;
 var sijaintiPaivitettyViimeksi = 0;
 
 var kyytipyyntojenHakuversio = 0;
+
+var aktiivistenKyytipyyntojenMaara = 0;
 
 var laajatOsoitetiedot =
     new Set();
@@ -805,7 +807,7 @@ async function etsiTarjoajanMaaranpaa() {
             tulos.lon +
             "')\">" +
 
-            "Aloita kyydin tarjoaminen" +
+            "Aloita kyytipyyntöjen etsiminen" +
 
             "</button> " +
 
@@ -1285,6 +1287,12 @@ function lopetaTarjoaminen() {
         "havaittukyytipyynto"
     ).innerHTML = "";
 
+    document.getElementById(
+        "kyytipyyntojenMaara"
+    ).textContent =
+        aktiivistenKyytipyyntojenMaara +
+        "/" +
+        aktiivistenKyytipyyntojenMaara;
 
     document.getElementById(
         "autonTuntomerkki"
@@ -1517,6 +1525,9 @@ function haeKyytipyynnot() {
                 return;
             }
 
+            aktiivistenKyytipyyntojenMaara =
+                pyyntojenLaskelmat.length;
+            
             const suodatetutPyynnot =
                 pyyntojenLaskelmat.filter(
                     (laskelma) => {
@@ -1584,7 +1595,9 @@ function haeKyytipyynnot() {
             document.getElementById(
                 "kyytipyyntojenMaara"
             ).textContent =
-                suodatetutPyynnot.length;
+                suodatetutPyynnot.length +
+                "/" +
+                aktiivistenKyytipyyntojenMaara;
             
             let html = "";
 

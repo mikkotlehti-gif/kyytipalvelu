@@ -118,6 +118,17 @@
 
 <br>
 
+<label>
+        <input
+            id="tarjoajaJoMatkalla"
+            type="checkbox"
+            onchange="paivitaJoMatkalla()"
+        >
+    Olen jo matkalla
+</label>
+
+<br><br>
+
 <label for="tarjoajanLahtoAikaisintaan">
     Lähden aikaisintaan:
 </label>
@@ -1233,6 +1244,30 @@ async function peruKyytipyynto() {
  * Tarjoamisen aloittaminen
  */
 
+function paivitaJoMatkalla() {
+
+    const joMatkalla =
+        document.getElementById(
+            "tarjoajaJoMatkalla"
+        ).checked;
+
+    const lahtoKentta =
+        document.getElementById(
+            "tarjoajanLahtoAikaisintaan"
+        );
+
+    if (joMatkalla) {
+
+        lahtoKentta.value = "";
+
+        lahtoKentta.disabled = true;
+
+    } else {
+
+        lahtoKentta.disabled = false;
+    }
+}
+    
 async function aloitaTarjoaminen() {
 
     autonTuntomerkki =
@@ -1240,34 +1275,41 @@ async function aloitaTarjoaminen() {
             "autonTuntomerkki"
         ).value;
 
-    tarjoajanLahtoAikaisintaan =
+    const tarjoajaJoMatkalla =
         document.getElementById(
-            "tarjoajanLahtoAikaisintaan"
+            "tarjoajaJoMatkalla"
+        ).checked;
+
+    tarjoajanLahtoAikaisintaan =
+        tarjoajaJoMatkalla
+            ? null
+            : document.getElementById(
+                "tarjoajanLahtoAikaisintaan"
+            ).value || null;
+
+    tarjoajanPerillaViimeistaan =
+        document.getElementById(
+            "tarjoajanPerillaViimeistaan"
         ).value || null;
 
-tarjoajanPerillaViimeistaan =
-    document.getElementById(
-        "tarjoajanPerillaViimeistaan"
-    ).value || null;
+
+    if (
+        tarjoajanLahtoAikaisintaan &&
+        new Date(
+            tarjoajanLahtoAikaisintaan
+        ).getTime() <
+            Date.now()
+    ) {
+
+        alert(
+            "Lähden aikaisintaan ei voi olla menneisyydessä."
+        );
+
+        return;
+    }
 
 
-if (
-    tarjoajanLahtoAikaisintaan &&
-    new Date(
-        tarjoajanLahtoAikaisintaan
-    ).getTime() <
-        Date.now()
-) {
-
-    alert(
-        "Lähden aikaisintaan ei voi olla menneisyydessä."
-    );
-
-    return;
-}
-
-
-if (autonTuntomerkki == "") {
+    if (autonTuntomerkki == "") {
 
         alert(
             "Anna auton tuntomerkki"
@@ -1318,10 +1360,12 @@ if (autonTuntomerkki == "") {
             : nykyinenAikaMs;
 
     const todellinenLahtoaikaMs =
-        Math.max(
-            nykyinenAikaMs,
-            annettuLahtoaikaMs
-        );
+        tarjoajaJoMatkalla
+            ? nykyinenAikaMs
+            : Math.max(
+                nykyinenAikaMs,
+                annettuLahtoaikaMs
+            );
 
     const omanMatkanKestoMs =
         reittiABAikaMin *
@@ -1357,6 +1401,7 @@ if (autonTuntomerkki == "") {
         }
     }
 
+
     haeKyytipyynnot();
 
     tarjoaKyytia = true;
@@ -1365,7 +1410,7 @@ if (autonTuntomerkki == "") {
     document.getElementById(
         "aloitaKyytienEtsiminenNappi"
     ).style.display = "none";
-    
+
     document.getElementById(
         "lopetatarjoaminen"
     ).style.display = "inline-block";
@@ -1414,6 +1459,10 @@ if (autonTuntomerkki == "") {
 
     document.getElementById(
         "vaihdaTarjoajanMaaranpaaNappi"
+    ).disabled = true;
+
+    document.getElementById(
+        "tarjoajaJoMatkalla"
     ).disabled = true;
 
     document.getElementById(
@@ -2799,5 +2848,8 @@ window.tyhjennaKaikkiSuodattimet =
 
 window.vaihdaTarjoajanMaaranpaa =
     vaihdaTarjoajanMaaranpaa;
+
+window.paivitaJoMatkalla =
+    paivitaJoMatkalla;
     
 </script>

@@ -133,6 +133,12 @@
     disabled
 >
 
+<button
+    onclick="tyhjennaSuodatinpari('noutomatkaRajaKm', 'noutoaikaRajaMin')"
+>
+    Tyhjennä
+</button>
+
 <br><br>
 
 <label>
@@ -162,6 +168,12 @@
     oninput="this.value = this.value.replace(/\D/g, ''); paivitaSuodataNappi();"
     disabled
 >
+
+<button
+    onclick="tyhjennaSuodatinpari('lisamatkaRajaKm', 'lisaaikaRajaMin')"
+>
+    Tyhjennä
+</button>
 
 <br><br>
 
@@ -193,6 +205,12 @@
     disabled
 >
 
+<button
+    onclick="tyhjennaSuodatinpari('pyydettyMatkaRajaKm', 'pyydettyAikaRajaMin')"
+>
+    Tyhjennä
+</button>
+
 <br><br>
 
 <label>
@@ -223,6 +241,22 @@
     disabled
 >
 
+<button
+    onclick="tyhjennaSuodatinpari('kokonaismatkaRajaKm', 'kokonaisaikaRajaMin')"
+>
+    Tyhjennä
+</button>
+
+<br><br>
+
+<br><br>
+
+<button
+    onclick="tyhjennaKaikkiSuodattimet()"
+>
+    Tyhjennä kaikki suodattimet
+</button>
+
 <br><br>
 
 <button
@@ -238,7 +272,7 @@
     onclick="poistaSuodatus()"
     disabled
 >
-    Poista suodatus
+    Lopeta/Muokkaa suodatusta
 </button>
 
 <div id="havaittukyytipyynto"></div>
@@ -2236,6 +2270,59 @@ function paivitaSuodataNappi() {
         !tarjoaKyytia ||
         kaikkiTyhjia;
 }
+
+function tyhjennaSuodatinpari(
+    matkaKenttaId,
+    aikaKenttaId
+) {
+
+    document.getElementById(
+        matkaKenttaId
+    ).value = "";
+
+    document.getElementById(
+        aikaKenttaId
+    ).value = "";
+
+    paivitaSuodataNappi();
+}
+
+function tyhjennaKaikkiSuodattimet() {
+
+    document.getElementById(
+        "noutomatkaRajaKm"
+    ).value = "";
+
+    document.getElementById(
+        "noutoaikaRajaMin"
+    ).value = "";
+
+    document.getElementById(
+        "lisamatkaRajaKm"
+    ).value = "";
+
+    document.getElementById(
+        "lisaaikaRajaMin"
+    ).value = "";
+
+    document.getElementById(
+        "pyydettyMatkaRajaKm"
+    ).value = "";
+
+    document.getElementById(
+        "pyydettyAikaRajaMin"
+    ).value = "";
+
+    document.getElementById(
+        "kokonaismatkaRajaKm"
+    ).value = "";
+
+    document.getElementById(
+        "kokonaisaikaRajaMin"
+    ).value = "";
+
+    paivitaSuodataNappi();
+}
     
 function suodataKyytipyynnot() {
 
@@ -2484,5 +2571,11 @@ window.naytaOsoitetiedot =
 
 window.piilotaOsoitetiedot =
     piilotaOsoitetiedot;
+
+window.tyhjennaSuodatinpari =
+    tyhjennaSuodatinpari;
+
+window.tyhjennaKaikkiSuodattimet =
+    tyhjennaKaikkiSuodattimet;
     
 </script>

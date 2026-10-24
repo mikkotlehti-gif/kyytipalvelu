@@ -117,7 +117,7 @@
     inputmode="numeric"
     maxlength="3"
     style="width: 45px;"
-    oninput="this.value = this.value.replace(/\D/g, ''); paivitaSuodataNappi();"
+    oninput="this.value = this.value.replace(/\D/g, ''); paivitaSuodatus();"
     disabled
 >
 
@@ -129,7 +129,7 @@
     inputmode="numeric"
     maxlength="3"
     style="width: 45px;"
-    oninput="this.value = this.value.replace(/\D/g, ''); paivitaSuodataNappi();"
+    oninput="this.value = this.value.replace(/\D/g, ''); paivitaSuodatus();"
     disabled
 >
 
@@ -155,7 +155,7 @@
     inputmode="numeric"
     maxlength="3"
     style="width: 45px;"
-    oninput="this.value = this.value.replace(/\D/g, ''); paivitaSuodataNappi();"
+    oninput="this.value = this.value.replace(/\D/g, ''); paivitaSuodatus();"
     disabled
 >
 
@@ -167,7 +167,7 @@
     inputmode="numeric"
     maxlength="3"
     style="width: 45px;"
-    oninput="this.value = this.value.replace(/\D/g, ''); paivitaSuodataNappi();"
+    oninput="this.value = this.value.replace(/\D/g, ''); paivitaSuodatus();"
     disabled
 >
 
@@ -193,7 +193,7 @@
     inputmode="numeric"
     maxlength="3"
     style="width: 45px;"
-    oninput="this.value = this.value.replace(/\D/g, ''); paivitaSuodataNappi();"
+    oninput="this.value = this.value.replace(/\D/g, ''); paivitaSuodatus();"
     disabled
 >
 
@@ -205,7 +205,7 @@
     inputmode="numeric"
     maxlength="3"
     style="width: 45px;"
-    oninput="this.value = this.value.replace(/\D/g, ''); paivitaSuodataNappi();"
+    oninput="this.value = this.value.replace(/\D/g, ''); paivitaSuodatus();"
     disabled
 >
 
@@ -231,7 +231,7 @@
     inputmode="numeric"
     maxlength="3"
     style="width: 45px;"
-    oninput="this.value = this.value.replace(/\D/g, ''); paivitaSuodataNappi();"
+    oninput="this.value = this.value.replace(/\D/g, ''); paivitaSuodatus();"
     disabled
 >
 
@@ -243,7 +243,7 @@
     inputmode="numeric"
     maxlength="3"
     style="width: 45px;"
-    oninput="this.value = this.value.replace(/\D/g, ''); paivitaSuodataNappi();"
+    oninput="this.value = this.value.replace(/\D/g, ''); paivitaSuodatus();"
     disabled
 >
 
@@ -266,22 +266,6 @@
 </button>
 
 <br><br>
-
-<button
-    id="suodataNappi"
-    onclick="suodataKyytipyynnot()"
-    disabled
->
-    Suodata
-</button>
-
-<button
-    id="poistaSuodatusNappi"
-    onclick="poistaSuodatus()"
-    disabled
->
-    Lopeta/Muokkaa suodatusta
-</button>
 
 <div id="havaittukyytipyynto"></div>
 
@@ -1171,8 +1155,6 @@ async function aloitaTarjoaminen() {
     document.getElementById(
         "lopetatarjoaminen"
     ).disabled = false;
-
-    paivitaSuodataNappi();
     
     document.getElementById(
         "noutomatkaRajaKm"
@@ -1275,16 +1257,6 @@ function lopetaTarjoaminen() {
     document.getElementById(
         "kokonaisaikaRajaMin"
     ).disabled = true;
-
-
-    document.getElementById(
-        "suodataNappi"
-    ).disabled = true;
-
-    document.getElementById(
-        "poistaSuodatusNappi"
-    ).disabled = true;
-
 
     document.getElementById(
         "havaittukyytipyynto"
@@ -2303,12 +2275,6 @@ function paivitaSuodataNappi() {
     ).disabled =
         kaikkiTyhjia;
 
-
-    document.getElementById(
-        "suodataNappi"
-    ).disabled =
-        !tarjoaKyytia ||
-        kaikkiTyhjia;
 }
 
 function tyhjennaSuodatinpari(
@@ -2324,7 +2290,7 @@ function tyhjennaSuodatinpari(
         aikaKenttaId
     ).value = "";
 
-    paivitaSuodataNappi();
+    paivitaSuodatus();
 }
 
 function tyhjennaKaikkiSuodattimet() {
@@ -2361,10 +2327,10 @@ function tyhjennaKaikkiSuodattimet() {
         "kokonaisaikaRajaMin"
     ).value = "";
 
-    paivitaSuodataNappi();
+    paivitaSuodatus();
 }
     
-function suodataKyytipyynnot() {
+function paivitaSuodatus() {
 
     const noutomatkaArvo =
         document.getElementById(
@@ -2448,146 +2414,19 @@ function suodataKyytipyynnot() {
             : parseFloat(kokonaisaikaArvo);
 
 
-    document.getElementById(
-        "noutomatkaRajaKm"
-    ).disabled = true;
-
-    document.getElementById(
-        "noutoaikaRajaMin"
-    ).disabled = true;
-
-    document.getElementById(
-        "lisamatkaRajaKm"
-    ).disabled = true;
-
-    document.getElementById(
-        "lisaaikaRajaMin"
-    ).disabled = true;
-
-    document.getElementById(
-        "pyydettyMatkaRajaKm"
-    ).disabled = true;
-
-    document.getElementById(
-        "pyydettyAikaRajaMin"
-    ).disabled = true;
-
-    document.getElementById(
-        "kokonaismatkaRajaKm"
-    ).disabled = true;
-
-    document.getElementById(
-        "kokonaisaikaRajaMin"
-    ).disabled = true;
-    
-    document.getElementById(
-        "tyhjennaNoutopaikkaNappi"
-    ).disabled = true;
-    
-    document.getElementById(
-        "tyhjennaLisamatkaNappi"
-    ).disabled = true;
-    
-    document.getElementById(
-        "tyhjennaPyydettyMatkaNappi"
-    ).disabled = true;
-    
-    document.getElementById(
-        "tyhjennaKokonaismatkaNappi"
-    ).disabled = true;
-    
-    document.getElementById(
-        "tyhjennaKaikkiSuodattimetNappi"
-    ).disabled = true;
-
-    document.getElementById(
-        "suodataNappi"
-    ).disabled = true;
-
-    document.getElementById(
-        "poistaSuodatusNappi"
-    ).disabled = false;
-
-
-    if (unsubscribeKyytipyynnot) {
-
-        unsubscribeKyytipyynnot();
-
-        unsubscribeKyytipyynnot = null;
-    }
-
-    haeKyytipyynnot();
-}
-
-function poistaSuodatus() {
-
-    noutomatkaRajaKm = null;
-
-    noutoaikaRajaMin = null;
-
-    lisamatkaRajaKm = null;
-
-    lisaaikaRajaMin = null;
-
-    pyydettyMatkaRajaKm = null;
-
-    pyydettyAikaRajaMin = null;
-
-    kokonaismatkaRajaKm = null;
-
-    kokonaisaikaRajaMin = null;
-
-
-    document.getElementById(
-        "noutomatkaRajaKm"
-    ).disabled = false;
-
-    document.getElementById(
-        "noutoaikaRajaMin"
-    ).disabled = false;
-
-    document.getElementById(
-        "lisamatkaRajaKm"
-    ).disabled = false;
-
-    document.getElementById(
-        "lisaaikaRajaMin"
-    ).disabled = false;
-
-    document.getElementById(
-        "pyydettyMatkaRajaKm"
-    ).disabled = false;
-
-    document.getElementById(
-        "pyydettyAikaRajaMin"
-    ).disabled = false;
-
-    document.getElementById(
-        "kokonaismatkaRajaKm"
-    ).disabled = false;
-
-    document.getElementById(
-        "kokonaisaikaRajaMin"
-    ).disabled = false;
-
-
     paivitaSuodataNappi();
 
-    document.getElementById(
-        "poistaSuodatusNappi"
-    ).disabled = true;
-
-
     if (unsubscribeKyytipyynnot) {
 
         unsubscribeKyytipyynnot();
 
-        unsubscribeKyytipyynnot = null;
+        unsubscribeKyytipyynnot =
+            null;
     }
 
     haeKyytipyynnot();
 }
-    
+ 
 /*
  * Moduulin funktiot HTML:n onclick-kutsuille
  */
@@ -2616,14 +2455,11 @@ window.olenPaikalla =
 window.hylkaaKyyti =
     hylkaaKyyti;
 
-window.suodataKyytipyynnot =
-    suodataKyytipyynnot;
-
-window.poistaSuodatus =
-    poistaSuodatus;
-
 window.paivitaSuodataNappi =
     paivitaSuodataNappi;
+
+window.paivitaSuodatus =
+    paivitaSuodatus;
 
 window.naytaOsoitetiedot =
     naytaOsoitetiedot;

@@ -97,12 +97,18 @@
 
 <div
     id="tarjoajanValittuMaaranpaa"
-    style="display: none; margin-top: 5px;"
+    style="display: none; margin-top: 10px;"
 >
     📍 <span id="tarjoajanValittuMaaranpaaTeksti"></span>
 
     <br>
-
+    <span
+        id="tarjoajanValittuReitti"
+        style="margin-left: 24px;"
+    ></span>
+    
+    <br>
+    
     <button
         onclick="vaihdaTarjoajanMaaranpaa()"
     >
@@ -138,6 +144,8 @@
 
 <br><br>
 
+<p id="reittiAB"></p>
+
 <button
     id="aloitaKyytienEtsiminenNappi"
     onclick="aloitaTarjoaminen()"
@@ -146,14 +154,10 @@
     Aloita kyytien etsiminen
 </button>
 
-<br><br>
-
-<p id="reittiAB"></p>
-
 <button
     id="lopetatarjoaminen"
     onclick="lopetaTarjoaminen()"
-    disabled
+    style="display: none;"
 >
     Lopeta kyytien etsiminen
 </button>
@@ -914,6 +918,10 @@ async function valitseTarjoajanMaaranpaa(
     ).innerHTML = "";
 
     document.getElementById(
+        "aloitaKyytienEtsiminenNappi"
+    ).disabled = false;
+    
+    document.getElementById(
         "tarjoajanMaaranpaa"
     ).style.display = "none";
 
@@ -1361,8 +1369,12 @@ if (autonTuntomerkki == "") {
 
 
     document.getElementById(
+        "aloitaKyytienEtsiminenNappi"
+    ).style.display = "none";
+    
+    document.getElementById(
         "lopetatarjoaminen"
-    ).disabled = false;
+    ).style.display = "inline-block";
 
 
     document.getElementById(
@@ -1441,8 +1453,11 @@ function lopetaTarjoaminen() {
 
     document.getElementById(
         "lopetatarjoaminen"
-    ).disabled = true;
-
+    ).style.display = "none";
+    
+    document.getElementById(
+        "aloitaKyytienEtsiminenNappi"
+    ).style.display = "inline-block";
 
     document.getElementById(
         "noutomatkaRajaKm"
@@ -2258,22 +2273,28 @@ async function laskeReittiAB() {
             reittiABAikaMin % 60
         );
 
+    const reittiABAikaTeksti =
+        tunnit > 0
+            ? tunnit +
+                " h " +
+                minuutit +
+                " min"
+            : minuutit +
+                " min";
+    
+    document.getElementById(
+        "tarjoajanValittuReitti"
+    ).innerHTML =
+        reittiABMatkaKm.toFixed(1) +
+        " km / " +
+        reittiABAikaTeksti;
+    
     document.getElementById(
         "reittiAB"
     ).innerHTML =
-"<b>Kyytien etsiminen on päällä (" +
-tarjoaminenAloitettu +
-")</b>" +
-
-        "<br>Määränpää: " +
-        tarjoajanMaaranpaa +
-        " (" +
-        reittiABMatkaKm.toFixed(1) +
-        " km, " +
-        tunnit +
-        " h " +
-        minuutit +
-        " min)";
+        "<b>Kyytien etsiminen on päällä (" +
+        tarjoaminenAloitettu +
+        ")</b>";
 }
 
 function laskeEtaisyysMetreina(

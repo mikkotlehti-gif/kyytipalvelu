@@ -121,6 +121,7 @@
 <button
     id="aloitaKyytienEtsiminenNappi"
     onclick="aloitaTarjoaminen()"
+    disabled
 >
     Aloita kyytien etsiminen
 </button>
@@ -131,6 +132,21 @@
     id="tarjoajanMaaranpaaHakutulokset"
     style="margin-top: 10px;"
 ></div>
+
+<div
+    id="tarjoajanValittuMaaranpaa"
+    style="display: none; margin-top: 10px;"
+>
+    📍 <span id="tarjoajanValittuMaaranpaaTeksti"></span>
+
+    <br>
+
+    <button
+        onclick="vaihdaTarjoajanMaaranpaa()"
+    >
+        Vaihda
+    </button>
+</div>
 
 <p id="reittiAB"></p>
 
@@ -838,7 +854,6 @@ async function etsiTarjoajanMaaranpaa() {
                 osoiteTeksti
             );
 
-        html +=
 html +=
     "<div style='margin-bottom: 16px;'>" +
 
@@ -890,9 +905,70 @@ async function valitseTarjoajanMaaranpaa(
         tarjoajanMaaranpaa;
 
     document.getElementById(
+        "tarjoajanValittuMaaranpaaTeksti"
+    ).textContent =
+        tarjoajanMaaranpaa;
+
+    document.getElementById(
         "tarjoajanMaaranpaaHakutulokset"
     ).innerHTML = "";
 
+    document.getElementById(
+        "tarjoajanMaaranpaa"
+    ).style.display = "none";
+
+    document.getElementById(
+        "etsiTarjoajanMaaranpaaNappi"
+    ).style.display = "none";
+
+    document.getElementById(
+        "tarjoajanValittuMaaranpaa"
+    ).style.display = "block";
+
+    document.getElementById(
+        "aloitaKyytienEtsiminenNappi"
+    ).disabled = false;
+}
+
+function vaihdaTarjoajanMaaranpaa() {
+
+    tarjoajanMaaranpaa = "";
+
+    tarjoajanMaaranpaaLatitude = null;
+
+    tarjoajanMaaranpaaLongitude = null;
+
+    document.getElementById(
+        "tarjoajanValittuMaaranpaa"
+    ).style.display = "none";
+
+    document.getElementById(
+        "tarjoajanMaaranpaa"
+    ).style.display = "";
+
+    document.getElementById(
+        "tarjoajanMaaranpaa"
+    ).value = "";
+
+    document.getElementById(
+        "etsiTarjoajanMaaranpaaNappi"
+    ).style.display = "";
+
+    document.getElementById(
+        "etsiTarjoajanMaaranpaaNappi"
+    ).disabled = true;
+
+    document.getElementById(
+        "tarjoajanMaaranpaaHakutulokset"
+    ).innerHTML = "";
+
+    document.getElementById(
+        "aloitaKyytienEtsiminenNappi"
+    ).disabled = true;
+
+    document.getElementById(
+        "tarjoajanMaaranpaa"
+    ).focus();
 }
     
 async function valitseMaaranpaa(
@@ -2699,5 +2775,8 @@ window.tyhjennaSuodatinpari =
 
 window.tyhjennaKaikkiSuodattimet =
     tyhjennaKaikkiSuodattimet;
+
+window.vaihdaTarjoajanMaaranpaa =
+    vaihdaTarjoajanMaaranpaa;
     
 </script>

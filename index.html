@@ -307,6 +307,7 @@ const db = getFirestore(app);
 
 console.log("Firebase OK");
 
+kuunteleKyytipyyntojenKokonaismaaraa();
 
 /*
  * Käyttäjän nykyinen GPS-sijainti
@@ -1427,7 +1428,41 @@ function piilotaOsoitetiedot(id) {
         "osoitteetTiivis-" + id
     ).style.display = "block";
 }
-    
+
+function kuunteleKyytipyyntojenKokonaismaaraa() {
+
+    const aktiivisetPyynnot = query(
+        collection(
+            db,
+            "kyytipyynnot"
+        ),
+        where(
+            "status",
+            "==",
+            "aktiivinen"
+        )
+    );
+
+    onSnapshot(
+        aktiivisetPyynnot,
+
+        (snapshot) => {
+
+            aktiivistenKyytipyyntojenMaara =
+                snapshot.size;
+
+            if (!tarjoaKyytia) {
+
+                document.getElementById(
+                    "kyytipyyntojenMaara"
+                ).textContent =
+                    "0/" +
+                    aktiivistenKyytipyyntojenMaara;
+            }
+        }
+    );
+}
+  
 function haeKyytipyynnot() {
 
     kyytipyyntojenHakuversio++;

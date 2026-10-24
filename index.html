@@ -1289,8 +1289,31 @@ async function aloitaTarjoaminen() {
         document.getElementById(
             "tarjoajanPerillaViimeistaan"
         ).value || null;
-
-
+    
+    
+    if (
+        !tarjoajaJoMatkalla &&
+        !tarjoajanLahtoAikaisintaan
+    ) {
+    
+        alert(
+            "Anna Haluan lähteä aikaisintaan -aika tai valitse Olen jo matkalla."
+        );
+    
+        return;
+    }
+    
+    
+    if (!tarjoajanPerillaViimeistaan) {
+    
+        alert(
+            "Anna Haluan olla perillä viimeistään -aika."
+        );
+    
+        return;
+    }
+    
+    
     if (
         tarjoajanLahtoAikaisintaan &&
         new Date(
@@ -1298,11 +1321,11 @@ async function aloitaTarjoaminen() {
         ).getTime() <
             Date.now()
     ) {
-
+    
         alert(
-            "Lähden aikaisintaan ei voi olla menneisyydessä."
+            "Haluan lähteä aikaisintaan -aika ei voi olla menneisyydessä."
         );
-
+    
         return;
     }
 
@@ -1536,7 +1559,6 @@ function lopetaTarjoaminen() {
         "kokonaisaikaRajaMin"
     ).disabled = true;
 
-
     document.getElementById(
         "tyhjennaNoutopaikkaNappi"
     ).disabled = true;
@@ -1557,7 +1579,6 @@ function lopetaTarjoaminen() {
         "tyhjennaKaikkiSuodattimetNappi"
     ).disabled = true;
 
-
     document.getElementById(
         "havaittukyytipyynto"
     ).innerHTML = "";
@@ -1568,23 +1589,13 @@ function lopetaTarjoaminen() {
         "0/" +
         aktiivistenKyytipyyntojenMaara;
 
-
     document.getElementById(
         "autonTuntomerkki"
     ).disabled = false;
 
     document.getElementById(
-        "autonTuntomerkki"
-    ).value = "";
-
-
-    document.getElementById(
         "tarjoajanMaaranpaa"
     ).disabled = false;
-
-    document.getElementById(
-        "tarjoajanMaaranpaa"
-    ).value = "";
 
     document.getElementById(
         "vaihdaTarjoajanMaaranpaaNappi"
@@ -1597,7 +1608,6 @@ function lopetaTarjoaminen() {
     document.getElementById(
         "tarjoajanPerillaViimeistaan"
     ).disabled = false;
-
 
     document.getElementById(
         "etsiTarjoajanMaaranpaaNappi"
@@ -1613,13 +1623,6 @@ function lopetaTarjoaminen() {
 
 
     autonTuntomerkki = "";
-
-    tarjoajanMaaranpaa = "";
-
-    tarjoajanMaaranpaaLatitude = null;
-
-    tarjoajanMaaranpaaLongitude = null;
-
 
     noutomatkaRajaKm = null;
 

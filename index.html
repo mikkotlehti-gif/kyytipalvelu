@@ -102,6 +102,7 @@
     📍 <span id="tarjoajanValittuMaaranpaaTeksti"></span>
 
     <button
+        id="vaihdaTarjoajanMaaranpaaNappi"
         onclick="vaihdaTarjoajanMaaranpaa()"
     >
         Vaihda
@@ -1412,6 +1413,10 @@ if (autonTuntomerkki == "") {
     ).disabled = true;
 
     document.getElementById(
+        "vaihdaTarjoajanMaaranpaaNappi"
+    ).disabled = true;
+
+    document.getElementById(
         "tarjoajanLahtoAikaisintaan"
     ).disabled = true;
 
@@ -1534,6 +1539,9 @@ function lopetaTarjoaminen() {
         "tarjoajanMaaranpaa"
     ).value = "";
 
+    document.getElementById(
+        "vaihdaTarjoajanMaaranpaaNappi"
+    ).disabled = false;
 
     document.getElementById(
         "tarjoajanLahtoAikaisintaan"

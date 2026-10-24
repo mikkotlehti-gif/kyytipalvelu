@@ -90,6 +90,48 @@
     Etsi määränpää
 </button>
 
+<br><br>
+
+<label>
+    Lähden:
+</label>
+
+<br>
+
+<input
+    id="tarjoajanLahtoAikaisintaan"
+    type="datetime-local"
+>
+
+–
+
+<input
+    id="tarjoajanLahtoViimeistaan"
+    type="datetime-local"
+>
+
+<br><br>
+
+<label>
+    Saavun:
+</label>
+
+<br>
+
+<input
+    id="tarjoajanSaapuminenAikaisintaan"
+    type="datetime-local"
+>
+
+–
+
+<input
+    id="tarjoajanSaapuminenViimeistaan"
+    type="datetime-local"
+>
+
+<br><br>
+
 <div
     id="tarjoajanMaaranpaaHakutulokset"
     style="margin-top: 10px;"
@@ -362,6 +404,14 @@ var tarjoajanMaaranpaa = "";
 var tarjoajanMaaranpaaLatitude = null;
 
 var tarjoajanMaaranpaaLongitude = null;
+
+var tarjoajanLahtoAikaisintaan = null;
+
+var tarjoajanLahtoViimeistaan = null;
+
+var tarjoajanSaapuminenAikaisintaan = null;
+
+var tarjoajanSaapuminenViimeistaan = null;
 
 
 /*
@@ -1119,6 +1169,56 @@ async function aloitaTarjoaminen() {
             "autonTuntomerkki"
         ).value;
 
+    tarjoajanLahtoAikaisintaan =
+        document.getElementById(
+            "tarjoajanLahtoAikaisintaan"
+        ).value || null;
+
+    tarjoajanLahtoViimeistaan =
+        document.getElementById(
+            "tarjoajanLahtoViimeistaan"
+        ).value || null;
+
+    tarjoajanSaapuminenAikaisintaan =
+        document.getElementById(
+            "tarjoajanSaapuminenAikaisintaan"
+        ).value || null;
+
+    tarjoajanSaapuminenViimeistaan =
+        document.getElementById(
+            "tarjoajanSaapuminenViimeistaan"
+        ).value || null;
+
+
+    if (
+        tarjoajanLahtoAikaisintaan &&
+        tarjoajanLahtoViimeistaan &&
+        tarjoajanLahtoAikaisintaan >
+            tarjoajanLahtoViimeistaan
+    ) {
+
+        alert(
+            "Lähden aikaisintaan ei voi olla myöhemmin kuin Lähden viimeistään."
+        );
+
+        return;
+    }
+
+
+    if (
+        tarjoajanSaapuminenAikaisintaan &&
+        tarjoajanSaapuminenViimeistaan &&
+        tarjoajanSaapuminenAikaisintaan >
+            tarjoajanSaapuminenViimeistaan
+    ) {
+
+        alert(
+            "Saavun aikaisintaan ei voi olla myöhemmin kuin Saavun viimeistään."
+        );
+
+        return;
+    }
+
     if (autonTuntomerkki == "") {
 
         alert(
@@ -1127,6 +1227,7 @@ async function aloitaTarjoaminen() {
 
         return;
     }
+
 
     if (
         tarjoajanMaaranpaa == "" ||
@@ -1141,6 +1242,7 @@ async function aloitaTarjoaminen() {
         return;
     }
 
+
     if (
         kayttajanNykyinenLatitude == null ||
         kayttajanNykyinenLongitude == null
@@ -1153,51 +1255,119 @@ async function aloitaTarjoaminen() {
         return;
     }
 
+
     tarjoaminenAloitettu =
         new Date().toLocaleString();
 
     await laskeReittiAB();
-
+    
+    const omanMatkanKestoMs =
+        reittiABAikaMin *
+        60 *
+        1000;
+    
+    const lahtoAikaisintaanMs =
+        tarjoajanLahtoAikaisintaan
+            ? new Date(
+                tarjoajanLahtoAikaisintaan
+            ).getTime()
+            : -Infinity;
+    
+    const lahtoViimeistaanMs =
+        tarjoajanLahtoViimeistaan
+            ? new Date(
+                tarjoajanLahtoViimeistaan
+            ).getTime()
+            : Infinity;
+    
+    const saapuminenAikaisintaanMs =
+        tarjoajanSaapuminenAikaisintaan
+            ? new Date(
+                tarjoajanSaapuminenAikaisintaan
+            ).getTime()
+            : -Infinity;
+    
+    const saapuminenViimeistaanMs =
+        tarjoajanSaapuminenViimeistaan
+            ? new Date(
+                tarjoajanSaapuminenViimeistaan
+            ).getTime()
+            : Infinity;
+    
+    const mahdollinenLahtoAikaisintaanMs =
+        Math.max(
+            lahtoAikaisintaanMs,
+            saapuminenAikaisintaanMs -
+                omanMatkanKestoMs
+        );
+    
+    const mahdollinenLahtoViimeistaanMs =
+        Math.min(
+            lahtoViimeistaanMs,
+            saapuminenViimeistaanMs -
+                omanMatkanKestoMs
+        );
+    
+    if (
+        mahdollinenLahtoAikaisintaanMs >
+        mahdollinenLahtoViimeistaanMs
+    ) {
+    
+        document.getElementById(
+            "reittiAB"
+        ).innerHTML = "";
+    
+        alert(
+            "Lähtö- ja saapumisaikojen välillä ei ole riittävästi aikaa omaan matkaasi."
+        );
+    
+        return;
+    }
+    
     haeKyytipyynnot();
+
 
     tarjoaKyytia =
         true;
 
+
     document.getElementById(
         "lopetatarjoaminen"
     ).disabled = false;
-    
+
+
     document.getElementById(
         "noutomatkaRajaKm"
     ).disabled = false;
-    
+
     document.getElementById(
         "noutoaikaRajaMin"
     ).disabled = false;
-    
+
     document.getElementById(
         "lisamatkaRajaKm"
     ).disabled = false;
-    
+
     document.getElementById(
         "lisaaikaRajaMin"
     ).disabled = false;
-    
+
     document.getElementById(
         "pyydettyMatkaRajaKm"
     ).disabled = false;
-    
+
     document.getElementById(
         "pyydettyAikaRajaMin"
     ).disabled = false;
-    
+
     document.getElementById(
         "kokonaismatkaRajaKm"
     ).disabled = false;
-    
+
     document.getElementById(
         "kokonaisaikaRajaMin"
     ).disabled = false;
+
 
     document.getElementById(
         "autonTuntomerkki"
@@ -1214,6 +1384,23 @@ async function aloitaTarjoaminen() {
     document.getElementById(
         "tarjoajanMaaranpaaHakutulokset"
     ).innerHTML = "";
+
+    document.getElementById(
+        "tarjoajanLahtoAikaisintaan"
+    ).disabled = true;
+    
+    document.getElementById(
+        "tarjoajanLahtoViimeistaan"
+    ).disabled = true;
+    
+    document.getElementById(
+        "tarjoajanSaapuminenAikaisintaan"
+    ).disabled = true;
+    
+    document.getElementById(
+        "tarjoajanSaapuminenViimeistaan"
+    ).disabled = true;
+        
 }
 
 /*
@@ -1316,6 +1503,22 @@ function lopetaTarjoaminen() {
         "tarjoajanMaaranpaa"
     ).value = "";
 
+    document.getElementById(
+        "tarjoajanLahtoAikaisintaan"
+    ).disabled = false;
+    
+    document.getElementById(
+        "tarjoajanLahtoViimeistaan"
+    ).disabled = false;
+    
+    document.getElementById(
+        "tarjoajanSaapuminenAikaisintaan"
+    ).disabled = false;
+    
+    document.getElementById(
+        "tarjoajanSaapuminenViimeistaan"
+    ).disabled = false;
+    
     document.getElementById(
         "etsiTarjoajanMaaranpaaNappi"
     ).disabled = true;

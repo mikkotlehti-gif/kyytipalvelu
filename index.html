@@ -106,7 +106,7 @@
 <h3>Kyytipyyntöjen suodatus</h3>
 
 <label>
-    Reitiltä noutopaikkaan enint. (km/minuuttia):
+    Reitiltä noutopaikkaan enint. (km/min):
 </label>
 
 <br>
@@ -135,14 +135,86 @@
 
 <br><br>
 
-<label for="lisamatkaRajaKm">
-    Lisämatka enint. (km):
+<label>
+    Lisämatka enint. (km/min):
 </label>
 
 <br>
 
 <input
     id="lisamatkaRajaKm"
+    type="text"
+    inputmode="numeric"
+    maxlength="3"
+    style="width: 45px;"
+    oninput="this.value = this.value.replace(/\D/g, ''); paivitaSuodataNappi();"
+    disabled
+>
+
+/
+
+<input
+    id="lisaaikaRajaMin"
+    type="text"
+    inputmode="numeric"
+    maxlength="3"
+    style="width: 45px;"
+    oninput="this.value = this.value.replace(/\D/g, ''); paivitaSuodataNappi();"
+    disabled
+>
+
+<br><br>
+
+<label>
+    Pyydetyn matkan pituus enint. (km/min):
+</label>
+
+<br>
+
+<input
+    id="pyydettyMatkaRajaKm"
+    type="text"
+    inputmode="numeric"
+    maxlength="3"
+    style="width: 45px;"
+    oninput="this.value = this.value.replace(/\D/g, ''); paivitaSuodataNappi();"
+    disabled
+>
+
+/
+
+<input
+    id="pyydettyAikaRajaMin"
+    type="text"
+    inputmode="numeric"
+    maxlength="3"
+    style="width: 45px;"
+    oninput="this.value = this.value.replace(/\D/g, ''); paivitaSuodataNappi();"
+    disabled
+>
+
+<br><br>
+
+<label>
+    Kokonaismatkani pituus enint. (km/min):
+</label>
+
+<br>
+
+<input
+    id="kokonaismatkaRajaKm"
+    type="text"
+    inputmode="numeric"
+    maxlength="3"
+    style="width: 45px;"
+    oninput="this.value = this.value.replace(/\D/g, ''); paivitaSuodataNappi();"
+    disabled
+>
+
+/
+
+<input
+    id="kokonaisaikaRajaMin"
     type="text"
     inputmode="numeric"
     maxlength="3"
@@ -280,6 +352,16 @@ var noutomatkaRajaKm = null;
 var noutoaikaRajaMin = null;
 
 var lisamatkaRajaKm = null;
+
+var lisaaikaRajaMin = null;
+
+var pyydettyMatkaRajaKm = null;
+
+var pyydettyAikaRajaMin = null;
+
+var kokonaismatkaRajaKm = null;
+
+var kokonaisaikaRajaMin = null;
 
 var kyytipyyntojenReititPaivitettyViimeksi = 0;
 
@@ -1048,19 +1130,39 @@ async function aloitaTarjoaminen() {
         "lopetatarjoaminen"
     ).disabled = false;
 
-paivitaSuodataNappi();
-
+    paivitaSuodataNappi();
+    
     document.getElementById(
-    "noutomatkaRajaKm"
-).disabled = false;
-
-document.getElementById(
-    "noutoaikaRajaMin"
-).disabled = false;
-
-document.getElementById(
-    "lisamatkaRajaKm"
-).disabled = false;
+        "noutomatkaRajaKm"
+    ).disabled = false;
+    
+    document.getElementById(
+        "noutoaikaRajaMin"
+    ).disabled = false;
+    
+    document.getElementById(
+        "lisamatkaRajaKm"
+    ).disabled = false;
+    
+    document.getElementById(
+        "lisaaikaRajaMin"
+    ).disabled = false;
+    
+    document.getElementById(
+        "pyydettyMatkaRajaKm"
+    ).disabled = false;
+    
+    document.getElementById(
+        "pyydettyAikaRajaMin"
+    ).disabled = false;
+    
+    document.getElementById(
+        "kokonaismatkaRajaKm"
+    ).disabled = false;
+    
+    document.getElementById(
+        "kokonaisaikaRajaMin"
+    ).disabled = false;
 
     document.getElementById(
         "autonTuntomerkki"
@@ -1089,7 +1191,8 @@ function lopetaTarjoaminen() {
 
         unsubscribeKyytipyynnot();
 
-        unsubscribeKyytipyynnot = null;
+        unsubscribeKyytipyynnot =
+            null;
     }
 
     tarjoaKyytia = false;
@@ -1098,29 +1201,53 @@ function lopetaTarjoaminen() {
         "lopetatarjoaminen"
     ).disabled = true;
 
+
     document.getElementById(
-    "noutomatkaRajaKm"
-).disabled = true;
+        "noutomatkaRajaKm"
+    ).disabled = true;
 
-document.getElementById(
-    "noutoaikaRajaMin"
-).disabled = true;
+    document.getElementById(
+        "noutoaikaRajaMin"
+    ).disabled = true;
 
-document.getElementById(
-    "lisamatkaRajaKm"
-).disabled = true;
+    document.getElementById(
+        "lisamatkaRajaKm"
+    ).disabled = true;
 
-document.getElementById(
-    "suodataNappi"
-).disabled = true;
+    document.getElementById(
+        "lisaaikaRajaMin"
+    ).disabled = true;
 
-document.getElementById(
-    "poistaSuodatusNappi"
-).disabled = true;
+    document.getElementById(
+        "pyydettyMatkaRajaKm"
+    ).disabled = true;
+
+    document.getElementById(
+        "pyydettyAikaRajaMin"
+    ).disabled = true;
+
+    document.getElementById(
+        "kokonaismatkaRajaKm"
+    ).disabled = true;
+
+    document.getElementById(
+        "kokonaisaikaRajaMin"
+    ).disabled = true;
+
+
+    document.getElementById(
+        "suodataNappi"
+    ).disabled = true;
+
+    document.getElementById(
+        "poistaSuodatusNappi"
+    ).disabled = true;
+
 
     document.getElementById(
         "havaittukyytipyynto"
     ).innerHTML = "";
+
 
     document.getElementById(
         "autonTuntomerkki"
@@ -1129,6 +1256,7 @@ document.getElementById(
     document.getElementById(
         "autonTuntomerkki"
     ).value = "";
+
 
     document.getElementById(
         "tarjoajanMaaranpaa"
@@ -1150,6 +1278,7 @@ document.getElementById(
         "reittiAB"
     ).innerHTML = "";
 
+
     autonTuntomerkki = "";
 
     tarjoajanMaaranpaa = "";
@@ -1158,11 +1287,23 @@ document.getElementById(
 
     tarjoajanMaaranpaaLongitude = null;
 
+
     noutomatkaRajaKm = null;
 
     noutoaikaRajaMin = null;
 
     lisamatkaRajaKm = null;
+
+    lisaaikaRajaMin = null;
+
+    pyydettyMatkaRajaKm = null;
+
+    pyydettyAikaRajaMin = null;
+
+    kokonaismatkaRajaKm = null;
+
+    kokonaisaikaRajaMin = null;
+
 
     reittiABMatkaKm = null;
 
@@ -1363,6 +1504,41 @@ function haeKyytipyynnot() {
                                 parseFloat(
                                     laskelma.lisamatkaKm.toFixed(1)
                                 ) <= lisamatkaRajaKm
+                            ) &&
+
+                            (
+                                lisaaikaRajaMin == null ||
+                                parseFloat(
+                                    laskelma.lisaaikaMin.toFixed(0)
+                                ) <= lisaaikaRajaMin
+                            ) &&
+
+                            (
+                                pyydettyMatkaRajaKm == null ||
+                                parseFloat(
+                                    laskelma.kuljetettavaMatka.matkaKm.toFixed(1)
+                                ) <= pyydettyMatkaRajaKm
+                            ) &&
+
+                            (
+                                pyydettyAikaRajaMin == null ||
+                                parseFloat(
+                                    laskelma.kuljetettavaMatka.aikaMin.toFixed(0)
+                                ) <= pyydettyAikaRajaMin
+                            ) &&
+
+                            (
+                                kokonaismatkaRajaKm == null ||
+                                parseFloat(
+                                    laskelma.reittiACDB.matkaKm.toFixed(1)
+                                ) <= kokonaismatkaRajaKm
+                            ) &&
+
+                            (
+                                kokonaisaikaRajaMin == null ||
+                                parseFloat(
+                                    laskelma.reittiACDB.aikaMin.toFixed(0)
+                                ) <= kokonaisaikaRajaMin
                             )
                         );
                     }
@@ -1395,7 +1571,6 @@ function haeKyytipyynnot() {
                             : noutoaikaMinuutit +
                                 " min";
 
-
                     const reitiltaNoutoaikaTunnit =
                         Math.floor(
                             laskelma.reittiNoutopaikkaan.aikaMin / 60
@@ -1414,7 +1589,6 @@ function haeKyytipyynnot() {
                                 " min"
                             : reitiltaNoutoaikaMinuutit +
                                 " min";
-
 
                     const lisaAikaTunnit =
                         Math.floor(
@@ -1435,7 +1609,6 @@ function haeKyytipyynnot() {
                             : lisaAikaMinuutit +
                                 " min";
 
-
                     const omaReittiAikaTunnit =
                         Math.floor(
                             reittiABAikaMin / 60
@@ -1454,7 +1627,6 @@ function haeKyytipyynnot() {
                                 " min"
                             : omaReittiAikaMinuutit +
                                 " min";
-
 
                     const kokonaisAikaTunnit =
                         Math.floor(
@@ -1475,7 +1647,6 @@ function haeKyytipyynnot() {
                             : kokonaisAikaMinuutit +
                                 " min";
 
-
                     const pyydettyAikaTunnit =
                         Math.floor(
                             laskelma.kuljetettavaMatka.aikaMin / 60
@@ -1494,7 +1665,6 @@ function haeKyytipyynnot() {
                                 " min"
                             : pyydettyAikaMinuutit +
                                 " min";
-
 
                     const lahtokaupunki =
                         haeKaupunkiTaiKunta(
@@ -2038,6 +2208,26 @@ function paivitaSuodataNappi() {
 
         document.getElementById(
             "lisamatkaRajaKm"
+        ).value === "" &&
+
+        document.getElementById(
+            "lisaaikaRajaMin"
+        ).value === "" &&
+
+        document.getElementById(
+            "pyydettyMatkaRajaKm"
+        ).value === "" &&
+
+        document.getElementById(
+            "pyydettyAikaRajaMin"
+        ).value === "" &&
+
+        document.getElementById(
+            "kokonaismatkaRajaKm"
+        ).value === "" &&
+
+        document.getElementById(
+            "kokonaisaikaRajaMin"
         ).value === "";
 
     document.getElementById(
@@ -2064,6 +2254,32 @@ function suodataKyytipyynnot() {
             "lisamatkaRajaKm"
         ).value;
 
+    const lisaaikaArvo =
+        document.getElementById(
+            "lisaaikaRajaMin"
+        ).value;
+
+    const pyydettyMatkaArvo =
+        document.getElementById(
+            "pyydettyMatkaRajaKm"
+        ).value;
+
+    const pyydettyAikaArvo =
+        document.getElementById(
+            "pyydettyAikaRajaMin"
+        ).value;
+
+    const kokonaismatkaArvo =
+        document.getElementById(
+            "kokonaismatkaRajaKm"
+        ).value;
+
+    const kokonaisaikaArvo =
+        document.getElementById(
+            "kokonaisaikaRajaMin"
+        ).value;
+
+
     noutomatkaRajaKm =
         noutomatkaArvo === ""
             ? null
@@ -2079,6 +2295,32 @@ function suodataKyytipyynnot() {
             ? null
             : parseFloat(lisamatkaArvo);
 
+    lisaaikaRajaMin =
+        lisaaikaArvo === ""
+            ? null
+            : parseFloat(lisaaikaArvo);
+
+    pyydettyMatkaRajaKm =
+        pyydettyMatkaArvo === ""
+            ? null
+            : parseFloat(pyydettyMatkaArvo);
+
+    pyydettyAikaRajaMin =
+        pyydettyAikaArvo === ""
+            ? null
+            : parseFloat(pyydettyAikaArvo);
+
+    kokonaismatkaRajaKm =
+        kokonaismatkaArvo === ""
+            ? null
+            : parseFloat(kokonaismatkaArvo);
+
+    kokonaisaikaRajaMin =
+        kokonaisaikaArvo === ""
+            ? null
+            : parseFloat(kokonaisaikaArvo);
+
+
     document.getElementById(
         "noutomatkaRajaKm"
     ).disabled = true;
@@ -2092,12 +2334,34 @@ function suodataKyytipyynnot() {
     ).disabled = true;
 
     document.getElementById(
+        "lisaaikaRajaMin"
+    ).disabled = true;
+
+    document.getElementById(
+        "pyydettyMatkaRajaKm"
+    ).disabled = true;
+
+    document.getElementById(
+        "pyydettyAikaRajaMin"
+    ).disabled = true;
+
+    document.getElementById(
+        "kokonaismatkaRajaKm"
+    ).disabled = true;
+
+    document.getElementById(
+        "kokonaisaikaRajaMin"
+    ).disabled = true;
+
+
+    document.getElementById(
         "suodataNappi"
     ).disabled = true;
 
     document.getElementById(
         "poistaSuodatusNappi"
     ).disabled = false;
+
 
     if (unsubscribeKyytipyynnot) {
 
@@ -2117,6 +2381,17 @@ function poistaSuodatus() {
 
     lisamatkaRajaKm = null;
 
+    lisaaikaRajaMin = null;
+
+    pyydettyMatkaRajaKm = null;
+
+    pyydettyAikaRajaMin = null;
+
+    kokonaismatkaRajaKm = null;
+
+    kokonaisaikaRajaMin = null;
+
+
     document.getElementById(
         "noutomatkaRajaKm"
     ).disabled = false;
@@ -2129,11 +2404,33 @@ function poistaSuodatus() {
         "lisamatkaRajaKm"
     ).disabled = false;
 
-paivitaSuodataNappi();
+    document.getElementById(
+        "lisaaikaRajaMin"
+    ).disabled = false;
+
+    document.getElementById(
+        "pyydettyMatkaRajaKm"
+    ).disabled = false;
+
+    document.getElementById(
+        "pyydettyAikaRajaMin"
+    ).disabled = false;
+
+    document.getElementById(
+        "kokonaismatkaRajaKm"
+    ).disabled = false;
+
+    document.getElementById(
+        "kokonaisaikaRajaMin"
+    ).disabled = false;
+
+
+    paivitaSuodataNappi();
 
     document.getElementById(
         "poistaSuodatusNappi"
     ).disabled = true;
+
 
     if (unsubscribeKyytipyynnot) {
 

@@ -267,6 +267,9 @@
 
 <br><br>
 
+<b>Kyytipyynnöt:</b>
+<span id="kyytipyyntojenMaara">0</span>
+
 <div id="havaittukyytipyynto"></div>
 
 <script type="module">
@@ -1259,6 +1262,26 @@ function lopetaTarjoaminen() {
     ).disabled = true;
 
     document.getElementById(
+        "tyhjennaNoutopaikkaNappi"
+    ).disabled = true;
+    
+    document.getElementById(
+        "tyhjennaLisamatkaNappi"
+    ).disabled = true;
+    
+    document.getElementById(
+        "tyhjennaPyydettyMatkaNappi"
+    ).disabled = true;
+    
+    document.getElementById(
+        "tyhjennaKokonaismatkaNappi"
+    ).disabled = true;
+    
+    document.getElementById(
+        "tyhjennaKaikkiSuodattimetNappi"
+    ).disabled = true;
+    
+    document.getElementById(
         "havaittukyytipyynto"
     ).innerHTML = "";
 
@@ -1558,6 +1581,11 @@ function haeKyytipyynnot() {
                     }
                 );
 
+            document.getElementById(
+                "kyytipyyntojenMaara"
+            ).textContent =
+                suodatetutPyynnot.length;
+            
             let html = "";
 
             suodatetutPyynnot.forEach(

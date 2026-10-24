@@ -797,24 +797,27 @@ async function etsiTarjoajanMaaranpaa() {
             );
 
         html +=
-            "<div style='margin-bottom: 8px;'>" +
+html +=
+    "<div style='margin-bottom: 16px;'>" +
 
-            "<button onclick=\"valitseTarjoajanMaaranpaa(" +
-            "decodeURIComponent('" +
-            koodattuOsoite +
-            "'), '" +
-            tulos.lat +
-            "', '" +
-            tulos.lon +
-            "')\">" +
+    osoiteTeksti +
 
-            "Aloita kyytipyyntöjen etsiminen" +
+    "<br>" +
 
-            "</button> " +
+    "<button onclick=\"valitseTarjoajanMaaranpaa(" +
+    "decodeURIComponent('" +
+    koodattuOsoite +
+    "'), '" +
+    tulos.lat +
+    "', '" +
+    tulos.lon +
+    "')\">" +
 
-            osoiteTeksti +
+    "Vahvista määränpääksesi ja aloita kyytipyyntöjen etsiminen" +
 
-            "</div>";
+    "</button>" +
+
+    "</div>";
     });
 
     document.getElementById(
@@ -2037,7 +2040,7 @@ async function laskeReittiAB() {
     document.getElementById(
         "reittiAB"
     ).innerHTML =
-"<b>Kyydin tarjoaminen on päällä (" +
+"<b>Kyytien etsiminen on päällä (" +
 tarjoaminenAloitettu +
 ")</b>" +
 

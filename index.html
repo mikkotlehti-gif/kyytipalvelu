@@ -134,7 +134,9 @@
 >
 
 <button
+    id="tyhjennaNoutopaikkaNappi"
     onclick="tyhjennaSuodatinpari('noutomatkaRajaKm', 'noutoaikaRajaMin')"
+    disabled
 >
     Tyhjennä
 </button>
@@ -170,7 +172,9 @@
 >
 
 <button
+    id="tyhjennaLisamatkaNappi"
     onclick="tyhjennaSuodatinpari('lisamatkaRajaKm', 'lisaaikaRajaMin')"
+    disabled
 >
     Tyhjennä
 </button>
@@ -206,7 +210,9 @@
 >
 
 <button
+    id="tyhjennaPyydettyMatkaNappi"
     onclick="tyhjennaSuodatinpari('pyydettyMatkaRajaKm', 'pyydettyAikaRajaMin')"
+    disabled
 >
     Tyhjennä
 </button>
@@ -242,7 +248,9 @@
 >
 
 <button
+    id="tyhjennaKokonaismatkaNappi"
     onclick="tyhjennaSuodatinpari('kokonaismatkaRajaKm', 'kokonaisaikaRajaMin')"
+    disabled
 >
     Tyhjennä
 </button>
@@ -252,7 +260,9 @@
 <br><br>
 
 <button
+    id="tyhjennaKaikkiSuodattimetNappi"
     onclick="tyhjennaKaikkiSuodattimet()"
+    disabled
 >
     Tyhjennä kaikki suodattimet
 </button>
@@ -2231,38 +2241,70 @@ async function laskeMatkustajanReitti() {
 
 function paivitaSuodataNappi() {
 
-    const kaikkiTyhjia =
+    const noutopaikkaTyhja =
         document.getElementById(
             "noutomatkaRajaKm"
         ).value === "" &&
-
         document.getElementById(
             "noutoaikaRajaMin"
-        ).value === "" &&
+        ).value === "";
 
+    const lisamatkaTyhja =
         document.getElementById(
             "lisamatkaRajaKm"
         ).value === "" &&
-
         document.getElementById(
             "lisaaikaRajaMin"
-        ).value === "" &&
+        ).value === "";
 
+    const pyydettyMatkaTyhja =
         document.getElementById(
             "pyydettyMatkaRajaKm"
         ).value === "" &&
-
         document.getElementById(
             "pyydettyAikaRajaMin"
-        ).value === "" &&
+        ).value === "";
 
+    const kokonaismatkaTyhja =
         document.getElementById(
             "kokonaismatkaRajaKm"
         ).value === "" &&
-
         document.getElementById(
             "kokonaisaikaRajaMin"
         ).value === "";
+
+    const kaikkiTyhjia =
+        noutopaikkaTyhja &&
+        lisamatkaTyhja &&
+        pyydettyMatkaTyhja &&
+        kokonaismatkaTyhja;
+
+
+    document.getElementById(
+        "tyhjennaNoutopaikkaNappi"
+    ).disabled =
+        noutopaikkaTyhja;
+
+    document.getElementById(
+        "tyhjennaLisamatkaNappi"
+    ).disabled =
+        lisamatkaTyhja;
+
+    document.getElementById(
+        "tyhjennaPyydettyMatkaNappi"
+    ).disabled =
+        pyydettyMatkaTyhja;
+
+    document.getElementById(
+        "tyhjennaKokonaismatkaNappi"
+    ).disabled =
+        kokonaismatkaTyhja;
+
+    document.getElementById(
+        "tyhjennaKaikkiSuodattimetNappi"
+    ).disabled =
+        kaikkiTyhjia;
+
 
     document.getElementById(
         "suodataNappi"

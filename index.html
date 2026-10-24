@@ -846,7 +846,7 @@ html +=
     tulos.lon +
     "')\">" +
 
-    "Vahvista ja aloita kyytipyyntöjen etsiminen" +
+    "Valitse" +
 
     "</button>" +
 
@@ -884,7 +884,6 @@ async function valitseTarjoajanMaaranpaa(
         "tarjoajanMaaranpaaHakutulokset"
     ).innerHTML = "";
 
-    await aloitaTarjoaminen();
 }
     
 async function valitseMaaranpaa(
@@ -1155,13 +1154,29 @@ async function aloitaTarjoaminen() {
             "tarjoajanLahtoAikaisintaan"
         ).value || null;
 
-    tarjoajanPerillaViimeistaan =
-        document.getElementById(
-            "tarjoajanPerillaViimeistaan"
-        ).value || null;
+tarjoajanPerillaViimeistaan =
+    document.getElementById(
+        "tarjoajanPerillaViimeistaan"
+    ).value || null;
 
 
-    if (autonTuntomerkki == "") {
+if (
+    tarjoajanLahtoAikaisintaan &&
+    new Date(
+        tarjoajanLahtoAikaisintaan
+    ).getTime() <
+        Date.now()
+) {
+
+    alert(
+        "Lähden aikaisintaan ei voi olla menneisyydessä."
+    );
+
+    return;
+}
+
+
+if (autonTuntomerkki == "") {
 
         alert(
             "Anna auton tuntomerkki"

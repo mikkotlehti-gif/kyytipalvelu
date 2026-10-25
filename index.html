@@ -239,15 +239,18 @@
 
 <input
     id="lisamatkaRajaProsentti"
-    type="text"
-    inputmode="numeric"
-    maxlength="3"
-    style="width: 45px;"
-    oninput="this.value = this.value.replace(/\D/g, ''); paivitaLisamatkaProsentti();"
+    type="range"
+    min="0"
+    max="100"
+    step="1"
+    value="0"
+    oninput="paivitaLisamatkaProsentti();"
     disabled
 >
 
-%
+<span id="lisamatkaProsenttiTeksti">
+    0 %
+</span>
 
 <span id="lisamatkaLaskettu">
     → — km / — min
@@ -2790,15 +2793,52 @@ function paivitaLisamatkaProsentti() {
             "lisamatkaRajaProsentti"
         ).value;
 
+    const prosentti =
+        parseFloat(
+            prosenttiArvo
+        );
+
+    document.getElementById(
+        "lisamatkaProsenttiTeksti"
+    ).textContent =
+        prosentti +
+        " %";
+
+
+    if (prosentti === 0) {
+
+        lisamatkaRajaProsentti = null;
+
+        lisamatkaRajaKm = null;
+
+        lisaaikaRajaMin = null;
+
+        document.getElementById(
+            "lisamatkaLaskettu"
+        ).textContent =
+            "→ — km / — min";
+
+        paivitaSuodataNappi();
+
+        if (unsubscribeKyytipyynnot) {
+
+            unsubscribeKyytipyynnot();
+
+            unsubscribeKyytipyynnot =
+                null;
+        }
+
+        haeKyytipyynnot();
+
+        return;
+    }
+
+
     lisamatkaRajaProsentti =
-        prosenttiArvo === ""
-            ? null
-            : parseFloat(
-                prosenttiArvo
-            );
+        prosentti;
+
 
     if (
-        lisamatkaRajaProsentti == null ||
         reittiABMatkaKm == null ||
         reittiABAikaMin == null
     ) {
@@ -2815,6 +2855,7 @@ function paivitaLisamatkaProsentti() {
         return;
     }
 
+
     lisamatkaRajaKm =
         reittiABMatkaKm *
         lisamatkaRajaProsentti /
@@ -2824,7 +2865,8 @@ function paivitaLisamatkaProsentti() {
         reittiABAikaMin *
         lisamatkaRajaProsentti /
         100;
-    
+
+
     document.getElementById(
         "lisamatkaLaskettu"
     ).textContent =
@@ -2835,18 +2877,20 @@ function paivitaLisamatkaProsentti() {
             lisaaikaRajaMin
         ) +
         " min";
-    
+
+
     paivitaSuodataNappi();
 
-if (unsubscribeKyytipyynnot) {
 
-    unsubscribeKyytipyynnot();
+    if (unsubscribeKyytipyynnot) {
 
-    unsubscribeKyytipyynnot =
-        null;
-}
+        unsubscribeKyytipyynnot();
 
-haeKyytipyynnot();
+        unsubscribeKyytipyynnot =
+            null;
+    }
+
+    haeKyytipyynnot();
 }
 
 function tyhjennaLisamatkaProsentti() {

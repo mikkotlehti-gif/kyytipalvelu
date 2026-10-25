@@ -1293,17 +1293,20 @@ function paivitaAloitaKyytienEtsiminenNappi() {
             "tarjoajanPerillaViimeistaan"
         ).value !== "";
 
+    const aikaehdotTayttyvat =
+        joMatkalla ||
+        (
+            lahtoaikaAnnettu &&
+            perillaAikaAnnettu
+        );
+
     document.getElementById(
         "aloitaKyytienEtsiminenNappi"
     ).disabled =
         !(
             autonTuntomerkkiAnnettu &&
             maaranpaaValittu &&
-            (
-                lahtoaikaAnnettu ||
-                joMatkalla
-            ) &&
-            perillaAikaAnnettu
+            aikaehdotTayttyvat
         );
 }
     
@@ -1345,7 +1348,10 @@ async function aloitaTarjoaminen() {
     }
     
     
-    if (!tarjoajanPerillaViimeistaan) {
+    if (
+        !tarjoajaJoMatkalla &&
+        !tarjoajanPerillaViimeistaan
+    ) {
     
         alert(
             "Anna Haluan olla perillä viimeistään -aika."

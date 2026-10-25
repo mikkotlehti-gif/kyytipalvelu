@@ -65,6 +65,7 @@
     id="autonTuntomerkki"
     type="text"
     placeholder="Anna autosi tuntomerkki"
+    oninput="paivitaAloitaKyytienEtsiminenNappi()"
 >
 
 <br><br>
@@ -127,6 +128,7 @@
 <input
     id="tarjoajanLahtoAikaisintaan"
     type="datetime-local"
+    onchange="paivitaAloitaKyytienEtsiminenNappi()"
 >
 
 <label>
@@ -149,6 +151,7 @@
 <input
     id="tarjoajanPerillaViimeistaan"
     type="datetime-local"
+    onchange="paivitaAloitaKyytienEtsiminenNappi()"
 >
 
 <br>
@@ -924,9 +927,7 @@ async function valitseTarjoajanMaaranpaa(
         "tarjoajanMaaranpaaHakutulokset"
     ).innerHTML = "";
 
-    document.getElementById(
-        "aloitaKyytienEtsiminenNappi"
-    ).disabled = false;
+    paivitaAloitaKyytienEtsiminenNappi();
     
     document.getElementById(
         "tarjoajanMaaranpaa"
@@ -1265,6 +1266,73 @@ function paivitaJoMatkalla() {
         lahtoKentta.disabled = false;
     }
 }
+
+function paivitaJoMatkalla() {
+
+    const joMatkalla =
+        document.getElementById(
+            "tarjoajaJoMatkalla"
+        ).checked;
+
+    const lahtoKentta =
+        document.getElementById(
+            "tarjoajanLahtoAikaisintaan"
+        );
+
+    if (joMatkalla) {
+
+        lahtoKentta.value = "";
+
+        lahtoKentta.disabled = true;
+
+    } else {
+
+        lahtoKentta.disabled = false;
+    }
+
+    paivitaAloitaKyytienEtsiminenNappi();
+}
+
+function paivitaAloitaKyytienEtsiminenNappi() {
+
+    const autonTuntomerkkiAnnettu =
+        document.getElementById(
+            "autonTuntomerkki"
+        ).value.trim() !== "";
+
+    const maaranpaaValittu =
+        tarjoajanMaaranpaa != "" &&
+        tarjoajanMaaranpaaLatitude != null &&
+        tarjoajanMaaranpaaLongitude != null;
+
+    const lahtoaikaAnnettu =
+        document.getElementById(
+            "tarjoajanLahtoAikaisintaan"
+        ).value !== "";
+
+    const joMatkalla =
+        document.getElementById(
+            "tarjoajaJoMatkalla"
+        ).checked;
+
+    const perillaAikaAnnettu =
+        document.getElementById(
+            "tarjoajanPerillaViimeistaan"
+        ).value !== "";
+
+    document.getElementById(
+        "aloitaKyytienEtsiminenNappi"
+    ).disabled =
+        !(
+            autonTuntomerkkiAnnettu &&
+            maaranpaaValittu &&
+            (
+                lahtoaikaAnnettu ||
+                joMatkalla
+            ) &&
+            perillaAikaAnnettu
+        );
+}
     
 async function aloitaTarjoaminen() {
 
@@ -1600,10 +1668,17 @@ function lopetaTarjoaminen() {
     document.getElementById(
         "vaihdaTarjoajanMaaranpaaNappi"
     ).disabled = false;
-
+    
+    document.getElementById(
+        "tarjoajaJoMatkalla"
+    ).disabled = false;
+    
     document.getElementById(
         "tarjoajanLahtoAikaisintaan"
-    ).disabled = false;
+    ).disabled =
+        document.getElementById(
+            "tarjoajaJoMatkalla"
+        ).checked;
 
     document.getElementById(
         "tarjoajanPerillaViimeistaan"
@@ -2852,5 +2927,8 @@ window.vaihdaTarjoajanMaaranpaa =
 
 window.paivitaJoMatkalla =
     paivitaJoMatkalla;
+
+window.paivitaAloitaKyytienEtsiminenNappi =
+    paivitaAloitaKyytienEtsiminenNappi;
     
 </script>

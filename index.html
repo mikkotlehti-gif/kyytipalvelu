@@ -2747,11 +2747,7 @@ function tyhjennaKaikkiSuodattimet() {
     ).value = "";
 
     document.getElementById(
-        "lisamatkaRajaKm"
-    ).value = "";
-
-    document.getElementById(
-        "lisaaikaRajaMin"
+        "lisamatkaRajaProsentti"
     ).value = "";
 
     document.getElementById(
@@ -2769,6 +2765,20 @@ function tyhjennaKaikkiSuodattimet() {
     document.getElementById(
         "kokonaisaikaRajaMin"
     ).value = "";
+
+
+    lisamatkaRajaProsentti = null;
+
+    lisamatkaRajaKm = null;
+
+    lisaaikaRajaMin = null;
+
+
+    document.getElementById(
+        "lisamatkaLaskettu"
+    ).textContent =
+        "→ — km / — min";
+
 
     paivitaSuodatus();
 }

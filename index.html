@@ -1265,30 +1265,6 @@ function paivitaJoMatkalla() {
 
         lahtoKentta.disabled = false;
     }
-}
-
-function paivitaJoMatkalla() {
-
-    const joMatkalla =
-        document.getElementById(
-            "tarjoajaJoMatkalla"
-        ).checked;
-
-    const lahtoKentta =
-        document.getElementById(
-            "tarjoajanLahtoAikaisintaan"
-        );
-
-    if (joMatkalla) {
-
-        lahtoKentta.value = "";
-
-        lahtoKentta.disabled = true;
-
-    } else {
-
-        lahtoKentta.disabled = false;
-    }
 
     paivitaAloitaKyytienEtsiminenNappi();
 }

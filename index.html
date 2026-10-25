@@ -2407,6 +2407,15 @@ async function laskeReittiAB() {
         "reittiAB"
     ).innerHTML =
         "<b>Kyytien etsiminen on päällä</b>";
+    
+    if (
+        document.getElementById(
+            "lisamatkaRajaProsentti"
+        ).value !== ""
+    ) {
+    
+        paivitaLisamatkaProsentti();
+    }
 
 }
 

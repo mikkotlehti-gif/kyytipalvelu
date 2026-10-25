@@ -237,14 +237,6 @@
 
 <br>
 
-<button
-    id="lisamatkaMiinusNappi"
-    onclick="muutaLisamatkaProsenttia(-1)"
-    disabled
->
-    −
-</button>
-
 <input
     id="lisamatkaRajaProsentti"
     type="range"
@@ -255,14 +247,6 @@
     oninput="paivitaLisamatkaProsentti();"
     disabled
 >
-
-<button
-    id="lisamatkaPlusNappi"
-    onclick="muutaLisamatkaProsenttia(1)"
-    disabled
->
-    +
-</button>
 
 <span id="lisamatkaProsenttiTeksti">
     0 %
@@ -1529,14 +1513,6 @@ async function aloitaTarjoaminen() {
     ).disabled = false;
 
     document.getElementById(
-        "lisamatkaMiinusNappi"
-    ).disabled = false;
-    
-    document.getElementById(
-        "lisamatkaPlusNappi"
-    ).disabled = false;
-
-    document.getElementById(
         "pyydettyMatkaRajaKm"
     ).disabled = false;
 
@@ -1622,14 +1598,6 @@ function lopetaTarjoaminen() {
         "lisamatkaRajaProsentti"
     ).disabled = true;
 
-    document.getElementById(
-        "lisamatkaMiinusNappi"
-    ).disabled = true;
-    
-    document.getElementById(
-        "lisamatkaPlusNappi"
-    ).disabled = true;
-    
     document.getElementById(
         "pyydettyMatkaRajaKm"
     ).disabled = true;
@@ -2930,31 +2898,6 @@ function paivitaLisamatkaProsentti() {
     haeKyytipyynnot();
 }
 
-function muutaLisamatkaProsenttia(muutos) {
-
-    const kentta =
-        document.getElementById(
-            "lisamatkaRajaProsentti"
-        );
-
-    let uusiArvo =
-        parseInt(kentta.value) +
-        muutos;
-
-    if (uusiArvo < 0) {
-        uusiArvo = 0;
-    }
-
-    if (uusiArvo > 100) {
-        uusiArvo = 100;
-    }
-
-    kentta.value =
-        uusiArvo;
-
-    paivitaLisamatkaProsentti();
-}
-
 function tyhjennaLisamatkaProsentti() {
 
     document.getElementById(
@@ -3152,8 +3095,5 @@ window.paivitaLisamatkaProsentti =
 
 window.tyhjennaLisamatkaProsentti =
     tyhjennaLisamatkaProsentti;
-
-window.muutaLisamatkaProsenttia =
-    muutaLisamatkaProsenttia;
     
 </script>

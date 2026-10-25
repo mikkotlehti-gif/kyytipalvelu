@@ -2810,8 +2810,19 @@ function paivitaLisamatkaProsentti() {
         reittiABAikaMin *
         lisamatkaRajaProsentti /
         100;
-
-paivitaSuodataNappi();
+    
+    document.getElementById(
+        "lisamatkaLaskettu"
+    ).textContent =
+        "→ " +
+        lisamatkaRajaKm.toFixed(1) +
+        " km / " +
+        Math.round(
+            lisaaikaRajaMin
+        ) +
+        " min";
+    
+    paivitaSuodataNappi();
 
 if (unsubscribeKyytipyynnot) {
 

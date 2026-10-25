@@ -2655,10 +2655,7 @@ function paivitaSuodataNappi() {
 
     const lisamatkaTyhja =
         document.getElementById(
-            "lisamatkaRajaKm"
-        ).value === "" &&
-        document.getElementById(
-            "lisaaikaRajaMin"
+            "lisamatkaRajaProsentti"
         ).value === "";
 
     const pyydettyMatkaTyhja =
@@ -2708,7 +2705,6 @@ function paivitaSuodataNappi() {
         "tyhjennaKaikkiSuodattimetNappi"
     ).disabled =
         kaikkiTyhjia;
-
 }
 
 function tyhjennaSuodatinpari(

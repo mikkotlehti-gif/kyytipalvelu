@@ -237,31 +237,33 @@
 
 <br>
 
-<span id="lisamatkaProsenttiTeksti">
-    0 %
-</span>
+<div
+    style="display: flex; align-items: center; gap: 10px;"
+>
+    <span style="min-width: 145px;">
+        <span id="lisamatkaProsenttiTeksti">
+            0 %
+        </span>
+
+        <span id="lisamatkaLaskettu">
+            → — km / — min
+        </span>
+    </span>
+
+    <input
+        id="lisamatkaRajaProsentti"
+        type="range"
+        min="0"
+        max="100"
+        step="1"
+        value="0"
+        style="width: 325px;"
+        oninput="paivitaLisamatkaProsentti();"
+        disabled
+    >
+</div>
 
 <br>
-
-<input
-    id="lisamatkaRajaProsentti"
-    type="range"
-    min="0"
-    max="100"
-    step="1"
-    value="0"
-    style="width: 325px;"
-    oninput="paivitaLisamatkaProsentti();"
-    disabled
->
-
-<span id="lisamatkaProsenttiTeksti">
-    0 %
-</span>
-
-<span id="lisamatkaLaskettu">
-    → — km / — min
-</span>
 
 <button
     id="tyhjennaLisamatkaNappi"

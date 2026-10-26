@@ -246,10 +246,10 @@
 <input
     id="lisamatkaRajaProsentti"
     type="range"
-    min="0"
+    min="-1"
     max="100"
     step="1"
-    value="0"
+    value="-1"
     style="width: 325px;"
     oninput="paivitaLisamatkaProsentti();"
     disabled
@@ -2658,7 +2658,7 @@ function paivitaSuodataNappi() {
     const lisamatkaTyhja =
         document.getElementById(
             "lisamatkaRajaProsentti"
-        ).value === "";
+        ).value === "-1";
 
     const pyydettyMatkaTyhja =
         document.getElementById(
@@ -2732,12 +2732,11 @@ function tyhjennaKaikkiSuodattimet() {
 
     document.getElementById(
         "lisamatkaRajaProsentti"
-    ).value = "0";
-
+    ).value = "-1";
+    
     document.getElementById(
         "lisamatkaProsenttiTeksti"
-    ).textContent =
-        "0 %";
+    ).textContent = "";
 
     document.getElementById(
         "pyydettyMatkaRajaKm"
@@ -2765,8 +2764,7 @@ function tyhjennaKaikkiSuodattimet() {
 
     document.getElementById(
         "lisamatkaLaskettu"
-    ).textContent =
-        "→ — km / — min";
+    ).textContent = "";
 
 
     paivitaSuodatus();
@@ -2774,24 +2772,15 @@ function tyhjennaKaikkiSuodattimet() {
 
 function paivitaLisamatkaProsentti() {
 
-    const prosenttiArvo =
-        document.getElementById(
-            "lisamatkaRajaProsentti"
-        ).value;
-
     const prosentti =
         parseFloat(
-            prosenttiArvo
+            document.getElementById(
+                "lisamatkaRajaProsentti"
+            ).value
         );
 
-    document.getElementById(
-        "lisamatkaProsenttiTeksti"
-    ).textContent =
-        prosentti +
-        " %";
 
-
-    if (prosentti === 0) {
+    if (prosentti === -1) {
 
         lisamatkaRajaProsentti = null;
 
@@ -2800,69 +2789,45 @@ function paivitaLisamatkaProsentti() {
         lisaaikaRajaMin = null;
 
         document.getElementById(
+            "lisamatkaProsenttiTeksti"
+        ).textContent = "";
+
+        document.getElementById(
             "lisamatkaLaskettu"
+        ).textContent = "";
+
+    } else {
+
+        lisamatkaRajaProsentti =
+            prosentti;
+
+        lisamatkaRajaKm =
+            reittiABMatkaKm *
+            prosentti /
+            100;
+
+        lisaaikaRajaMin =
+            reittiABAikaMin *
+            prosentti /
+            100;
+
+        document.getElementById(
+            "lisamatkaProsenttiTeksti"
         ).textContent =
-            "→ — km / — min";
-
-        paivitaSuodataNappi();
-
-        if (unsubscribeKyytipyynnot) {
-
-            unsubscribeKyytipyynnot();
-
-            unsubscribeKyytipyynnot =
-                null;
-        }
-
-        haeKyytipyynnot();
-
-        return;
-    }
-
-
-    lisamatkaRajaProsentti =
-        prosentti;
-
-
-    if (
-        reittiABMatkaKm == null ||
-        reittiABAikaMin == null
-    ) {
-
-        lisamatkaRajaKm = null;
-
-        lisaaikaRajaMin = null;
+            prosentti +
+            " %";
 
         document.getElementById(
             "lisamatkaLaskettu"
         ).textContent =
-            "→ — km / — min";
-
-        return;
+            " → " +
+            lisamatkaRajaKm.toFixed(1) +
+            " km / " +
+            Math.round(
+                lisaaikaRajaMin
+            ) +
+            " min";
     }
-
-
-    lisamatkaRajaKm =
-        reittiABMatkaKm *
-        lisamatkaRajaProsentti /
-        100;
-
-    lisaaikaRajaMin =
-        reittiABAikaMin *
-        lisamatkaRajaProsentti /
-        100;
-
-
-    document.getElementById(
-        "lisamatkaLaskettu"
-    ).textContent =
-        "→ " +
-        lisamatkaRajaKm.toFixed(1) +
-        " km / " +
-        Math.round(
-            lisaaikaRajaMin
-        ) +
-        " min";
 
 
     paivitaSuodataNappi();

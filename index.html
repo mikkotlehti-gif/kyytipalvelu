@@ -237,48 +237,35 @@
 
 <br>
 
-<div
-    style="display: flex; align-items: center; gap: 10px;"
->
-    <span style="min-width: 145px;">
-        <span id="lisamatkaProsenttiTeksti">
-            0 %
-        </span>
+<div style="min-height: 22px;">
+    <span id="lisamatkaProsenttiTeksti"></span>
 
-        <span id="lisamatkaLaskettu">
-            → — km / — min
-        </span>
-    </span>
-
-    <input
-        id="lisamatkaRajaProsentti"
-        type="range"
-        min="0"
-        max="100"
-        step="1"
-        value="0"
-        style="width: 325px;"
-        oninput="paivitaLisamatkaProsentti();"
-        disabled
-    >
+    <span id="lisamatkaLaskettu"></span>
 </div>
+
+<label>
+    Lisämatka enint. (%):
+</label>
 
 <br>
 
-<button
-    id="tyhjennaLisamatkaNappi"
-    onclick="tyhjennaLisamatkaProsentti()"
+<input
+    id="lisamatkaRajaProsentti"
+    type="range"
+    min="0"
+    max="100"
+    step="1"
+    value="0"
+    style="width: 325px;"
+    oninput="paivitaLisamatkaProsentti();"
     disabled
 >
-    Tyhjennä
-</button>
 
 <br><br>
 
 <label>
     Pyydetyn matkan pituus enint. (km/min):
 </label>
-
 <br>
 
 <input

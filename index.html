@@ -231,12 +231,6 @@
 
 <br><br>
 
-<label>
-    Lisämatka enint. (%):
-</label>
-
-<br>
-
 <div style="min-height: 22px;">
     <span id="lisamatkaProsenttiTeksti"></span>
 
@@ -1615,10 +1609,6 @@ function lopetaTarjoaminen() {
     ).disabled = true;
 
     document.getElementById(
-        "tyhjennaLisamatkaNappi"
-    ).disabled = true;
-
-    document.getElementById(
         "tyhjennaPyydettyMatkaNappi"
     ).disabled = true;
 
@@ -2697,11 +2687,6 @@ function paivitaSuodataNappi() {
         "tyhjennaNoutopaikkaNappi"
     ).disabled =
         noutopaikkaTyhja;
-
-    document.getElementById(
-        "tyhjennaLisamatkaNappi"
-    ).disabled =
-        lisamatkaTyhja;
 
     document.getElementById(
         "tyhjennaPyydettyMatkaNappi"

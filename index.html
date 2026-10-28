@@ -2867,32 +2867,6 @@ function paivitaLisamatkaProsentti() {
             saadin.value
         );
 
-    const offAlueProsentti = 10;
-
-const nupinKohtaProsentti =
-    (
-        saadinAsento /
-        parseInt(saadin.max)
-    ) *
-    100;
-
-if (saadinAsento === 0) {
-
-    saadin.style.background =
-        "#ddd";
-
-} else {
-
-    saadin.style.background =
-        "linear-gradient(to right, " +
-        "#ddd 0%, " +
-        "#ddd " + offAlueProsentti + "%, " +
-        "#777 " + offAlueProsentti + "%, " +
-        "#777 " + nupinKohtaProsentti + "%, " +
-        "#ddd " + nupinKohtaProsentti + "%, " +
-        "#ddd 100%)";
-}
-
     const sallitutProsentit = [
         0,
         1,

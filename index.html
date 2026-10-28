@@ -244,22 +244,6 @@
 <br>
 
 <div
-    style="display: flex; align-items: center; gap: 4px;"
->
-    <button
-        id="lisamatkaPoisNappi"
-        onclick="poistaLisamatkaSuodatus()"
-        disabled
-        style="
-            width: 28px;
-            height: 22px;
-            padding: 0;
-        "
-    >
-        ×
-    </button>
-
-<div
     style="
         position: relative;
         width: 325px;
@@ -275,6 +259,7 @@
             height: 28px;
             background-color: #666;
             pointer-events: none;
+            z-index: 2;
         "
     ></div>
 
@@ -282,15 +267,13 @@
         id="lisamatkaRajaProsentti"
         type="range"
         min="0"
-        max="110"
+        max="111"
         step="1"
         value="0"
         style="width: 325px;"
         oninput="paivitaLisamatkaProsentti();"
         disabled
     >
-    
-</div>
 </div>
 
 <br><br>
@@ -2771,7 +2754,7 @@ function tyhjennaKaikkiSuodattimet() {
 
     document.getElementById(
         "lisamatkaRajaProsentti"
-    ).value = "-1";
+    ).value = "0";
     
     document.getElementById(
         "lisamatkaProsenttiTeksti"
@@ -2811,15 +2794,26 @@ function tyhjennaKaikkiSuodattimet() {
 
 function paivitaLisamatkaProsentti() {
 
-    const prosentti =
-        parseFloat(
-            document.getElementById(
-                "lisamatkaRajaProsentti"
-            ).value
+    const saadin =
+        document.getElementById(
+            "lisamatkaRajaProsentti"
+        );
+
+    const saadinArvo =
+        parseInt(
+            saadin.value
         );
 
 
-    if (prosentti === -1) {
+    /*
+     * Säätimen arvot 0–10 ovat OFF-aluetta.
+     * Jos käyttäjä siirtää säätimen tälle alueelle,
+     * säädin napsahtaa vasempaan reunaan.
+     */
+
+    if (saadinArvo <= 10) {
+
+        saadin.value = "0";
 
         lisamatkaRajaProsentti = null;
 
@@ -2836,6 +2830,16 @@ function paivitaLisamatkaProsentti() {
         ).textContent = "";
 
     } else {
+
+        /*
+         * 11 = 0 %
+         * 12 = 1 %
+         * ...
+         * 111 = 100 %
+         */
+
+        const prosentti =
+            saadinArvo - 11;
 
         lisamatkaRajaProsentti =
             prosentti;
@@ -2893,16 +2897,6 @@ function paivitaSuodatus() {
     const noutoaikaArvo =
         document.getElementById(
             "noutoaikaRajaMin"
-        ).value;
-
-    const lisamatkaArvo =
-        document.getElementById(
-            "lisamatkaRajaKm"
-        ).value;
-
-    const lisaaikaArvo =
-        document.getElementById(
-            "lisaaikaRajaMin"
         ).value;
 
     const pyydettyMatkaArvo =

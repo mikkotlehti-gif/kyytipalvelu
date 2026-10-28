@@ -212,11 +212,6 @@
     </span>
 </div>
 
-<p
-    id="reittiAB"
-    style="color: red;"
-></p>
-
 <div
     id="kyytienEtsiminenAlue"
     style="
@@ -1580,8 +1575,9 @@ async function aloitaTarjoaminen() {
         return;
     }
 
-
     await laskeReittiAB();
+
+    paivitaSuodatus();
 
 
     const nykyinenAikaMs =
@@ -2511,12 +2507,7 @@ async function laskeReittiAB() {
         reittiABMatkaKm.toFixed(1) +
         " km / " +
         reittiABAikaTeksti;
-        
-    document.getElementById(
-        "reittiAB"
-    ).innerHTML =
-        "<b>Kyytien etsiminen on päällä</b>";
-    
+     
     if (
         document.getElementById(
             "lisamatkaRajaProsentti"
@@ -2908,9 +2899,7 @@ function tyhjennaKaikkiSuodattimet() {
         "lisamatkaLaskettu"
     ).textContent = "";
 
-    document.getElementById(
-        "kokonaismatkaLaskettu"
-    ).textContent = "";
+    paivitaKokonaismatka();
 
     paivitaSuodatus();
 }

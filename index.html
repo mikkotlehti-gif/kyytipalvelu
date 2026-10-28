@@ -2843,44 +2843,7 @@ function paivitaLisamatkaProsentti() {
 
     haeKyytipyynnot();
 }
-
-function tyhjennaLisamatkaProsentti() {
-
-    document.getElementById(
-        "lisamatkaRajaProsentti"
-    ).value = "0";
-
-    document.getElementById(
-        "lisamatkaProsenttiTeksti"
-    ).textContent =
-        "0 %";
-
-    lisamatkaRajaProsentti = null;
-
-    lisamatkaRajaKm = null;
-
-    lisaaikaRajaMin = null;
-
-    document.getElementById(
-        "lisamatkaLaskettu"
-    ).textContent =
-        "→ — km / — min";
-
-    document.getElementById(
-        "tyhjennaLisamatkaNappi"
-    ).disabled = true;
-
-    if (unsubscribeKyytipyynnot) {
-
-        unsubscribeKyytipyynnot();
-
-        unsubscribeKyytipyynnot =
-            null;
-    }
-
-    haeKyytipyynnot();
-}
-    
+ 
 function paivitaSuodatus() {
 
     const noutomatkaArvo =
@@ -3038,8 +3001,5 @@ window.paivitaAloitaKyytienEtsiminenNappi =
 
 window.paivitaLisamatkaProsentti =
     paivitaLisamatkaProsentti;
-
-window.tyhjennaLisamatkaProsentti =
-    tyhjennaLisamatkaProsentti;
     
 </script>

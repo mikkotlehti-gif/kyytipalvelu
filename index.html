@@ -2683,7 +2683,7 @@ function paivitaSuodataNappi() {
     const lisamatkaTyhja =
         document.getElementById(
             "lisamatkaRajaProsentti"
-        ).value === "-1";
+        ).value === "0";
 
     const pyydettyMatkaTyhja =
         document.getElementById(
@@ -2802,15 +2802,33 @@ function paivitaLisamatkaProsentti() {
             "lisamatkaRajaProsentti"
         );
 
-    const saadinArvo =
+    const saadinAsento =
         parseInt(
             saadin.value
         );
 
+    const sallitutProsentit = [
+        0,
+        1,
+        2,
+        5,
+        10,
+        15,
+        20,
+        30,
+        40,
+        50,
+        75,
+        100
+    ];
 
-    if (saadinArvo <= 10) {
 
-        saadin.value = "0";
+    /*
+     * Asento 0 tarkoittaa:
+     * Lisämatka-suodatin pois päältä.
+     */
+
+    if (saadinAsento === 0) {
 
         lisamatkaRajaProsentti = null;
 
@@ -2828,43 +2846,15 @@ function paivitaLisamatkaProsentti() {
 
     } else {
 
-        const sallitutProsentit = [
-            0,
-            1,
-            2,
-            5,
-            10,
-            15,
-            20,
-            30,
-            40,
-            50,
-            75,
-            100
-        ];
-
-        const raakaProsentti =
-            saadinArvo - 11;
+        /*
+         * Asento 1 vastaa taulukon ensimmäistä arvoa 0 %,
+         * asento 2 vastaa arvoa 1 % jne.
+         */
 
         const prosentti =
-            sallitutProsentit.reduce(
-                (lahin, vaihtoehto) => {
-
-                    return Math.abs(
-                        vaihtoehto -
-                        raakaProsentti
-                    ) <
-                    Math.abs(
-                        lahin -
-                        raakaProsentti
-                    )
-                        ? vaihtoehto
-                        : lahin;
-                }
-            );
-
-        saadin.value =
-            prosentti + 11;
+            sallitutProsentit[
+                saadinAsento - 1
+            ];
 
         lisamatkaRajaProsentti =
             prosentti;
@@ -2910,8 +2900,7 @@ function paivitaLisamatkaProsentti() {
     }
 
     haeKyytipyynnot();
-}
- 
+} 
 /*
  * Moduulin funktiot HTML:n onclick-kutsuille
  */

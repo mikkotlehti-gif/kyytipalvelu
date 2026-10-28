@@ -250,17 +250,36 @@
         <b>POIS</b> |
     </span>
 
+<div
+    style="display: flex; align-items: center; gap: 4px;"
+>
+    <button
+        id="lisamatkaPoisNappi"
+        onclick="poistaLisamatkaSuodatus()"
+        disabled
+        style="
+            width: 28px;
+            height: 22px;
+            padding: 0;
+        "
+    >
+        ×
+    </button>
+
     <input
         id="lisamatkaRajaProsentti"
         type="range"
-        min="-1"
+        min="0"
         max="100"
         step="1"
-        value="-1"
+        value="0"
         style="width: 325px;"
         oninput="paivitaLisamatkaProsentti();"
         disabled
     >
+    
+</div>
+
 </div>
 
 <br><br>

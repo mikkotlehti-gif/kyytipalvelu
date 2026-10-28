@@ -2670,6 +2670,66 @@ async function laskeMatkustajanReitti() {
     };
 }
 
+function paivitaSuodatus() {
+
+    const lueNumeroTaiNull = (id) => {
+
+        const arvo =
+            document.getElementById(
+                id
+            ).value;
+
+        return arvo === ""
+            ? null
+            : parseFloat(arvo);
+    };
+
+    noutomatkaRajaKm =
+        lueNumeroTaiNull(
+            "noutomatkaRajaKm"
+        );
+
+    noutoaikaRajaMin =
+        lueNumeroTaiNull(
+            "noutoaikaRajaMin"
+        );
+
+    pyydettyMatkaRajaKm =
+        lueNumeroTaiNull(
+            "pyydettyMatkaRajaKm"
+        );
+
+    pyydettyAikaRajaMin =
+        lueNumeroTaiNull(
+            "pyydettyAikaRajaMin"
+        );
+
+    kokonaismatkaRajaKm =
+        lueNumeroTaiNull(
+            "kokonaismatkaRajaKm"
+        );
+
+    kokonaisaikaRajaMin =
+        lueNumeroTaiNull(
+            "kokonaisaikaRajaMin"
+        );
+
+    paivitaSuodataNappi();
+
+    if (unsubscribeKyytipyynnot) {
+
+        unsubscribeKyytipyynnot();
+
+        unsubscribeKyytipyynnot =
+            null;
+    }
+
+    if (tarjoaKyytia) {
+
+        haeKyytipyynnot();
+    }
+}
+    
 function paivitaSuodataNappi() {
 
     const noutopaikkaTyhja =

@@ -156,28 +156,75 @@
 
 <br><br>
 
-<button
-    id="aloitaKyytienEtsiminenNappi"
-    onclick="aloitaTarjoaminen()"
-    disabled
+<div
+    id="kyytienEtsiminenKytkin"
+    role="button"
+    tabindex="0"
+    aria-pressed="false"
+    onclick="vaihdaKyytienEtsiminen()"
+    style="
+        display: flex;
+        align-items: center;
+        width: fit-content;
+        cursor: pointer;
+        user-select: none;
+    "
 >
-    Aloita kyytien etsiminen
-</button>
+    <div
+        id="kyytienEtsiminenKytkinRunko"
+        style="
+            position: relative;
+            width: 64px;
+            height: 32px;
+            border-radius: 18px;
+            background-color: #b5b5b5;
+            border: 2px solid #777;
+            transition:
+                background-color 0.2s,
+                border-color 0.2s;
+        "
+    >
+        <div
+            id="kyytienEtsiminenKytkinNuppi"
+            style="
+                position: absolute;
+                top: 3px;
+                left: 3px;
+                width: 26px;
+                height: 26px;
+                border-radius: 50%;
+                background-color: white;
+                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+                transition: left 0.2s;
+            "
+        ></div>
+    </div>
 
-<br><br>
-
-<button
-    id="lopetatarjoaminen"
-    onclick="lopetaTarjoaminen()"
-    style="display: none;"
->
-    Lopeta kyytien etsiminen
-</button>
+    <span
+        id="kyytienEtsiminenKytkinTeksti"
+        style="
+            margin-left: 10px;
+            font-weight: bold;
+            color: #555;
+        "
+    >
+        Aloita kyytien etsiminen
+    </span>
+</div>
 
 <p
     id="reittiAB"
     style="color: red;"
 ></p>
+
+<div
+    id="kyytienEtsiminenAlue"
+    style="
+        background-color: #eeeeee;
+        padding: 12px;
+        transition: background-color 0.25s;
+    "
+>
 
 <div style="min-height: 22px;">
     <span>Kokonaismatkani enint.:</span>
@@ -341,6 +388,10 @@
 
 <div id="havaittukyytipyynto"></div>
 
+<div id="havaittukyytipyynto"></div>
+
+</div>
+    
 <script type="module">
 
 import {
@@ -1300,14 +1351,130 @@ function paivitaAloitaKyytienEtsiminenNappi() {
             perillaAikaAnnettu
         );
 
-    document.getElementById(
-        "aloitaKyytienEtsiminenNappi"
-    ).disabled =
-        !(
-            autonTuntomerkkiAnnettu &&
-            maaranpaaValittu &&
-            aikaehdotTayttyvat
+    const kytkin =
+        document.getElementById(
+            "kyytienEtsiminenKytkin"
         );
+
+    const tiedotValmiina =
+        autonTuntomerkkiAnnettu &&
+        maaranpaaValittu &&
+        aikaehdotTayttyvat;
+
+    if (!tarjoaKyytia) {
+
+        kytkin.style.opacity =
+            tiedotValmiina
+                ? "1"
+                : "0.45";
+
+        kytkin.style.pointerEvents =
+            tiedotValmiina
+                ? "auto"
+                : "none";
+    }
+}
+
+async function vaihdaKyytienEtsiminen() {
+
+    if (tarjoaKyytia) {
+
+        lopetaTarjoaminen();
+
+    } else {
+
+        await aloitaTarjoaminen();
+    }
+
+    paivitaKyytienEtsiminenKytkin();
+}
+
+
+function paivitaKyytienEtsiminenKytkin() {
+
+    const kytkin =
+        document.getElementById(
+            "kyytienEtsiminenKytkin"
+        );
+
+    const runko =
+        document.getElementById(
+            "kyytienEtsiminenKytkinRunko"
+        );
+
+    const nuppi =
+        document.getElementById(
+            "kyytienEtsiminenKytkinNuppi"
+        );
+
+    const teksti =
+        document.getElementById(
+            "kyytienEtsiminenKytkinTeksti"
+        );
+
+    const alue =
+        document.getElementById(
+            "kyytienEtsiminenAlue"
+        );
+
+    if (tarjoaKyytia) {
+
+        runko.style.backgroundColor =
+            "#4caf50";
+
+        runko.style.borderColor =
+            "#2e7d32";
+
+        nuppi.style.left =
+            "35px";
+
+        teksti.textContent =
+            "Lopeta kyytien etsiminen";
+
+        teksti.style.color =
+            "#2e7d32";
+
+        alue.style.backgroundColor =
+            "#e5f5e5";
+
+        kytkin.setAttribute(
+            "aria-pressed",
+            "true"
+        );
+
+        kytkin.style.opacity =
+            "1";
+
+        kytkin.style.pointerEvents =
+            "auto";
+
+    } else {
+
+        runko.style.backgroundColor =
+            "#b5b5b5";
+
+        runko.style.borderColor =
+            "#777";
+
+        nuppi.style.left =
+            "3px";
+
+        teksti.textContent =
+            "Aloita kyytien etsiminen";
+
+        teksti.style.color =
+            "#555";
+
+        alue.style.backgroundColor =
+            "#eeeeee";
+
+        kytkin.setAttribute(
+            "aria-pressed",
+            "false"
+        );
+
+        paivitaAloitaKyytienEtsiminenNappi();
+    }
 }
     
 async function aloitaTarjoaminen() {
@@ -1474,16 +1641,6 @@ async function aloitaTarjoaminen() {
 
     tarjoaKyytia = true;
 
-
-    document.getElementById(
-        "aloitaKyytienEtsiminenNappi"
-    ).style.display = "none";
-
-    document.getElementById(
-        "lopetatarjoaminen"
-    ).style.display = "inline-block";
-
-
     document.getElementById(
         "noutomatkaRajaKm"
     ).disabled = false;
@@ -1535,6 +1692,10 @@ async function aloitaTarjoaminen() {
     document.getElementById(
         "tarjoajanMaaranpaaHakutulokset"
     ).innerHTML = "";
+
+    paivitaKyytienEtsiminenKytkin();
+
+    paivitaKyytienEtsiminenKytkin();
 }
 
 /*
@@ -1552,14 +1713,6 @@ function lopetaTarjoaminen() {
     }
 
     tarjoaKyytia = false;
-
-    document.getElementById(
-        "lopetatarjoaminen"
-    ).style.display = "none";
-    
-    document.getElementById(
-        "aloitaKyytienEtsiminenNappi"
-    ).style.display = "inline-block";
 
     document.getElementById(
         "noutomatkaRajaKm"
@@ -2973,5 +3126,8 @@ window.paivitaAloitaKyytienEtsiminenNappi =
 
 window.paivitaLisamatkaProsentti =
     paivitaLisamatkaProsentti;
+
+window.vaihdaKyytienEtsiminen =
+    vaihdaKyytienEtsiminen;
     
 </script>

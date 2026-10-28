@@ -253,7 +253,7 @@
     <div
         style="
             position: absolute;
-            left: 9.1%;
+            left: 10%;
             top: 3px;
             width: 2px;
             height: 28px;
@@ -267,10 +267,13 @@
         id="lisamatkaRajaProsentti"
         type="range"
         min="0"
-        max="111"
+        max="12"
         step="1"
         value="0"
-        style="width: 325px;"
+        style="
+        width: 325px;
+        accent-color: #777;
+        "
         oninput="paivitaLisamatkaProsentti();"
         disabled
     >
@@ -2887,81 +2890,111 @@ function paivitaLisamatkaProsentti() {
     haeKyytipyynnot();
 }
  
-function paivitaSuodatus() {
+function paivitaLisamatkaProsentti() {
 
-    const noutomatkaArvo =
+    const saadin =
         document.getElementById(
-            "noutomatkaRajaKm"
-        ).value;
+            "lisamatkaRajaProsentti"
+        );
 
-    const noutoaikaArvo =
+    const saadinArvo =
+        parseInt(
+            saadin.value
+        );
+
+
+    if (saadinArvo <= 10) {
+
+        saadin.value = "0";
+
+        lisamatkaRajaProsentti = null;
+
+        lisamatkaRajaKm = null;
+
+        lisaaikaRajaMin = null;
+
         document.getElementById(
-            "noutoaikaRajaMin"
-        ).value;
+            "lisamatkaProsenttiTeksti"
+        ).textContent = "";
 
-    const pyydettyMatkaArvo =
         document.getElementById(
-            "pyydettyMatkaRajaKm"
-        ).value;
+            "lisamatkaLaskettu"
+        ).textContent = "";
 
-    const pyydettyAikaArvo =
+    } else {
+
+        const sallitutProsentit = [
+            0,
+            1,
+            2,
+            5,
+            10,
+            15,
+            20,
+            30,
+            40,
+            50,
+            75,
+            100
+        ];
+
+        const raakaProsentti =
+            saadinArvo - 11;
+
+        const prosentti =
+            sallitutProsentit.reduce(
+                (lahin, vaihtoehto) => {
+
+                    return Math.abs(
+                        vaihtoehto -
+                        raakaProsentti
+                    ) <
+                    Math.abs(
+                        lahin -
+                        raakaProsentti
+                    )
+                        ? vaihtoehto
+                        : lahin;
+                }
+            );
+
+        saadin.value =
+            prosentti + 11;
+
+        lisamatkaRajaProsentti =
+            prosentti;
+
+        lisamatkaRajaKm =
+            reittiABMatkaKm *
+            prosentti /
+            100;
+
+        lisaaikaRajaMin =
+            reittiABAikaMin *
+            prosentti /
+            100;
+
         document.getElementById(
-            "pyydettyAikaRajaMin"
-        ).value;
+            "lisamatkaProsenttiTeksti"
+        ).textContent =
+            prosentti +
+            " %";
 
-    const kokonaismatkaArvo =
         document.getElementById(
-            "kokonaismatkaRajaKm"
-        ).value;
-
-    const kokonaisaikaArvo =
-        document.getElementById(
-            "kokonaisaikaRajaMin"
-        ).value;
-
-
-    noutomatkaRajaKm =
-        noutomatkaArvo === ""
-            ? null
-            : parseFloat(noutomatkaArvo);
-
-    noutoaikaRajaMin =
-        noutoaikaArvo === ""
-            ? null
-            : parseFloat(noutoaikaArvo);
-
-    lisamatkaRajaKm =
-        lisamatkaArvo === ""
-            ? null
-            : parseFloat(lisamatkaArvo);
-
-    lisaaikaRajaMin =
-        lisaaikaArvo === ""
-            ? null
-            : parseFloat(lisaaikaArvo);
-
-    pyydettyMatkaRajaKm =
-        pyydettyMatkaArvo === ""
-            ? null
-            : parseFloat(pyydettyMatkaArvo);
-
-    pyydettyAikaRajaMin =
-        pyydettyAikaArvo === ""
-            ? null
-            : parseFloat(pyydettyAikaArvo);
-
-    kokonaismatkaRajaKm =
-        kokonaismatkaArvo === ""
-            ? null
-            : parseFloat(kokonaismatkaArvo);
-
-    kokonaisaikaRajaMin =
-        kokonaisaikaArvo === ""
-            ? null
-            : parseFloat(kokonaisaikaArvo);
+            "lisamatkaLaskettu"
+        ).textContent =
+            " → " +
+            lisamatkaRajaKm.toFixed(1) +
+            " km / " +
+            Math.round(
+                lisaaikaRajaMin
+            ) +
+            " min";
+    }
 
 
     paivitaSuodataNappi();
+
 
     if (unsubscribeKyytipyynnot) {
 

@@ -232,16 +232,13 @@
 <br><br>
 
 <div style="min-height: 22px;">
-    <span id="lisamatkaProsenttiTeksti"></span>
+    <label>
+        Lisämatka enintään:
+    </label>
 
+    <span id="lisamatkaProsenttiTeksti"></span>
     <span id="lisamatkaLaskettu"></span>
 </div>
-
-<label>
-    Lisämatka enint. (%):
-</label>
-
-<br>
 
 <div
     style="
@@ -2776,9 +2773,7 @@ function paivitaKokonaismatka() {
 
     if (
         reittiABMatkaKm == null ||
-        reittiABAikaMin == null ||
-        lisamatkaRajaKm == null ||
-        lisaaikaRajaMin == null
+        reittiABAikaMin == null
     ) {
 
         kokonaismatkaTeksti.textContent = "";
@@ -2786,13 +2781,23 @@ function paivitaKokonaismatka() {
         return;
     }
 
+    const lisamatkaKm =
+        lisamatkaRajaKm == null
+            ? 0
+            : lisamatkaRajaKm;
+
+    const lisaaikaMin =
+        lisaaikaRajaMin == null
+            ? 0
+            : lisaaikaRajaMin;
+
     const laskettuKokonaismatkaKm =
         reittiABMatkaKm +
-        lisamatkaRajaKm;
+        lisamatkaKm;
 
     const laskettuKokonaisaikaMin =
         reittiABAikaMin +
-        lisaaikaRajaMin;
+        lisaaikaMin;
 
     kokonaismatkaTeksti.textContent =
         laskettuKokonaismatkaKm.toFixed(1) +

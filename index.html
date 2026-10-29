@@ -55,6 +55,13 @@
 
 <h2>Kyytipyyntöjen etsiminen</h2>
 
+<div>
+    <b>Kyytipyyntöjä järjestelmässä yht.:</b>
+    <span id="kyytipyyntojenKokonaismaara">0</span>
+</div>
+
+<br>
+
 <label for="autonTuntomerkki">
     Auton tuntomerkki:
 </label>
@@ -381,9 +388,7 @@
 <br><br>
 
 <b>Täsmäävät kyytipyynnöt:</b>
-<span id="kyytipyyntojenMaara">0/0</span>
-
-<div id="havaittukyytipyynto"></div>
+<span id="kyytipyyntojenMaara">0</span>
 
 <div id="havaittukyytipyynto"></div>
 
@@ -1752,9 +1757,7 @@ function lopetaTarjoaminen() {
 
     document.getElementById(
         "kyytipyyntojenMaara"
-    ).textContent =
-        "0/" +
-        aktiivistenKyytipyyntojenMaara;
+    ).textContent = "0";
 
     document.getElementById(
         "autonTuntomerkki"
@@ -1922,14 +1925,10 @@ function kuunteleKyytipyyntojenKokonaismaaraa() {
             aktiivistenKyytipyyntojenMaara =
                 snapshot.size;
 
-            if (!tarjoaKyytia) {
-
-                document.getElementById(
-                    "kyytipyyntojenMaara"
-                ).textContent =
-                    "0/" +
-                    aktiivistenKyytipyyntojenMaara;
-            }
+            document.getElementById(
+                "kyytipyyntojenKokonaismaara"
+            ).textContent =
+                aktiivistenKyytipyyntojenMaara;
         }
     );
 }
@@ -2087,9 +2086,7 @@ function haeKyytipyynnot() {
             document.getElementById(
                 "kyytipyyntojenMaara"
             ).textContent =
-                suodatetutPyynnot.length +
-                "/" +
-                aktiivistenKyytipyyntojenMaara;
+                suodatetutPyynnot.length;
             
             let html = "";
 

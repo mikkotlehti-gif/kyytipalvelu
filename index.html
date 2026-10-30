@@ -238,7 +238,7 @@
 <br>
 
 <label>
-    Reitiltä noutopaikkaan enint. (km/min):
+    Turha ajo oharitilanteessa enint. (km/min):
 </label>
 
 <br>
@@ -2280,7 +2280,7 @@ function haeKyytipyynnot() {
 
                         <br>
 
-                        <b>Reitiltä noutopaikkaan:</b>
+                        <b>Turha ajo oharitilanteessa:</b>
                         ${laskelma.reittiNoutopaikkaan.matkaKm.toFixed(1)} km /
                         ${reitiltaNoutoaikaTeksti}
 
@@ -2619,47 +2619,32 @@ async function laskeMatkaNoutopaikalle(pyynto) {
     
 async function laskeReitiltaNoutopaikkaan(pyynto) {
 
-    let lahinKoordinaatti = null;
-    let lyhinEtaisyys = Infinity;
-
-    reittiABKoordinaatit.forEach(
-        (koordinaatti) => {
-
-            const longitude =
-                koordinaatti[0];
-
-            const latitude =
-                koordinaatti[1];
-
-            const etaisyys =
-                laskeEtaisyysMetreina(
-                    latitude,
-                    longitude,
-                    pyynto.matkustajanLahtopaikkaLatitude,
-                    pyynto.matkustajanLahtopaikkaLongitude
-                );
-
-            if (etaisyys < lyhinEtaisyys) {
-
-                lyhinEtaisyys =
-                    etaisyys;
-
-                lahinKoordinaatti =
-                    koordinaatti;
-            }
-        }
-    );
+    /*
+     * Reitti oharitilanteessa:
+     *
+     * tarjoajan nykyinen sijainti
+     * → matkustajan noutopaikka
+     * → tarjoajan oma määränpää
+     */
 
     const url =
         "https://router.project-osrm.org/route/v1/driving/" +
 
-        lahinKoordinaatti[0] + "," +
-        lahinKoordinaatti[1] +
+        kayttajanNykyi*enLongitude +
+        "," +
+      * kayttajanNykyinenLatitude +
+
+    *   ";" +
+
+        pyynto.matkustajanLahtopaikkaLongitude +
+        "," +
+        pyynto.matkustajanLahtopaikkaLatitude +
 
         ";" +
 
-        pyynto.matkustajanLahtopaikkaLongitude + "," +
-        pyynto.matkustajanLahtopaikkaLatitude +
+        tarjoajanMaaranpaaLongitude +
+        "," +
+        tarjoajanMaaranpaaLatitude +
 
         "?overview=false";
 
@@ -2669,12 +2654,39 @@ async function laskeReitiltaNoutopaikkaan(pyynto) {
     const data =
         await vastaus.json();
 
+    const oharireittiMatkaKm =
+        data.routes[0].distance /
+        1000;
+
+    const oharireittiAikaMin =
+        data.routes[0].duration /
+        60;
+
+    /*
+     * Turha ajo saadaan vähentämällä oharireitistä
+     * tarjoajan normaali jäljellä oleva reitti A → B.
+     */
+
+    const turhaMatkaKm =
+        oharireittiMatkaKm -
+        reittiABMatkaKm;
+
+    const turhaAikaMin =
+        oharireittiAikaMin -
+        reittiABAikaMin;
+
     return {
         matkaKm:
-            data.routes[0].distance / 1000,
+            Math.max(
+                0,
+                turhaMatkaKm
+            ),
 
         aikaMin:
-            data.routes[0].duration / 60
+            Math.max(
+                0,
+                turhaAikaMin
+            )
     };
 }
 

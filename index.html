@@ -2630,11 +2630,11 @@ async function laskeReitiltaNoutopaikkaan(pyynto) {
     const url =
         "https://router.project-osrm.org/route/v1/driving/" +
 
-        kayttajanNykyi*enLongitude +
+        kayttajanNykyinenLongitude +
         "," +
-      * kayttajanNykyinenLatitude +
+        kayttajanNykyinenLatitude +
 
-    *   ";" +
+        ";" +
 
         pyynto.matkustajanLahtopaikkaLongitude +
         "," +
@@ -2663,8 +2663,11 @@ async function laskeReitiltaNoutopaikkaan(pyynto) {
         60;
 
     /*
-     * Turha ajo saadaan vähentämällä oharireitistä
-     * tarjoajan normaali jäljellä oleva reitti A → B.
+     * Turha ajo:
+     *
+     * A → C → B
+     * miinus
+     * A → B
      */
 
     const turhaMatkaKm =

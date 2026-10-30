@@ -27,7 +27,7 @@
     top: 5px;
     height: 8px;
     border-radius: 4px;
-    background-color: #888;
+    background-color: #777;
     pointer-events: none;
     z-index: 2;
 }
@@ -87,11 +87,18 @@
 }
 
 .kyydin-pituus-saadin input[type="range"]:disabled::-webkit-slider-thumb {
-    background-color: #999;
+    background-color: #aaa;
+    cursor: default;
 }
 
 .kyydin-pituus-saadin input[type="range"]:disabled::-moz-range-thumb {
-    background-color: #999;
+    background-color: #aaa;
+    cursor: default;
+}
+
+.kyydin-pituus-saadin:has(input[type="range"]:disabled)
+.kyydin-pituus-valittu-raita {
+    background-color: #c8c8c8;
 }
 </style>
 
@@ -2924,11 +2931,11 @@ const valittuRaita =
     );
 
 valittuRaita.style.left =
-    (7 + 311 * alaraja / 100) +
+    (3 + 319 * alaraja / 100) +
     "px";
 
 valittuRaita.style.width =
-    (311 * (ylaraja - alaraja) / 100) +
+    (319 * (ylaraja - alaraja) / 100) +
     "px";
 
 document.getElementById(

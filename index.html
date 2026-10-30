@@ -1,5 +1,89 @@
 <h1>Kyytipalvelu TESTI2</h1>
 
+<style>
+    .kyydin-pituus-saadin {
+        position: relative;
+        width: 325px;
+        height: 34px;
+        padding-top: 8px;
+    }
+
+    .kyydin-pituus-raita {
+        position: absolute;
+        left: 10px;
+        right: 10px;
+        top: 19px;
+        height: 6px;
+        border-radius: 3px;
+        background-color: #c8c8c8;
+        pointer-events: none;
+    }
+
+    .kyydin-pituus-valittu-alue {
+        position: absolute;
+        top: 19px;
+        height: 6px;
+        border-radius: 3px;
+        background-color: #777;
+        pointer-events: none;
+    }
+
+    .kyydin-pituus-saadin input[type="range"] {
+        position: absolute;
+        left: 0;
+        top: 4px;
+        width: 325px;
+        margin: 0;
+        background: transparent;
+        pointer-events: none;
+        appearance: none;
+        -webkit-appearance: none;
+    }
+
+    .kyydin-pituus-saadin input[type="range"]::-webkit-slider-runnable-track {
+        height: 6px;
+        background: transparent;
+    }
+
+    .kyydin-pituus-saadin input[type="range"]::-webkit-slider-thumb {
+        width: 20px;
+        height: 20px;
+        margin-top: -7px;
+        border: 1px solid #666;
+        border-radius: 50%;
+        background-color: #777;
+        cursor: pointer;
+        pointer-events: auto;
+        appearance: none;
+        -webkit-appearance: none;
+    }
+
+    .kyydin-pituus-saadin input[type="range"]::-moz-range-track {
+        height: 6px;
+        background: transparent;
+    }
+
+    .kyydin-pituus-saadin input[type="range"]::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        border: 1px solid #666;
+        border-radius: 50%;
+        background-color: #777;
+        cursor: pointer;
+        pointer-events: auto;
+    }
+
+    .kyydin-pituus-saadin input[type="range"]:disabled::-webkit-slider-thumb {
+        background-color: #aaa;
+        cursor: default;
+    }
+
+    .kyydin-pituus-saadin input[type="range"]:disabled::-moz-range-thumb {
+        background-color: #aaa;
+        cursor: default;
+    }
+</style>
+
 <p>Rooli:</p>
 
 <button id="roolitarvitsija">Kyydin tarvitsija</button>

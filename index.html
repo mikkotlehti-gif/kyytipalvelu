@@ -2915,53 +2915,231 @@ async function laskeMatkustajanReitti() {
 }
 
 
-function paivitaKyydinPituus(muutettuNuppi = "", haePyynnotUudelleen = true) {
-    const ala = document.getElementById("kyydinPituusAlarajaProsentti");
-    const yla = document.getElementById("kyydinPituusYlarajaProsentti");
-    let alaraja = parseInt(ala.value);
-    let ylaraja = parseInt(yla.value);
-    if (muutettuNuppi === "alaraja" && alaraja > ylaraja) { alaraja = ylaraja; ala.value = alaraja; }
-    if (muutettuNuppi === "ylaraja" && ylaraja < alaraja) { ylaraja = alaraja; yla.value = ylaraja; }
-kyydinPituusAlarajaProsentti = alaraja;
-kyydinPituusYlarajaProsentti = ylaraja;
+function paivitaKyydinPituus(
+    muutettuNuppi = "",
+    haePyynnotUudelleen = true
+) {
 
-const valittuRaita =
+    const ala =
+        document.getElementById(
+            "kyydinPituusAlarajaProsentti"
+        );
+
+    const yla =
+        document.getElementById(
+            "kyydinPituusYlarajaProsentti"
+        );
+
+    let alaraja =
+        parseInt(ala.value);
+
+    let ylaraja =
+        parseInt(yla.value);
+
+
+    if (
+        muutettuNuppi === "alaraja" &&
+        alaraja > ylaraja
+    ) {
+
+        alaraja =
+            ylaraja;
+
+        ala.value =
+            alaraja;
+    }
+
+
+    if (
+        muutettuNuppi === "ylaraja" &&
+        ylaraja < alaraja
+    ) {
+
+        ylaraja =
+            alaraja;
+
+        yla.value =
+            ylaraja;
+    }
+
+
+    kyydinPituusAlarajaProsentti =
+        alaraja;
+
+    kyydinPituusYlarajaProsentti =
+        ylaraja;
+
+
+    const valittuRaita =
+        document.getElementById(
+            "kyydinPituusValittuRaita"
+        );
+
+    valittuRaita.style.left =
+        (3 + 319 * alaraja / 100) +
+        "px";
+
+    valittuRaita.style.width =
+        (319 * (ylaraja - alaraja) / 100) +
+        "px";
+
+
     document.getElementById(
-        "kyydinPituusValittuRaita"
-    );
+        "kyydinPituusProsenttiTeksti"
+    ).textContent =
+        alaraja +
+        "–" +
+        ylaraja +
+        " %";
 
-valittuRaita.style.left =
-    (3 + 319 * alaraja / 100) +
-    "px";
 
-valittuRaita.style.width =
-    (319 * (ylaraja - alaraja) / 100) +
-    "px";
+    /*
+     * 0–100 % tarkoittaa:
+     * Kyydin pituus -suodatin ei rajaa
+     * kyytipyyntöjä lainkaan.
+     */
 
-document.getElementById(
-    "kyydinPituusProsenttiTeksti"
-).textContent =
-    alaraja +
-    "–" +
-    ylaraja +
-    " %";
-    if (reittiABMatkaKm == null || reittiABAikaMin == null) {
-        pyydettyMatkaAlarajaKm = pyydettyMatkaYlarajaKm = null;
-        pyydettyAikaAlarajaMin = pyydettyAikaYlarajaMin = null;
-        document.getElementById("kyydinPituusLaskettu").textContent = "";
+    if (
+        alaraja === 0 &&
+        ylaraja === 100
+    ) {
+
+        pyydettyMatkaAlarajaKm = null;
+        pyydettyMatkaYlarajaKm = null;
+
+        pyydettyAikaAlarajaMin = null;
+        pyydettyAikaYlarajaMin = null;
+
+        document.getElementById(
+            "kyydinPituusLaskettu"
+        ).textContent = "";
+
         paivitaSuodataNappi();
+
+
+        if (
+            haePyynnotUudelleen &&
+            unsubscribeKyytipyynnot
+        ) {
+
+            unsubscribeKyytipyynnot();
+
+            unsubscribeKyytipyynnot =
+                null;
+        }
+
+
+        if (
+            haePyynnotUudelleen &&
+            tarjoaKyytia
+        ) {
+
+            haeKyytipyynnot();
+        }
+
         return;
     }
-    const kokonaismatkaKm = reittiABMatkaKm + (lisamatkaRajaKm == null ? 0 : lisamatkaRajaKm);
-    const kokonaisaikaMin = reittiABAikaMin + (lisaaikaRajaMin == null ? 0 : lisaaikaRajaMin);
-    pyydettyMatkaAlarajaKm = kokonaismatkaKm * alaraja / 100;
-    pyydettyMatkaYlarajaKm = kokonaismatkaKm * ylaraja / 100;
-    pyydettyAikaAlarajaMin = kokonaisaikaMin * alaraja / 100;
-    pyydettyAikaYlarajaMin = kokonaisaikaMin * ylaraja / 100;
-    document.getElementById("kyydinPituusLaskettu").textContent = " → " + pyydettyMatkaAlarajaKm.toFixed(1) + "–" + pyydettyMatkaYlarajaKm.toFixed(1) + " km / " + Math.round(pyydettyAikaAlarajaMin) + "–" + Math.round(pyydettyAikaYlarajaMin) + " min";
+
+
+    if (
+        reittiABMatkaKm == null ||
+        reittiABAikaMin == null
+    ) {
+
+        pyydettyMatkaAlarajaKm = null;
+        pyydettyMatkaYlarajaKm = null;
+
+        pyydettyAikaAlarajaMin = null;
+        pyydettyAikaYlarajaMin = null;
+
+        document.getElementById(
+            "kyydinPituusLaskettu"
+        ).textContent = "";
+
+        paivitaSuodataNappi();
+
+        return;
+    }
+
+
+    const kokonaismatkaKm =
+        reittiABMatkaKm +
+        (
+            lisamatkaRajaKm == null
+                ? 0
+                : lisamatkaRajaKm
+        );
+
+    const kokonaisaikaMin =
+        reittiABAikaMin +
+        (
+            lisaaikaRajaMin == null
+                ? 0
+                : lisaaikaRajaMin
+        );
+
+
+    pyydettyMatkaAlarajaKm =
+        kokonaismatkaKm *
+        alaraja /
+        100;
+
+    pyydettyMatkaYlarajaKm =
+        kokonaismatkaKm *
+        ylaraja /
+        100;
+
+    pyydettyAikaAlarajaMin =
+        kokonaisaikaMin *
+        alaraja /
+        100;
+
+    pyydettyAikaYlarajaMin =
+        kokonaisaikaMin *
+        ylaraja /
+        100;
+
+
+    document.getElementById(
+        "kyydinPituusLaskettu"
+    ).textContent =
+        " → " +
+        pyydettyMatkaAlarajaKm.toFixed(1) +
+        "–" +
+        pyydettyMatkaYlarajaKm.toFixed(1) +
+        " km / " +
+        Math.round(
+            pyydettyAikaAlarajaMin
+        ) +
+        "–" +
+        Math.round(
+            pyydettyAikaYlarajaMin
+        ) +
+        " min";
+
+
     paivitaSuodataNappi();
-    if (haePyynnotUudelleen && unsubscribeKyytipyynnot) { unsubscribeKyytipyynnot(); unsubscribeKyytipyynnot = null; }
-    if (haePyynnotUudelleen && tarjoaKyytia) haeKyytipyynnot();
+
+
+    if (
+        haePyynnotUudelleen &&
+        unsubscribeKyytipyynnot
+    ) {
+
+        unsubscribeKyytipyynnot();
+
+        unsubscribeKyytipyynnot =
+            null;
+    }
+
+
+    if (
+        haePyynnotUudelleen &&
+        tarjoaKyytia
+    ) {
+
+        haeKyytipyynnot();
+    }
 }
 
 function paivitaSuodatus() {

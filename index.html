@@ -11,21 +11,23 @@
 .kyydin-pituus-pohjaraita {
     position: absolute;
     left: 7px;
-    top: 8px;
+    top: 6px;
     width: 311px;
     height: 4px;
     border-radius: 2px;
     background-color: #d9d9d9;
     pointer-events: none;
+    z-index: 1;
 }
 
 .kyydin-pituus-valittu-raita {
     position: absolute;
-    top: 8px;
+    top: 6px;
     height: 4px;
     border-radius: 2px;
     background-color: #777;
     pointer-events: none;
+    z-index: 2;
 }
 
 .kyydin-pituus-saadin input[type="range"] {
@@ -33,26 +35,61 @@
     left: 0;
     top: 0;
     width: 325px;
+    height: 16px;
     margin: 0;
-    accent-color: #777;
-    pointer-events: none;
+    padding: 0;
     background: transparent;
+    pointer-events: none;
+    appearance: none;
+    -webkit-appearance: none;
+    z-index: 3;
 }
 
 .kyydin-pituus-saadin input[type="range"]::-webkit-slider-runnable-track {
+    height: 4px;
     background: transparent;
-}
-
-.kyydin-pituus-saadin input[type="range"]::-moz-range-track {
-    background: transparent;
+    border: none;
 }
 
 .kyydin-pituus-saadin input[type="range"]::-webkit-slider-thumb {
+    width: 14px;
+    height: 14px;
+    margin-top: -5px;
+    border: none;
+    border-radius: 50%;
+    background-color: #777;
     pointer-events: auto;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.kyydin-pituus-saadin input[type="range"]::-moz-range-track {
+    height: 4px;
+    background: transparent;
+    border: none;
+}
+
+.kyydin-pituus-saadin input[type="range"]::-moz-range-progress {
+    background: transparent;
 }
 
 .kyydin-pituus-saadin input[type="range"]::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border: none;
+    border-radius: 50%;
+    background-color: #777;
     pointer-events: auto;
+    cursor: pointer;
+}
+
+.kyydin-pituus-saadin input[type="range"]:disabled::-webkit-slider-thumb {
+    background-color: #999;
+}
+
+.kyydin-pituus-saadin input[type="range"]:disabled::-moz-range-thumb {
+    background-color: #999;
 }
 </style>
 

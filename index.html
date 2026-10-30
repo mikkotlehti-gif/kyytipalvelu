@@ -8,6 +8,26 @@
     padding-top: 8px;
 }
 
+.kyydin-pituus-pohjaraita {
+    position: absolute;
+    left: 7px;
+    top: 8px;
+    width: 311px;
+    height: 4px;
+    border-radius: 2px;
+    background-color: #d9d9d9;
+    pointer-events: none;
+}
+
+.kyydin-pituus-valittu-raita {
+    position: absolute;
+    top: 8px;
+    height: 4px;
+    border-radius: 2px;
+    background-color: #777;
+    pointer-events: none;
+}
+
 .kyydin-pituus-saadin input[type="range"] {
     position: absolute;
     left: 0;
@@ -16,6 +36,15 @@
     margin: 0;
     accent-color: #777;
     pointer-events: none;
+    background: transparent;
+}
+
+.kyydin-pituus-saadin input[type="range"]::-webkit-slider-runnable-track {
+    background: transparent;
+}
+
+.kyydin-pituus-saadin input[type="range"]::-moz-range-track {
+    background: transparent;
 }
 
 .kyydin-pituus-saadin input[type="range"]::-webkit-slider-thumb {
@@ -25,18 +54,6 @@
 .kyydin-pituus-saadin input[type="range"]::-moz-range-thumb {
     pointer-events: auto;
 }
-
-#kyydinPituusVasenVaalea {
-    position: absolute;
-    left: 0;
-    top: 6px;
-    width: 0;
-    height: 9px;
-    background-color: #e5f5e5;
-    pointer-events: none;
-    z-index: 3;
-}
-    
 </style>
 
 <p>Rooli:</p>
@@ -392,7 +409,12 @@
 </div>
 
 <div class="kyydin-pituus-saadin">
-    <div id="kyydinPituusVasenVaalea"></div>
+    <div class="kyydin-pituus-pohjaraita"></div>
+    <div
+        id="kyydinPituusValittuRaita"
+        class="kyydin-pituus-valittu-raita"
+    ></div>
+
     <input
         id="kyydinPituusAlarajaProsentti"
         type="range"
@@ -2853,15 +2875,29 @@ function paivitaKyydinPituus(muutettuNuppi = "", haePyynnotUudelleen = true) {
     let ylaraja = parseInt(yla.value);
     if (muutettuNuppi === "alaraja" && alaraja > ylaraja) { alaraja = ylaraja; ala.value = alaraja; }
     if (muutettuNuppi === "ylaraja" && ylaraja < alaraja) { ylaraja = alaraja; yla.value = ylaraja; }
-    kyydinPituusAlarajaProsentti = alaraja;
-    kyydinPituusYlarajaProsentti = ylaraja;
-    
+kyydinPituusAlarajaProsentti = alaraja;
+kyydinPituusYlarajaProsentti = ylaraja;
+
+const valittuRaita =
     document.getElementById(
-        "kyydinPituusVasenVaalea"
-    ).style.width =
-        (325 * alaraja / 100) + "px";
-    
-    document.getElementById("kyydinPituusProsenttiTeksti").textContent = alaraja + "–" + ylaraja + " %";
+        "kyydinPituusValittuRaita"
+    );
+
+valittuRaita.style.left =
+    (7 + 311 * alaraja / 100) +
+    "px";
+
+valittuRaita.style.width =
+    (311 * (ylaraja - alaraja) / 100) +
+    "px";
+
+document.getElementById(
+    "kyydinPituusProsenttiTeksti"
+).textContent =
+    alaraja +
+    "–" +
+    ylaraja +
+    " %";
     if (reittiABMatkaKm == null || reittiABAikaMin == null) {
         pyydettyMatkaAlarajaKm = pyydettyMatkaYlarajaKm = null;
         pyydettyAikaAlarajaMin = pyydettyAikaYlarajaMin = null;

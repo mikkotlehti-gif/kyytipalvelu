@@ -1430,7 +1430,6 @@ function paivitaJoMatkalla() {
     paivitaAloitaKyytienEtsiminenNappi();
 }
 
-
 function paivitaAloitaKyytienEtsiminenNappi() {
 
     const autonTuntomerkkiAnnettu =
@@ -1470,6 +1469,16 @@ function paivitaAloitaKyytienEtsiminenNappi() {
             "kyytienEtsiminenKytkin"
         );
 
+    const runko =
+        document.getElementById(
+            "kyytienEtsiminenKytkinRunko"
+        );
+
+    const teksti =
+        document.getElementById(
+            "kyytienEtsiminenKytkinTeksti"
+        );
+
     const tiedotValmiina =
         autonTuntomerkkiAnnettu &&
         maaranpaaValittu &&
@@ -1486,9 +1495,31 @@ function paivitaAloitaKyytienEtsiminenNappi() {
             tiedotValmiina
                 ? "auto"
                 : "none";
+
+        if (tiedotValmiina) {
+
+            runko.style.backgroundColor =
+                "#2196f3";
+
+            runko.style.borderColor =
+                "#1976d2";
+
+            teksti.style.color =
+                "#1976d2";
+
+        } else {
+
+            runko.style.backgroundColor =
+                "#b5b5b5";
+
+            runko.style.borderColor =
+                "#777";
+
+            teksti.style.color =
+                "#555";
+        }
     }
 }
-
 
 async function vaihdaKyytienEtsiminen() {
 

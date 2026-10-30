@@ -1496,14 +1496,10 @@ async function vaihdaKyytienEtsiminen() {
 
         lopetaTarjoaminen();
 
-        paivitaKyytienEtsiminenKytkin();
-
-    } else {
-
-        await aloitaTarjoaminen();
-
-        paivitaKyytienEtsiminenKytkin();
+        return;
     }
+
+    await aloitaTarjoaminen();
 }
 
 
@@ -1824,6 +1820,10 @@ async function aloitaTarjoaminen() {
 
 function lopetaTarjoaminen() {
 
+    tarjoaKyytia = false;
+
+    paivitaKyytienEtsiminenKytkin();
+
     if (unsubscribeKyytipyynnot) {
 
         unsubscribeKyytipyynnot();
@@ -1831,9 +1831,6 @@ function lopetaTarjoaminen() {
         unsubscribeKyytipyynnot =
             null;
     }
-
-    tarjoaKyytia = false;
-
 
     document.getElementById(
         "ohariRajaProsentti"

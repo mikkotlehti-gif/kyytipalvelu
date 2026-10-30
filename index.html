@@ -319,12 +319,28 @@
 <span
     id="kyytienEtsiminenKytkinTeksti"
     style="
-        margin-left: 10px;
+        margin-left: 8px;
         font-weight: bold;
         color: #555;
+        display: flex;
+        align-items: center;
     "
 >
-    ← Aloita kyytien etsiminen
+    <span
+        id="kyytienEtsiminenNuoli"
+        style="
+            font-size: 24px;
+            font-weight: bold;
+            line-height: 1;
+            margin-right: 6px;
+        "
+    >
+        ←
+    </span>
+
+    <span id="kyytienEtsiminenTeksti">
+        Aloita kyytien etsiminen
+    </span>
 </span>
 </div>
 
@@ -1556,6 +1572,11 @@ function paivitaKyytienEtsiminenKytkin() {
             "kyytienEtsiminenKytkinTeksti"
         );
 
+    const kytkinTeksti =
+    document.getElementById(
+        "kyytienEtsiminenTeksti"
+    );
+
     const alue =
         document.getElementById(
             "kyytienEtsiminenAlue"
@@ -1572,8 +1593,8 @@ function paivitaKyytienEtsiminenKytkin() {
         nuppi.style.left =
             "35px";
 
-        teksti.textContent =
-            "← Lopeta kyytien etsiminen";
+        kytkinTeksti.textContent =
+            "Lopeta kyytien etsiminen";
 
         teksti.style.color =
             "#2e7d32";
@@ -1603,8 +1624,8 @@ function paivitaKyytienEtsiminenKytkin() {
         nuppi.style.left =
             "3px";
 
-        teksti.textContent =
-            "← Aloita kyytien etsiminen";
+        kytkinTeksti.textContent =
+            "Aloita kyytien etsiminen";
 
         teksti.style.color =
             "#555";
@@ -3577,4 +3598,6 @@ window.paivitaLisamatkaProsentti =
 window.vaihdaKyytienEtsiminen =
     vaihdaKyytienEtsiminen;
 
+paivitaAloitaKyytienEtsiminenNappi();
+    
 </script>

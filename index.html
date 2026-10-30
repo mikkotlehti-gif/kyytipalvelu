@@ -100,6 +100,12 @@
 .kyydin-pituus-valittu-raita {
     background-color: #c8c8c8;
 }
+
+.kyydin-pituus-saadin.ei-suodatusta
+.kyydin-pituus-valittu-raita {
+    background-color: #c8c8c8;
+}
+  
 </style>
 
 
@@ -450,9 +456,8 @@
 <br><br>
 
 <div style="min-height: 22px;">
-    <label>Kyydin pituus:</label>
-    <span id="kyydinPituusProsenttiTeksti">0–100 %</span>
-    <span id="kyydinPituusLaskettu"></span>
+    <div id="kyydinPituusArvot"></div>
+    <label>Kyydin pituus min-max kokonaismatkastani</label>
 </div>
 
 <div class="kyydin-pituus-saadin">
@@ -2930,6 +2935,11 @@ function paivitaKyydinPituus(
             "kyydinPituusYlarajaProsentti"
         );
 
+    const saadin =
+        document.querySelector(
+            ".kyydin-pituus-saadin"
+        );
+
     let alaraja =
         parseInt(ala.value);
 
@@ -2984,25 +2994,18 @@ function paivitaKyydinPituus(
         "px";
 
 
-    document.getElementById(
-        "kyydinPituusProsenttiTeksti"
-    ).textContent =
-        alaraja +
-        "–" +
-        ylaraja +
-        " %";
-
-
-    /*
-     * 0–100 % tarkoittaa:
-     * Kyydin pituus -suodatin ei rajaa
-     * kyytipyyntöjä lainkaan.
-     */
-
-    if (
+    const eiSuodatusta =
         alaraja === 0 &&
-        ylaraja === 100
-    ) {
+        ylaraja === 100;
+
+
+    saadin.classList.toggle(
+        "ei-suodatusta",
+        eiSuodatusta
+    );
+
+
+    if (eiSuodatusta) {
 
         pyydettyMatkaAlarajaKm = null;
         pyydettyMatkaYlarajaKm = null;
@@ -3011,7 +3014,7 @@ function paivitaKyydinPituus(
         pyydettyAikaYlarajaMin = null;
 
         document.getElementById(
-            "kyydinPituusLaskettu"
+            "kyydinPituusArvot"
         ).textContent = "";
 
         paivitaSuodataNappi();
@@ -3053,7 +3056,7 @@ function paivitaKyydinPituus(
         pyydettyAikaYlarajaMin = null;
 
         document.getElementById(
-            "kyydinPituusLaskettu"
+            "kyydinPituusArvot"
         ).textContent = "";
 
         paivitaSuodataNappi();
@@ -3101,17 +3104,20 @@ function paivitaKyydinPituus(
 
 
     document.getElementById(
-        "kyydinPituusLaskettu"
+        "kyydinPituusArvot"
     ).textContent =
-        " → " +
+        alaraja +
+        "-" +
+        ylaraja +
+        "% eli " +
         pyydettyMatkaAlarajaKm.toFixed(1) +
-        "–" +
+        "-" +
         pyydettyMatkaYlarajaKm.toFixed(1) +
         " km / " +
         Math.round(
             pyydettyAikaAlarajaMin
         ) +
-        "–" +
+        "-" +
         Math.round(
             pyydettyAikaYlarajaMin
         ) +

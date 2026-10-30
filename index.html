@@ -236,7 +236,52 @@
 </div>
 
 <br>
+<div style="min-height: 22px;">
+    <label>
+        Lisämatka enintään:
+    </label>
 
+    <span id="lisamatkaProsenttiTeksti"></span>
+    <span id="lisamatkaLaskettu"></span>
+</div>
+
+<div
+    style="
+        position: relative;
+        width: 325px;
+        padding-top: 8px;
+    "
+>
+    <div
+        style="
+            position: absolute;
+            left: 10%;
+            top: 3px;
+            width: 2px;
+            height: 28px;
+            background-color: #666;
+            pointer-events: none;
+            z-index: 2;
+        "
+    ></div>
+
+    <input
+        id="lisamatkaRajaProsentti"
+        type="range"
+        min="0"
+        max="12"
+        step="1"
+        value="0"
+        style="
+            width: 325px;
+            accent-color: #777;
+        "
+        oninput="paivitaLisamatkaProsentti();"
+        disabled
+    >
+</div>
+
+<br><br>
 <div style="min-height: 22px;">
     <label>
         Turha ajo oharitilanteessa:
@@ -298,53 +343,6 @@
     style="width: 45px;"
     disabled
 >
-
-<br><br>
-
-<div style="min-height: 22px;">
-    <label>
-        Lisämatka enintään:
-    </label>
-
-    <span id="lisamatkaProsenttiTeksti"></span>
-    <span id="lisamatkaLaskettu"></span>
-</div>
-
-<div
-    style="
-        position: relative;
-        width: 325px;
-        padding-top: 8px;
-    "
->
-    <div
-        style="
-            position: absolute;
-            left: 10%;
-            top: 3px;
-            width: 2px;
-            height: 28px;
-            background-color: #666;
-            pointer-events: none;
-            z-index: 2;
-        "
-    ></div>
-
-    <input
-        id="lisamatkaRajaProsentti"
-        type="range"
-        min="0"
-        max="12"
-        step="1"
-        value="0"
-        style="
-            width: 325px;
-            accent-color: #777;
-        "
-        oninput="paivitaLisamatkaProsentti();"
-        disabled
-    >
-</div>
 
 <br><br>
 

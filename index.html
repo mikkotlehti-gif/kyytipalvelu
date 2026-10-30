@@ -26,8 +26,15 @@
     pointer-events: auto;
 }
 
-#kyydinPituusAlarajaProsentti {
-    accent-color: #d9d9d9;
+#kyydinPituusVasenVaalea {
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 0;
+    height: 3px;
+    background-color: #d9d9d9;
+    pointer-events: none;
+    z-index: 3;
 }
     
 </style>
@@ -385,6 +392,7 @@
 </div>
 
 <div class="kyydin-pituus-saadin">
+    <div id="kyydinPituusVasenVaalea"></div>
     <input
         id="kyydinPituusAlarajaProsentti"
         type="range"
@@ -2847,6 +2855,12 @@ function paivitaKyydinPituus(muutettuNuppi = "", haePyynnotUudelleen = true) {
     if (muutettuNuppi === "ylaraja" && ylaraja < alaraja) { ylaraja = alaraja; yla.value = ylaraja; }
     kyydinPituusAlarajaProsentti = alaraja;
     kyydinPituusYlarajaProsentti = ylaraja;
+    
+    document.getElementById(
+        "kyydinPituusVasenVaalea"
+    ).style.width =
+        (325 * alaraja / 100) + "px";
+    
     document.getElementById("kyydinPituusProsenttiTeksti").textContent = alaraja + "–" + ylaraja + " %";
     if (reittiABMatkaKm == null || reittiABAikaMin == null) {
         pyydettyMatkaAlarajaKm = pyydettyMatkaYlarajaKm = null;

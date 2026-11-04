@@ -547,6 +547,11 @@ import {
 } from "https://www.gstatic.com/firebasejs/13.0.0/firebase-app.js";
 
 import {
+    getAuth,
+    signInAnonymously
+} from "https://www.gstatic.com/firebasejs/13.0.0/firebase-auth.js";
+    
+import {
     getFirestore,
     addDoc,
     collection,
@@ -571,12 +576,31 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
+const auth = getAuth(app);
+
 const db = getFirestore(app);
 
 console.log("Firebase OK");
 
-kuunteleKyytipyyntojenKokonaismaaraa();
+signInAnonymously(auth)
+    .then((userCredential) => {
 
+        console.log(
+            "Firebase Anonymous Auth OK:",
+            userCredential.user.uid
+        );
+
+    })
+    .catch((error) => {
+
+        console.error(
+            "Firebase Anonymous Auth virhe:",
+            error
+        );
+
+    });
+
+kuunteleKyytipyyntojenKokonaismaaraa();
 
 var kayttajanNykyinenLatitude = null;
 

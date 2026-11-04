@@ -299,6 +299,7 @@
             position: relative;
             width: 64px;
             height: 32px;
+            flex-shrink: 0;
             border-radius: 18px;
             background-color: #b5b5b5;
             border: 2px solid #777;
@@ -323,37 +324,35 @@
         ></div>
     </div>
 
-<span
-    id="kyytienEtsiminenKytkinTeksti"
-    style="
-        margin-left: 8px;
-        font-weight: bold;
-        color: #555;
-        display: flex;
-        align-items: center;
-    "
->
+    <div
+        id="kyytienEtsiminenKytkinTeksti"
+        style="
+            margin-left: 10px;
+            color: #555;
+            line-height: 1.2;
+        "
+    >
+        <div
+            id="kyytienEtsiminenTeksti"
+            style="
+                font-weight: bold;
+            "
+        >
+            Kyytien etsiminen
+        </div>
 
-<span
-    id="kyytienEtsiminenNuoli"
-    style="
-        position: relative;
-        top: -2px;
-        font-size: 22px;
-        line-height: 1;
-        margin-right: 6px;
-    "
->
-    ⬅
-</span>
-
-    <span id="kyytienEtsiminenTeksti">
-        Aloita kyytien etsiminen
-    </span>
-</span>
+        <div
+            id="kyytienEtsiminenTila"
+            style="
+                margin-top: 2px;
+                font-size: 12px;
+                color: #777;
+            "
+        >
+            Täytä pakolliset tiedot
+        </div>
+    </div>
 </div>
-
-<br>
 
 <div
     id="kyytienEtsiminenAlue"
@@ -1528,9 +1527,9 @@ function paivitaAloitaKyytienEtsiminenNappi() {
             "kyytienEtsiminenKytkinRunko"
         );
 
-    const teksti =
+    const tila =
         document.getElementById(
-            "kyytienEtsiminenKytkinTeksti"
+            "kyytienEtsiminenTila"
         );
 
     const tiedotValmiina =
@@ -1558,8 +1557,11 @@ function paivitaAloitaKyytienEtsiminenNappi() {
             runko.style.borderColor =
                 "#1976d2";
 
-            teksti.style.color =
-                "#1976d2";
+            tila.textContent =
+                "Valmis käynnistettäväksi";
+
+            tila.style.color =
+                "#555";
 
         } else {
 
@@ -1569,8 +1571,11 @@ function paivitaAloitaKyytienEtsiminenNappi() {
             runko.style.borderColor =
                 "#777";
 
-            teksti.style.color =
-                "#555";
+            tila.textContent =
+                "Täytä pakolliset tiedot";
+
+            tila.style.color =
+                "#777";
         }
     }
 }
@@ -1605,15 +1610,10 @@ function paivitaKyytienEtsiminenKytkin() {
             "kyytienEtsiminenKytkinNuppi"
         );
 
-    const teksti =
+    const tila =
         document.getElementById(
-            "kyytienEtsiminenKytkinTeksti"
+            "kyytienEtsiminenTila"
         );
-
-    const kytkinTeksti =
-    document.getElementById(
-        "kyytienEtsiminenTeksti"
-    );
 
     const alue =
         document.getElementById(
@@ -1631,10 +1631,10 @@ function paivitaKyytienEtsiminenKytkin() {
         nuppi.style.left =
             "35px";
 
-        kytkinTeksti.textContent =
-            "Lopeta kyytien etsiminen";
+        tila.textContent =
+            "Käynnissä";
 
-        teksti.style.color =
+        tila.style.color =
             "#2e7d32";
 
         alue.style.backgroundColor =
@@ -1653,20 +1653,8 @@ function paivitaKyytienEtsiminenKytkin() {
 
     } else {
 
-        runko.style.backgroundColor =
-            "#b5b5b5";
-
-        runko.style.borderColor =
-            "#777";
-
         nuppi.style.left =
             "3px";
-
-        kytkinTeksti.textContent =
-            "Aloita kyytien etsiminen";
-
-        teksti.style.color =
-            "#555";
 
         alue.style.backgroundColor =
             "#eeeeee";
@@ -1679,7 +1667,6 @@ function paivitaKyytienEtsiminenKytkin() {
         paivitaAloitaKyytienEtsiminenNappi();
     }
 }
-
 
 async function aloitaTarjoaminen() {
 

@@ -590,6 +590,8 @@ signInAnonymously(auth)
             userCredential.user.uid
         );
 
+        kuunteleKyytipyyntojenKokonaismaaraa();
+
     })
     .catch((error) => {
 
@@ -599,8 +601,6 @@ signInAnonymously(auth)
         );
 
     });
-
-kuunteleKyytipyyntojenKokonaismaaraa();
 
 var kayttajanNykyinenLatitude = null;
 

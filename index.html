@@ -193,6 +193,59 @@
 
 <br><br>
 
+<label for="tarjoajanLahtopaikka">
+    Oma lähtöpaikka:
+</label>
+
+<br>
+
+<div id="tarjoajanLahtopaikanValinta">
+    <button
+        id="kaytaNykyistaSijaintiaNappi"
+        onclick="valitseTarjoajanNykyinenSijainti()"
+    >
+        Käytä nykyistä sijaintia
+    </button>
+
+    <br><br>
+
+    <input
+        id="tarjoajanLahtopaikka"
+        type="text"
+        placeholder="Anna oma lähtöpaikka"
+        oninput="document.getElementById('etsiTarjoajanLahtopaikkaNappi').disabled = (this.value == '')"
+    >
+
+    <button
+        id="etsiTarjoajanLahtopaikkaNappi"
+        onclick="etsiTarjoajanLahtopaikka()"
+        disabled
+    >
+        Etsi lähtöpaikka
+    </button>
+
+    <div
+        id="tarjoajanLahtopaikkaHakutulokset"
+        style="margin-top: 10px;"
+    ></div>
+</div>
+
+<div
+    id="tarjoajanValittuLahtopaikka"
+    style="display: none; margin-top: 10px;"
+>
+    📍 <span id="tarjoajanValittuLahtopaikkaTeksti"></span>
+
+    <button
+        id="vaihdaTarjoajanLahtopaikkaNappi"
+        onclick="vaihdaTarjoajanLahtopaikka()"
+    >
+        Vaihda
+    </button>
+</div>
+
+<br><br>
+
 <label for="tarjoajanMaaranpaa">
     Oma määränpää:
 </label>
@@ -629,6 +682,14 @@ var tarjoaKyytia = false;
 
 var autonTuntomerkki = "";
 
+var tarjoajanLahtopaikanTyyppi = "";
+
+var tarjoajanLahtopaikka = "";
+
+var tarjoajanLahtopaikkaLatitude = null;
+
+var tarjoajanLahtopaikkaLongitude = null;
+
 var tarjoajanMaaranpaa = "";
 
 var tarjoajanMaaranpaaLatitude = null;
@@ -750,6 +811,15 @@ navigator.geolocation.watchPosition(
         kayttajanNykyinenLongitude =
             sijainti.coords.longitude;
 
+        if (tarjoajanLahtopaikanTyyppi === "nykyinen") {
+
+            tarjoajanLahtopaikkaLatitude =
+                kayttajanNykyinenLatitude;
+
+            tarjoajanLahtopaikkaLongitude =
+                kayttajanNykyinenLongitude;
+        }
+
         haeMatkustajanLahtopaikanNimi(
             kayttajanNykyinenLatitude,
             kayttajanNykyinenLongitude
@@ -778,6 +848,7 @@ navigator.geolocation.watchPosition(
 
         if (
             tarjoaKyytia &&
+            tarjoajanLahtopaikanTyyppi === "nykyinen" &&
             nykyinenAika -
                 kyytipyyntojenReititPaivitettyViimeksi >=
                 15000
@@ -991,6 +1062,217 @@ async function etsiMaaranpaa() {
     ).innerHTML =
         html ||
         "Sopivia osoitteita ei löytynyt.";
+}
+
+
+async function etsiTarjoajanLahtopaikka() {
+
+    const hakuteksti =
+        document.getElementById(
+            "tarjoajanLahtopaikka"
+        ).value.trim();
+
+    const sisaltaaNumeron =
+        /\d/.test(hakuteksti);
+
+    if (!sisaltaaNumeron) {
+
+        document.getElementById(
+            "tarjoajanLahtopaikkaHakutulokset"
+        ).innerHTML =
+            "Anna katuosoite ja numero, esimerkiksi Perkiöntie 12.";
+
+        return;
+    }
+
+    const vastaus =
+        await fetch(
+            "https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=20&countrycodes=fi&q=" +
+            encodeURIComponent(hakuteksti)
+        );
+
+    const tulokset =
+        await vastaus.json();
+
+    let html = "";
+
+    const loydetytOsoitteet =
+        new Set();
+
+    tulokset.forEach((tulos) => {
+
+        const osoite =
+            tulos.address || {};
+
+        if (
+            !osoite.road ||
+            !osoite.house_number
+        ) {
+            return;
+        }
+
+        const katuosoite =
+            osoite.road +
+            " " +
+            osoite.house_number;
+
+        const kuntaTaiKaupunki =
+            osoite.city ||
+            osoite.town ||
+            osoite.municipality ||
+            osoite.village ||
+            "";
+
+        const osoiteTeksti =
+            katuosoite +
+            ", " +
+            kuntaTaiKaupunki;
+
+        if (loydetytOsoitteet.has(osoiteTeksti)) {
+            return;
+        }
+
+        loydetytOsoitteet.add(osoiteTeksti);
+
+        const koodattuOsoite =
+            encodeURIComponent(osoiteTeksti);
+
+        html +=
+            "<div style='margin-bottom: 16px;'>" +
+            osoiteTeksti +
+            "<br>" +
+            "<button onclick=\"valitseTarjoajanLahtopaikka(" +
+            "decodeURIComponent('" +
+            koodattuOsoite +
+            "'), '" +
+            tulos.lat +
+            "', '" +
+            tulos.lon +
+            "')\">" +
+            "Valitse" +
+            "</button>" +
+            "</div>";
+    });
+
+    document.getElementById(
+        "tarjoajanLahtopaikkaHakutulokset"
+    ).innerHTML =
+        html ||
+        "Sopivia osoitteita ei löytynyt.";
+}
+
+
+function naytaTarjoajanValittuLahtopaikka() {
+
+    document.getElementById(
+        "tarjoajanValittuLahtopaikkaTeksti"
+    ).textContent =
+        tarjoajanLahtopaikka;
+
+    document.getElementById(
+        "tarjoajanLahtopaikanValinta"
+    ).style.display = "none";
+
+    document.getElementById(
+        "tarjoajanValittuLahtopaikka"
+    ).style.display = "block";
+
+    document.getElementById(
+        "tarjoajanLahtopaikkaHakutulokset"
+    ).innerHTML = "";
+
+    paivitaAloitaKyytienEtsiminenNappi();
+}
+
+
+async function valitseTarjoajanNykyinenSijainti() {
+
+    if (
+        kayttajanNykyinenLatitude == null ||
+        kayttajanNykyinenLongitude == null
+    ) {
+        alert("Nykyistä sijaintia ei ole vielä saatavilla.");
+        return;
+    }
+
+    tarjoajanLahtopaikanTyyppi =
+        "nykyinen";
+
+    tarjoajanLahtopaikkaLatitude =
+        kayttajanNykyinenLatitude;
+
+    tarjoajanLahtopaikkaLongitude =
+        kayttajanNykyinenLongitude;
+
+    tarjoajanLahtopaikka =
+        await haeMatkustajanLahtopaikanNimi(
+            tarjoajanLahtopaikkaLatitude,
+            tarjoajanLahtopaikkaLongitude
+        );
+
+    naytaTarjoajanValittuLahtopaikka();
+}
+
+
+function valitseTarjoajanLahtopaikka(
+    nimi,
+    latitude,
+    longitude
+) {
+
+    tarjoajanLahtopaikanTyyppi =
+        "osoite";
+
+    tarjoajanLahtopaikka =
+        nimi;
+
+    tarjoajanLahtopaikkaLatitude =
+        parseFloat(latitude);
+
+    tarjoajanLahtopaikkaLongitude =
+        parseFloat(longitude);
+
+    document.getElementById(
+        "tarjoajanLahtopaikka"
+    ).value =
+        tarjoajanLahtopaikka;
+
+    naytaTarjoajanValittuLahtopaikka();
+}
+
+
+function vaihdaTarjoajanLahtopaikka() {
+
+    tarjoajanLahtopaikanTyyppi = "";
+    tarjoajanLahtopaikka = "";
+    tarjoajanLahtopaikkaLatitude = null;
+    tarjoajanLahtopaikkaLongitude = null;
+
+    document.getElementById(
+        "tarjoajanValittuLahtopaikka"
+    ).style.display = "none";
+
+    document.getElementById(
+        "tarjoajanLahtopaikanValinta"
+    ).style.display = "block";
+
+    document.getElementById(
+        "tarjoajanLahtopaikka"
+    ).value = "";
+
+    document.getElementById(
+        "etsiTarjoajanLahtopaikkaNappi"
+    ).disabled = true;
+
+    document.getElementById(
+        "tarjoajanLahtopaikkaHakutulokset"
+    ).innerHTML = "";
+
+    document.getElementById(
+        "tarjoajanLahtopaikka"
+    ).focus();
+
+    paivitaAloitaKyytienEtsiminenNappi();
 }
 
 
@@ -1490,6 +1772,11 @@ function paivitaAloitaKyytienEtsiminenNappi() {
             "autonTuntomerkki"
         ).value.trim() !== "";
 
+    const lahtopaikkaValittu =
+        tarjoajanLahtopaikka != "" &&
+        tarjoajanLahtopaikkaLatitude != null &&
+        tarjoajanLahtopaikkaLongitude != null;
+
     const maaranpaaValittu =
         tarjoajanMaaranpaa != "" &&
         tarjoajanMaaranpaaLatitude != null &&
@@ -1534,6 +1821,7 @@ function paivitaAloitaKyytienEtsiminenNappi() {
 
     const tiedotValmiina =
         autonTuntomerkkiAnnettu &&
+        lahtopaikkaValittu &&
         maaranpaaValittu &&
         aikaehdotTayttyvat;
 
@@ -1746,6 +2034,20 @@ async function aloitaTarjoaminen() {
 
 
     if (
+        tarjoajanLahtopaikka == "" ||
+        tarjoajanLahtopaikkaLatitude == null ||
+        tarjoajanLahtopaikkaLongitude == null
+    ) {
+
+        alert(
+            "Valitse ensin tarjoajan lähtöpaikka"
+        );
+
+        return;
+    }
+
+
+    if (
         tarjoajanMaaranpaa == "" ||
         tarjoajanMaaranpaaLatitude == null ||
         tarjoajanMaaranpaaLongitude == null
@@ -1758,18 +2060,6 @@ async function aloitaTarjoaminen() {
         return;
     }
 
-
-    if (
-        kayttajanNykyinenLatitude == null ||
-        kayttajanNykyinenLongitude == null
-    ) {
-
-        alert(
-            "Odotetaan tarjoajan sijaintitietoa"
-        );
-
-        return;
-    }
 
 
     await laskeReittiAB();
@@ -1851,6 +2141,22 @@ async function aloitaTarjoaminen() {
     ).disabled = true;
 
     document.getElementById(
+        "tarjoajanLahtopaikka"
+    ).disabled = true;
+
+    document.getElementById(
+        "etsiTarjoajanLahtopaikkaNappi"
+    ).disabled = true;
+
+    document.getElementById(
+        "kaytaNykyistaSijaintiaNappi"
+    ).disabled = true;
+
+    document.getElementById(
+        "vaihdaTarjoajanLahtopaikkaNappi"
+    ).disabled = true;
+
+    document.getElementById(
         "tarjoajanMaaranpaa"
     ).disabled = true;
 
@@ -1873,6 +2179,10 @@ async function aloitaTarjoaminen() {
     document.getElementById(
         "etsiTarjoajanMaaranpaaNappi"
     ).disabled = true;
+
+    document.getElementById(
+        "tarjoajanLahtopaikkaHakutulokset"
+    ).innerHTML = "";
 
     document.getElementById(
         "tarjoajanMaaranpaaHakutulokset"
@@ -1944,6 +2254,18 @@ function lopetaTarjoaminen() {
     ).disabled = false;
 
     document.getElementById(
+        "tarjoajanLahtopaikka"
+    ).disabled = false;
+
+    document.getElementById(
+        "kaytaNykyistaSijaintiaNappi"
+    ).disabled = false;
+
+    document.getElementById(
+        "vaihdaTarjoajanLahtopaikkaNappi"
+    ).disabled = false;
+
+    document.getElementById(
         "tarjoajanMaaranpaa"
     ).disabled = false;
 
@@ -1969,6 +2291,10 @@ function lopetaTarjoaminen() {
     document.getElementById(
         "etsiTarjoajanMaaranpaaNappi"
     ).disabled = true;
+
+    document.getElementById(
+        "tarjoajanLahtopaikkaHakutulokset"
+    ).innerHTML = "";
 
     document.getElementById(
         "tarjoajanMaaranpaaHakutulokset"
@@ -2656,9 +2982,9 @@ async function laskeReittiAB() {
     const url =
         "https://router.project-osrm.org/route/v1/driving/" +
 
-        kayttajanNykyinenLongitude +
+        tarjoajanLahtopaikkaLongitude +
         "," +
-        kayttajanNykyinenLatitude +
+        tarjoajanLahtopaikkaLatitude +
 
         ";" +
 
@@ -2825,9 +3151,9 @@ async function laskeMatkaNoutopaikalle(pyynto) {
     const url =
         "https://router.project-osrm.org/route/v1/driving/" +
 
-        kayttajanNykyinenLongitude +
+        tarjoajanLahtopaikkaLongitude +
         "," +
-        kayttajanNykyinenLatitude +
+        tarjoajanLahtopaikkaLatitude +
 
         ";" +
 
@@ -2860,9 +3186,9 @@ async function laskeReitiltaNoutopaikkaan(pyynto) {
     const url =
         "https://router.project-osrm.org/route/v1/driving/" +
 
-        kayttajanNykyinenLongitude +
+        tarjoajanLahtopaikkaLongitude +
         "," +
-        kayttajanNykyinenLatitude +
+        tarjoajanLahtopaikkaLatitude +
 
         ";" +
 
@@ -2921,9 +3247,9 @@ async function laskeReittiACDB(pyynto) {
     const url =
         "https://router.project-osrm.org/route/v1/driving/" +
 
-        kayttajanNykyinenLongitude +
+        tarjoajanLahtopaikkaLongitude +
         "," +
-        kayttajanNykyinenLatitude +
+        tarjoajanLahtopaikkaLatitude +
 
         ";" +
 
@@ -3559,6 +3885,18 @@ function paivitaLisamatkaProsentti() {
 
 window.etsiMaaranpaa =
     etsiMaaranpaa;
+
+window.etsiTarjoajanLahtopaikka =
+    etsiTarjoajanLahtopaikka;
+
+window.valitseTarjoajanLahtopaikka =
+    valitseTarjoajanLahtopaikka;
+
+window.valitseTarjoajanNykyinenSijainti =
+    valitseTarjoajanNykyinenSijainti;
+
+window.vaihdaTarjoajanLahtopaikka =
+    vaihdaTarjoajanLahtopaikka;
 
 window.etsiTarjoajanMaaranpaa =
     etsiTarjoajanMaaranpaa;

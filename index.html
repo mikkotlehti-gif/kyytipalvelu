@@ -477,7 +477,7 @@
 <br><br>
 <div style="min-height: 22px;">
     <label>
-        Ohari enimmäislisämatkasta enint.:
+        Ohari lisämatkasta enint.:
     </label>
 
     <span id="ohariProsenttiTeksti"></span>
@@ -2608,22 +2608,28 @@ function haeKyytipyynnot() {
                         (laskelma) => {
 
                             return (
-                                (
-                                    noutomatkaRajaKm == null ||
-                                    parseFloat(
-                                        laskelma.reittiNoutopaikkaan.matkaKm.toFixed(1)
-                                    ) <=
-                                        noutomatkaRajaKm
-                                ) &&
-
-                                (
-                                    noutoaikaRajaMin == null ||
-                                    parseFloat(
-                                        laskelma.reittiNoutopaikkaan.aikaMin.toFixed(0)
-                                    ) <=
-                                        noutoaikaRajaMin
-                                ) &&
-
+                                    (
+                                        ohariRajaProsentti == null ||
+                                        (
+                                            (
+                                                laskelma.lisamatkaKm > 0 &&
+                                                (
+                                                    laskelma.reittiNoutopaikkaan.matkaKm /
+                                                    laskelma.lisamatkaKm *
+                                                    100
+                                                ) <= ohariRajaProsentti
+                                            )
+                                            ||
+                                            (
+                                                laskelma.lisaaikaMin > 0 &&
+                                                (
+                                                    laskelma.reittiNoutopaikkaan.aikaMin /
+                                                    laskelma.lisaaikaMin *
+                                                    100
+                                                ) <= ohariRajaProsentti
+                                            )
+                                        )
+                                    ) &&
                                 (
                                     lisamatkaRajaKm == null ||
                                     parseFloat(
@@ -3937,18 +3943,9 @@ function paivitaOhariProsentti(
     ];
 
 
-    /*
-     * Asento 0 tarkoittaa:
-     * Ohari-suodatin pois päältä.
-     */
-
     if (saadinAsento === 0) {
 
         ohariRajaProsentti = null;
-
-        noutomatkaRajaKm = null;
-
-        noutoaikaRajaMin = null;
 
         document.getElementById(
             "ohariProsenttiTeksti"
@@ -3960,65 +3957,20 @@ function paivitaOhariProsentti(
 
     } else {
 
-        const prosentti =
+        ohariRajaProsentti =
             sallitutProsentit[
                 saadinAsento - 1
             ];
 
-        ohariRajaProsentti =
-            prosentti;
-
         document.getElementById(
             "ohariProsenttiTeksti"
         ).textContent =
-            prosentti +
+            ohariRajaProsentti +
             " %";
 
-
-        /*
-         * Ohari km- ja min-arvot lasketaan aina
-         * Lisämatka enintään -arvoista.
-         *
-         * Jos Lisämatka enintään -suodatin ei ole päällä,
-         * Ohari-prosentti näytetään mutta km/min jätetään tyhjiksi.
-         */
-
-        if (
-            lisamatkaRajaKm == null ||
-            lisaaikaRajaMin == null
-        ) {
-
-            noutomatkaRajaKm = null;
-
-            noutoaikaRajaMin = null;
-
-            document.getElementById(
-                "ohariLaskettu"
-            ).textContent = "";
-
-        } else {
-
-            noutomatkaRajaKm =
-                lisamatkaRajaKm *
-                prosentti /
-                100;
-
-            noutoaikaRajaMin =
-                lisaaikaRajaMin *
-                prosentti /
-                100;
-
-            document.getElementById(
-                "ohariLaskettu"
-            ).textContent =
-                " → " +
-                noutomatkaRajaKm.toFixed(1) +
-                " km / " +
-                Math.round(
-                    noutoaikaRajaMin
-                ) +
-                " min";
-        }
+        document.getElementById(
+            "ohariLaskettu"
+        ).textContent = "";
     }
 
 

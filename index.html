@@ -2850,6 +2850,24 @@ function haeKyytipyynnot() {
                                 .trim();
 
 
+                        const kyytipyyntoTehokkuusProsentti =
+                            laskelma.kuljetettavaMatka.matkaKm /
+                            (
+                                laskelma.kuljetettavaMatka.matkaKm +
+                                Math.max(
+                                    0,
+                                    laskelma.lisamatkaKm
+                                )
+                            ) *
+                            100;
+                        
+                        const kyytipyyntoKokonaismatkaKm =
+                            laskelma.kuljetettavaMatka.matkaKm +
+                            Math.max(
+                                0,
+                                laskelma.lisamatkaKm
+                            );
+                        
                         const osoitetiedotNakyvissa =
                             laajatOsoitetiedot.has(
                                 laskelma.id
@@ -2914,9 +2932,15 @@ function haeKyytipyynnot() {
                             <b>Pyydetyn matkan pituus:</b>
                             ${laskelma.kuljetettavaMatka.matkaKm.toFixed(1)} km /
                             ${pyydettyAikaTeksti}
-
+                            
+                            <br>
+                            <b>Kyytipyynnön tehokkuus:</b>
+                            ${Math.round(kyytipyyntoTehokkuusProsentti)} %
+                            (${laskelma.kuljetettavaMatka.matkaKm.toFixed(1)} km /
+                            ${kyytipyyntoKokonaismatkaKm.toFixed(1)} km)
+                            
                             <br><br>
-
+                            
                             <b>Noutopaikkaan:</b>
                             ${laskelma.matkaNoutopaikalle.matkaKm.toFixed(1)} km /
                             ${noutoaikaTeksti}

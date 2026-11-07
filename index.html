@@ -476,10 +476,11 @@
 
 <div style="min-height: 22px;">
     <label>
-        Kyyti/kokonaismatka vähint.:
+        Matkani tehokkuus vähint.:
     </label>
 
-    <span id="matkaniTehokkuusProsenttiTeksti">off</span>
+    <span id="matkaniTehokkuusProsenttiTeksti"></span>
+    <span id="matkaniTehokkuusLaskettu"></span>
 </div>
 
 <div
@@ -490,11 +491,24 @@
         margin-left: 20px;
     "
 >
+    <div
+        style="
+            position: absolute;
+            left: 10%;
+            top: 3px;
+            width: 2px;
+            height: 28px;
+            background-color: #666;
+            pointer-events: none;
+            z-index: 2;
+        "
+    ></div>
+
     <input
         id="matkaniTehokkuusRajaProsentti"
         type="range"
         min="0"
-        max="101"
+        max="12"
         step="1"
         value="0"
         style="
@@ -665,6 +679,8 @@ var kyydinPituusSuhdeLisamatkaanRajaProsentti = null;
 
 
 var matkaniTehokkuusRajaProsentti = null;
+var matkaniTehokkuusRajaKm = null;
+var matkaniTehokkuusRajaMin = null;
 
 
 var kokonaismatkaRajaKm = null;
@@ -2256,13 +2272,20 @@ function lopetaTarjoaminen() {
     ).textContent = "";
 
     matkaniTehokkuusRajaProsentti = null;
+    matkaniTehokkuusRajaKm = null;
+    matkaniTehokkuusRajaMin = null;
+
     document.getElementById(
         "matkaniTehokkuusRajaProsentti"
     ).value = "0";
 
     document.getElementById(
         "matkaniTehokkuusProsenttiTeksti"
-    ).textContent = "off";
+    ).textContent = "";
+
+    document.getElementById(
+        "matkaniTehokkuusLaskettu"
+    ).textContent = "";
 
     kokonaismatkaRajaKm = null;
 
@@ -2610,7 +2633,7 @@ function haeKyytipyynnot() {
                 
                 
                                 /*
-                                 * Kyydin osuus kokonaismatkasta
+                                 * Matkani tehokkuus
                                  *
                                  * Kyydin pituuden pitää olla vähintään
                                  * valittu osuus tämän kyydin mukaisesta
@@ -2621,8 +2644,15 @@ function haeKyytipyynnot() {
                                     matkaniTehokkuusRajaProsentti == null ||
                                     (
                                         laskelma.reittiACDB.matkaKm > 0 &&
+                                        laskelma.reittiACDB.aikaMin > 0 &&
+
                                         laskelma.kuljetettavaMatka.matkaKm /
                                             laskelma.reittiACDB.matkaKm *
+                                            100 >=
+                                            matkaniTehokkuusRajaProsentti &&
+
+                                        laskelma.kuljetettavaMatka.aikaMin /
+                                            laskelma.reittiACDB.aikaMin *
                                             100 >=
                                             matkaniTehokkuusRajaProsentti
                                     )
@@ -2846,12 +2876,32 @@ function haeKyytipyynnot() {
                         const matkaniKokonaismatkaKm =
                             laskelma.reittiACDB.matkaKm;
 
-                        const matkaniTehokkuusProsentti =
+                        const matkaniTehokkuusMatkaProsentti =
                             matkaniKokonaismatkaKm > 0
                                 ? laskelma.kuljetettavaMatka.matkaKm /
                                     matkaniKokonaismatkaKm *
                                     100
                                 : 0;
+
+                        const matkaniKokonaisaikaMin =
+                            laskelma.reittiACDB.aikaMin;
+
+                        const matkaniTehokkuusAikaProsentti =
+                            matkaniKokonaisaikaMin > 0
+                                ? laskelma.kuljetettavaMatka.aikaMin /
+                                    matkaniKokonaisaikaMin *
+                                    100
+                                : 0;
+
+                        const matkaniKyytiaikaTeksti =
+                            muotoileTunnitJaMinuutit(
+                                laskelma.kuljetettavaMatka.aikaMin
+                            );
+
+                        const matkaniKokonaisaikaTeksti =
+                            muotoileTunnitJaMinuutit(
+                                matkaniKokonaisaikaMin
+                            );
                         
                         
                         const kyytipyyntoAikaTunnit =
@@ -2999,10 +3049,17 @@ function haeKyytipyynnot() {
                             ${kyytipyyntoKokonaisaikaTunnit} h ${kyytipyyntoKokonaisaikaMinuutit} min)
 
                             <br>
-                            <b>Kyydin osuus kokonaismatkasta:</b>
-                            ${Math.round(matkaniTehokkuusProsentti)} %
+                            <b>Matkani tehokkuus:</b>
+
+                            <br>
+                            ${Math.round(matkaniTehokkuusMatkaProsentti)} %
                             (${laskelma.kuljetettavaMatka.matkaKm.toFixed(1)} km /
                             ${matkaniKokonaismatkaKm.toFixed(1)} km)
+
+                            <br>
+                            ${Math.round(matkaniTehokkuusAikaProsentti)} %
+                            (${matkaniKyytiaikaTeksti} /
+                            ${matkaniKokonaisaikaTeksti})
                             
                             <br><br>
                             
@@ -3510,26 +3567,111 @@ function paivitaMatkaniTehokkuus(
             saadin.value
         );
 
+    const sallitutProsentit = [
+        0,
+        10,
+        20,
+        30,
+        40,
+        50,
+        60,
+        70,
+        80,
+        90,
+        95,
+        100
+    ];
+
+
     if (saadinAsento === 0) {
 
         matkaniTehokkuusRajaProsentti =
             null;
 
+        matkaniTehokkuusRajaKm =
+            null;
+
+        matkaniTehokkuusRajaMin =
+            null;
+
         document.getElementById(
             "matkaniTehokkuusProsenttiTeksti"
         ).textContent =
-            "off";
+            "";
+
+        document.getElementById(
+            "matkaniTehokkuusLaskettu"
+        ).textContent =
+            "";
 
     } else {
 
         matkaniTehokkuusRajaProsentti =
-            saadinAsento - 1;
+            sallitutProsentit[
+                saadinAsento - 1
+            ];
 
         document.getElementById(
             "matkaniTehokkuusProsenttiTeksti"
         ).textContent =
             matkaniTehokkuusRajaProsentti +
             " %";
+
+
+        if (
+            reittiABMatkaKm == null ||
+            reittiABAikaMin == null
+        ) {
+
+            matkaniTehokkuusRajaKm =
+                null;
+
+            matkaniTehokkuusRajaMin =
+                null;
+
+            document.getElementById(
+                "matkaniTehokkuusLaskettu"
+            ).textContent =
+                "";
+
+        } else {
+
+            const kokonaismatkaKm =
+                reittiABMatkaKm +
+                (
+                    lisamatkaRajaKm == null
+                        ? 0
+                        : lisamatkaRajaKm
+                );
+
+            const kokonaisaikaMin =
+                reittiABAikaMin +
+                (
+                    lisaaikaRajaMin == null
+                        ? 0
+                        : lisaaikaRajaMin
+                );
+
+            matkaniTehokkuusRajaKm =
+                kokonaismatkaKm *
+                matkaniTehokkuusRajaProsentti /
+                100;
+
+            matkaniTehokkuusRajaMin =
+                kokonaisaikaMin *
+                matkaniTehokkuusRajaProsentti /
+                100;
+
+            document.getElementById(
+                "matkaniTehokkuusLaskettu"
+            ).textContent =
+                " → " +
+                matkaniTehokkuusRajaKm.toFixed(1) +
+                " km / " +
+                muotoileTunnitJaMinuutit(
+                    matkaniTehokkuusRajaMin
+                );
+        }
     }
 
 
@@ -3676,12 +3818,15 @@ function tyhjennaKaikkiSuodattimet() {
     document.getElementById("kyydinPituusSuhdeLisamatkaanProsentti").value = "0";
     document.getElementById("kyydinTehokkuusProsenttiTeksti").textContent = "";
     document.getElementById("matkaniTehokkuusRajaProsentti").value = "0";
-    document.getElementById("matkaniTehokkuusProsenttiTeksti").textContent = "off";
+    document.getElementById("matkaniTehokkuusProsenttiTeksti").textContent = "";
+    document.getElementById("matkaniTehokkuusLaskettu").textContent = "";
     ohariRajaProsentti = null;    noutomatkaRajaKm = null;
     noutoaikaRajaMin = null;
     lisamatkaRajaProsentti = null; lisamatkaRajaKm = null; lisaaikaRajaMin = null;
     kyydinPituusSuhdeLisamatkaanRajaProsentti = null;
     matkaniTehokkuusRajaProsentti = null;
+    matkaniTehokkuusRajaKm = null;
+    matkaniTehokkuusRajaMin = null;
     paivitaLisamatkaProsentti();
     paivitaOhariProsentti(false);
     paivitaMatkaniTehokkuus(false);

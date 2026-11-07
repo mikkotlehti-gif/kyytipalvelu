@@ -471,7 +471,7 @@
 <br><br>
 <div style="min-height: 22px;">
     <label>
-        Ohari enint. lisämatkasta:
+        Ohari enint.:
     </label>
 
     <span id="ohariProsenttiTeksti"></span>
@@ -510,7 +510,7 @@
             width: 325px;
             accent-color: #777;
         "
-        oninput="paivitaOhariProsentti();"
+        oninput="paivitaOhariProsentti(true, true);"
         disabled
     >
 </div>
@@ -715,6 +715,16 @@ var reittiABKoordinaatit = [];
 
 
 var ohariRajaProsentti = null;
+
+/*
+ * Käyttäjän valitsema Ohari-raja säilytetään kiinteinä
+ * kilometri- ja minuuttirajoina. Lisämatka enintään voi
+ * myöhemmin rajoittaa molemmat arvot yhtä aikaa.
+ */
+
+var ohariValittuMatkaRajaKm = null;
+
+var ohariValittuAikaRajaMin = null;
 
 var noutomatkaRajaKm = null;
 
@@ -2305,6 +2315,10 @@ function lopetaTarjoaminen() {
 
     ohariRajaProsentti = null;
 
+    ohariValittuMatkaRajaKm = null;
+
+    ohariValittuAikaRajaMin = null;
+
     noutomatkaRajaKm = null;
 
     noutoaikaRajaMin = null;
@@ -3580,7 +3594,11 @@ function tyhjennaKaikkiSuodattimet() {
     document.getElementById("lisamatkaLaskettu").textContent = "";
     document.getElementById("kyydinPituusAlarajaProsentti").value = "0";
     document.getElementById("kyydinPituusYlarajaProsentti").value = "100";
-    ohariRajaProsentti = null; noutomatkaRajaKm = null; noutoaikaRajaMin = null;
+    ohariRajaProsentti = null;
+    ohariValittuMatkaRajaKm = null;
+    ohariValittuAikaRajaMin = null;
+    noutomatkaRajaKm = null;
+    noutoaikaRajaMin = null;
     lisamatkaRajaProsentti = null; lisamatkaRajaKm = null; lisaaikaRajaMin = null;
     kyydinPituusAlarajaProsentti = 0; kyydinPituusYlarajaProsentti = 100;
     paivitaKokonaismatka();
@@ -3638,7 +3656,8 @@ function paivitaKokonaismatka() {
 
 
 function paivitaOhariProsentti(
-    haePyynnotUudelleen = true
+    haePyynnotUudelleen = true,
+    tallennaUusiValinta = false
 ) {
 
     const saadin =
@@ -3669,12 +3688,16 @@ function paivitaOhariProsentti(
 
     /*
      * Asento 0 tarkoittaa:
-     * Turha ajo -suodatin pois päältä.
+     * Ohari-suodatin pois päältä.
      */
 
     if (saadinAsento === 0) {
 
         ohariRajaProsentti = null;
+
+        ohariValittuMatkaRajaKm = null;
+
+        ohariValittuAikaRajaMin = null;
 
         noutomatkaRajaKm = null;
 
@@ -3690,62 +3713,158 @@ function paivitaOhariProsentti(
 
     } else {
 
-        const prosentti =
+        const valittuProsentti =
             sallitutProsentit[
                 saadinAsento - 1
             ];
 
-        ohariRajaProsentti =
-            prosentti;
-
 
         /*
-         * Jos Lisämatka enintään on OFF,
-         * käytetään laskentapohjana 100 % normaalista
-         * jäljellä olevasta matkasta.
+         * Lisämatka enintään toimii Ohari-rajan
+         * tämänhetkisenä enimmäismääränä.
          *
-         * Muuten käytetään Lisämatka enintään
-         * -suodattimen laskennallisia km/min-arvoja.
+         * Jos Lisämatka enintään on OFF, käytetään
+         * laskentapohjana 100 % normaalista matkasta.
          */
 
-        const laskentapohjaKm =
+        const jaljellaOlevaMatkaKm =
             lisamatkaRajaKm == null
                 ? reittiABMatkaKm
                 : lisamatkaRajaKm;
 
-        const laskentapohjaMin =
+        const jaljellaOlevaAikaMin =
             lisaaikaRajaMin == null
                 ? reittiABAikaMin
                 : lisaaikaRajaMin;
 
 
-        noutomatkaRajaKm =
-            laskentapohjaKm *
-            prosentti /
-            100;
+        if (
+            jaljellaOlevaMatkaKm == null ||
+            jaljellaOlevaAikaMin == null
+        ) {
 
-        noutoaikaRajaMin =
-            laskentapohjaMin *
-            prosentti /
-            100;
+            ohariRajaProsentti = null;
+
+            noutomatkaRajaKm = null;
+
+            noutoaikaRajaMin = null;
+
+            document.getElementById(
+                "ohariProsenttiTeksti"
+            ).textContent = "";
+
+            document.getElementById(
+                "ohariLaskettu"
+            ).textContent = "";
+
+        } else {
+
+            /*
+             * Liukusäätimen uusi käyttäjävalinta muunnetaan
+             * kerran kiinteiksi km- ja min-rajoiksi.
+             *
+             * Sama tehdään käynnistyksen yhteydessä, jos
+             * liukusäätimessä on aiempi arvo mutta muistissa
+             * ei vielä ole kiinteää rajaa.
+             */
+
+            if (
+                tallennaUusiValinta ||
+                ohariValittuMatkaRajaKm == null ||
+                ohariValittuAikaRajaMin == null
+            ) {
+
+                ohariValittuMatkaRajaKm =
+                    jaljellaOlevaMatkaKm *
+                    valittuProsentti /
+                    100;
+
+                ohariValittuAikaRajaMin =
+                    jaljellaOlevaAikaMin *
+                    valittuProsentti /
+                    100;
+            }
 
 
-        document.getElementById(
-            "ohariProsenttiTeksti"
-        ).textContent =
-            prosentti +
-            " %";
+            /*
+             * Jos jäljellä oleva Lisämatka enintään saavuttaa
+             * joko käyttäjän valitseman kilometrirajan TAI
+             * minuuttirajan, koko Ohari-raja siirtyy jäljellä
+             * olevaan määrään. Tällöin sekä km että min ovat
+             * jäljellä olevat arvot ja näytettävä prosentti on 100 %.
+             */
 
-        document.getElementById(
-            "ohariLaskettu"
-        ).textContent =
-            " → " +
-            noutomatkaRajaKm.toFixed(1) +
-            " km / " +
-            Math.round(
-                noutoaikaRajaMin
-            ) +
-            " min";
+            const jaljellaOlevaRajoittaa =
+                jaljellaOlevaMatkaKm <=
+                    ohariValittuMatkaRajaKm ||
+                jaljellaOlevaAikaMin <=
+                    ohariValittuAikaRajaMin;
+
+            if (jaljellaOlevaRajoittaa) {
+
+                noutomatkaRajaKm =
+                    jaljellaOlevaMatkaKm;
+
+                noutoaikaRajaMin =
+                    jaljellaOlevaAikaMin;
+
+                ohariRajaProsentti = 100;
+
+            } else {
+
+                noutomatkaRajaKm =
+                    ohariValittuMatkaRajaKm;
+
+                noutoaikaRajaMin =
+                    ohariValittuAikaRajaMin;
+
+                /*
+                 * Prosentti elää nykyiseen jäljellä olevaan
+                 * määrään nähden. Suurempi km/min-suhteista
+                 * määrää näytettävän prosentin, koska kumpi tahansa
+                 * niistä voi ensimmäisenä saavuttaa 100 % rajan.
+                 */
+
+                const matkaProsentti =
+                    noutomatkaRajaKm /
+                    jaljellaOlevaMatkaKm *
+                    100;
+
+                const aikaProsentti =
+                    noutoaikaRajaMin /
+                    jaljellaOlevaAikaMin *
+                    100;
+
+                ohariRajaProsentti =
+                    Math.min(
+                        100,
+                        Math.round(
+                            Math.max(
+                                matkaProsentti,
+                                aikaProsentti
+                            )
+                        )
+                    );
+            }
+
+
+            document.getElementById(
+                "ohariProsenttiTeksti"
+            ).textContent =
+                ohariRajaProsentti +
+                " %";
+
+            document.getElementById(
+                "ohariLaskettu"
+            ).textContent =
+                " → " +
+                noutomatkaRajaKm.toFixed(1) +
+                " km / " +
+                Math.round(
+                    noutoaikaRajaMin
+                ) +
+                " min";
+        }
     }
 
 

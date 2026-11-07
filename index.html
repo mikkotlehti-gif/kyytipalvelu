@@ -2850,7 +2850,7 @@ function haeKyytipyynnot() {
                                 .trim();
 
 
-                        const kyytipyyntoTehokkuusProsentti =
+                        const kyytipyyntoTehokkuusMatkaProsentti =
                             laskelma.kuljetettavaMatka.matkaKm /
                             (
                                 laskelma.kuljetettavaMatka.matkaKm +
@@ -2866,6 +2866,50 @@ function haeKyytipyynnot() {
                             Math.max(
                                 0,
                                 laskelma.lisamatkaKm
+                            );
+                        
+                        
+                        const kyytipyyntoTehokkuusAikaProsentti =
+                            laskelma.kuljetettavaMatka.aikaMin /
+                            (
+                                laskelma.kuljetettavaMatka.aikaMin +
+                                Math.max(
+                                    0,
+                                    laskelma.lisaaikaMin
+                                )
+                            ) *
+                            100;
+                        
+                        const kyytipyyntoKokonaisaikaMin =
+                            laskelma.kuljetettavaMatka.aikaMin +
+                            Math.max(
+                                0,
+                                laskelma.lisaaikaMin
+                            );
+                        
+                        
+                        const kyytipyyntoAikaTunnit =
+                            Math.floor(
+                                laskelma.kuljetettavaMatka.aikaMin /
+                                60
+                            );
+                        
+                        const kyytipyyntoAikaMinuutit =
+                            Math.round(
+                                laskelma.kuljetettavaMatka.aikaMin %
+                                60
+                            );
+                        
+                        const kyytipyyntoKokonaisaikaTunnit =
+                            Math.floor(
+                                kyytipyyntoKokonaisaikaMin /
+                                60
+                            );
+                        
+                        const kyytipyyntoKokonaisaikaMinuutit =
+                            Math.round(
+                                kyytipyyntoKokonaisaikaMin %
+                                60
                             );
                         
                         const osoitetiedotNakyvissa =
@@ -2934,10 +2978,17 @@ function haeKyytipyynnot() {
                             ${pyydettyAikaTeksti}
                             
                             <br>
-                            <b>Kyytipyynnön tehokkuus:</b>
-                            ${Math.round(kyytipyyntoTehokkuusProsentti)} %
+                            <b>Kyydin tehokkuus:</b>
+                            
+                            <br>
+                            ${Math.round(kyytipyyntoTehokkuusMatkaProsentti)} %
                             (${laskelma.kuljetettavaMatka.matkaKm.toFixed(1)} km /
                             ${kyytipyyntoKokonaismatkaKm.toFixed(1)} km)
+                            
+                            <br>
+                            ${Math.round(kyytipyyntoTehokkuusAikaProsentti)} %
+                            (${kyytipyyntoAikaTunnit} h ${kyytipyyntoAikaMinuutit} min /
+                            ${kyytipyyntoKokonaisaikaTunnit} h ${kyytipyyntoKokonaisaikaMinuutit} min)
                             
                             <br><br>
                             

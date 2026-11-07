@@ -2599,51 +2599,34 @@ function haeKyytipyynnot() {
                                 ) &&
                 
                 
-                                /*
-                                 * Kyydin tehokkuus
-                                 */
-                
-                                (
-                                    kyydinPituusSuhdeLisamatkaanRajaProsentti == null ||
-                                    (
-                                        tehokkuusOnVahintaan(
-                                            laskelma.lisamatkaKm,
-                                            laskelma.kuljetettavaMatka.matkaKm,
-                                            kyydinPituusSuhdeLisamatkaanRajaProsentti
-                                        ) &&
-                
-                                        tehokkuusOnVahintaan(
-                                            laskelma.lisaaikaMin,
-                                            laskelma.kuljetettavaMatka.aikaMin,
-                                            kyydinPituusSuhdeLisamatkaanRajaProsentti
-                                        )
-                                    )
-                                ) &&
+                            /*
+                             * Kyytimatkan osuus kyydin vuoksi ajettavasta matkasta
+                             *
+                             * Suodatus perustuu vain kilometreihin.
+                             */
+                            (
+                                kyydinPituusSuhdeLisamatkaanRajaProsentti == null ||
+                                tehokkuusOnVahintaan(
+                                    laskelma.lisamatkaKm,
+                                    laskelma.kuljetettavaMatka.matkaKm,
+                                    kyydinPituusSuhdeLisamatkaanRajaProsentti
+                                )
+                            ) &&
                 
                 
                             /*
                              * Kyyti kokonaismatkasta vähint.
                              *
-                             * Riittää, että joko matkaan tai aikaan
-                             * perustuva prosentti täyttää valitun rajan.
+                             * Suodatus perustuu vain kilometreihin.
                              */
                             (
                                 matkaniTehokkuusRajaProsentti == null ||
                                 (
-                                    (
-                                        laskelma.reittiACDB.matkaKm > 0 &&
-                                        laskelma.kuljetettavaMatka.matkaKm /
-                                            laskelma.reittiACDB.matkaKm *
-                                            100 >=
-                                            matkaniTehokkuusRajaProsentti
-                                    ) ||
-                                    (
-                                        laskelma.reittiACDB.aikaMin > 0 &&
-                                        laskelma.kuljetettavaMatka.aikaMin /
-                                            laskelma.reittiACDB.aikaMin *
-                                            100 >=
-                                            matkaniTehokkuusRajaProsentti
-                                    )
+                                    laskelma.reittiACDB.matkaKm > 0 &&
+                                    laskelma.kuljetettavaMatka.matkaKm /
+                                        laskelma.reittiACDB.matkaKm *
+                                        100 >=
+                                        matkaniTehokkuusRajaProsentti
                                 )
                             )
                             );

@@ -1,119 +1,6 @@
 <h1>Kyytipalvelu TESTI2</h1>
 
-<style>
 
-.kyydin-pituus-saadin {
-    position: relative;
-    width: 325px;
-    height: 26px;
-    padding-top: 8px;
-    margin-left: 20px;
-}
-
-.kyydin-pituus-pohjaraita {
-    position: absolute;
-    left: 3px;
-    top: 4px;
-    width: 323px;
-    height: 8px;
-    border: 1px solid #c8c8c8;
-    border-radius: 4px;
-    box-sizing: border-box;
-    background-color: #f3f3f3;
-    pointer-events: none;
-    z-index: 1;
-}
-
-.kyydin-pituus-valittu-raita {
-    position: absolute;
-    top: 4px;
-    height: 8px;
-    border-radius: 4px;
-    background-color: #777;
-    pointer-events: none;
-    z-index: 2;
-}
-
-.kyydin-pituus-saadin input[type="range"] {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 325px;
-    height: 16px;
-    margin: 0;
-    padding: 0;
-    background: transparent;
-    pointer-events: none;
-    appearance: none;
-    -webkit-appearance: none;
-    z-index: 3;
-}
-
-.kyydin-pituus-saadin input[type="range"]::-webkit-slider-runnable-track {
-    height: 5px;
-    background: transparent;
-    border: none;
-}
-
-.kyydin-pituus-saadin input[type="range"]::-webkit-slider-thumb {
-    width: 16px;
-    height: 16px;
-    margin-top: -5.5px;
-    border: none;
-    border-radius: 50%;
-    background-color: #777;
-    pointer-events: auto;
-    cursor: pointer;
-    appearance: none;
-    -webkit-appearance: none;
-}
-
-.kyydin-pituus-saadin input[type="range"]::-moz-range-track {
-    height: 5px;
-    background: transparent;
-    border: none;
-}
-
-.kyydin-pituus-saadin input[type="range"]::-moz-range-progress {
-    background: transparent;
-}
-
-.kyydin-pituus-saadin input[type="range"]::-moz-range-thumb {
-    width: 16px;
-    height: 16px;
-    border: none;
-    border-radius: 50%;
-    background-color: #777;
-    pointer-events: auto;
-    cursor: pointer;
-}
-
-.kyydin-pituus-saadin input[type="range"]:disabled::-webkit-slider-thumb {
-    background-color: #c8c8c8;
-    cursor: default;
-}
-
-.kyydin-pituus-saadin input[type="range"]:disabled::-moz-range-thumb {
-    background-color: #c8c8c8;
-    cursor: default;
-}
-
-.kyydin-pituus-saadin:has(input[type="range"]:disabled)
-.kyydin-pituus-valittu-raita {
-    background-color: #d6d6d6;
-}
-
-.kyydin-pituus-saadin.ei-suodatusta:has(input[type="range"]:disabled)
-.kyydin-pituus-valittu-raita {
-    background-color: transparent;
-}
-
-.kyydin-pituus-saadin.ei-suodatusta
-.kyydin-pituus-valittu-raita {
-    background-color: transparent;
-}
-  
-</style>
 
 
 <p>Rooli:</p>
@@ -588,40 +475,47 @@
 <br><br>
 
 <div style="min-height: 22px;">
-    <div
-        id="kyydinPituusArvot"
-        style="min-height: 22px;"
-    ></div>
-    
-    <label>Kyydin pituus (min ja max) enimmäiskokonaismatkastani:</label>
+    <label>
+        Matkani tehokkuus vähint.:
+    </label>
+
+    <span id="matkaniTehokkuusProsenttiTeksti"></span>
+    <span id="matkaniTehokkuusLaskettu"></span>
 </div>
 
-<div class="kyydin-pituus-saadin">
-    <div class="kyydin-pituus-pohjaraita"></div>
+<div
+    style="
+        position: relative;
+        width: 325px;
+        padding-top: 8px;
+        margin-left: 20px;
+    "
+>
     <div
-        id="kyydinPituusValittuRaita"
-        class="kyydin-pituus-valittu-raita"
+        style="
+            position: absolute;
+            left: 10%;
+            top: 3px;
+            width: 2px;
+            height: 28px;
+            background-color: #666;
+            pointer-events: none;
+            z-index: 2;
+        "
     ></div>
 
     <input
-        id="kyydinPituusAlarajaProsentti"
+        id="matkaniTehokkuusRajaProsentti"
         type="range"
         min="0"
-        max="100"
+        max="12"
         step="1"
         value="0"
-        oninput="paivitaKyydinPituus('alaraja');"
-        disabled
-    >
-
-    <input
-        id="kyydinPituusYlarajaProsentti"
-        type="range"
-        min="0"
-        max="100"
-        step="1"
-        value="100"
-        oninput="paivitaKyydinPituus('ylaraja');"
+        style="
+            width: 325px;
+            accent-color: #777;
+        "
+        oninput="paivitaMatkaniTehokkuus();"
         disabled
     >
 </div>
@@ -784,12 +678,9 @@ var lisaaikaRajaMin = null;
 var kyydinPituusSuhdeLisamatkaanRajaProsentti = null;
 
 
-var kyydinPituusAlarajaProsentti = 0;
-var kyydinPituusYlarajaProsentti = 100;
-var pyydettyMatkaAlarajaKm = null;
-var pyydettyMatkaYlarajaKm = null;
-var pyydettyAikaAlarajaMin = null;
-var pyydettyAikaYlarajaMin = null;
+var matkaniTehokkuusRajaProsentti = null;
+var matkaniTehokkuusRajaKm = null;
+var matkaniTehokkuusRajaMin = null;
 
 
 var kokonaismatkaRajaKm = null;
@@ -2187,11 +2078,7 @@ async function aloitaTarjoaminen() {
     ).disabled = false;
 
     document.getElementById(
-        "kyydinPituusAlarajaProsentti"
-    ).disabled = false;
-
-    document.getElementById(
-        "kyydinPituusYlarajaProsentti"
+        "matkaniTehokkuusRajaProsentti"
     ).disabled = false;
 
 
@@ -2291,11 +2178,7 @@ function lopetaTarjoaminen() {
     ).disabled = true;
 
     document.getElementById(
-        "kyydinPituusAlarajaProsentti"
-    ).disabled = true;
-
-    document.getElementById(
-        "kyydinPituusYlarajaProsentti"
+        "matkaniTehokkuusRajaProsentti"
     ).disabled = true;
 
     document.getElementById(
@@ -2388,10 +2271,21 @@ function lopetaTarjoaminen() {
         "kyydinTehokkuusProsenttiTeksti"
     ).textContent = "";
 
-    pyydettyMatkaAlarajaKm = null;
-    pyydettyMatkaYlarajaKm = null;
-    pyydettyAikaAlarajaMin = null;
-    pyydettyAikaYlarajaMin = null;
+    matkaniTehokkuusRajaProsentti = null;
+    matkaniTehokkuusRajaKm = null;
+    matkaniTehokkuusRajaMin = null;
+
+    document.getElementById(
+        "matkaniTehokkuusRajaProsentti"
+    ).value = "0";
+
+    document.getElementById(
+        "matkaniTehokkuusProsenttiTeksti"
+    ).textContent = "";
+
+    document.getElementById(
+        "matkaniTehokkuusLaskettu"
+    ).textContent = "";
 
     kokonaismatkaRajaKm = null;
 
@@ -2414,9 +2308,6 @@ function lopetaTarjoaminen() {
         "kokonaismatkaLaskettu"
     ).textContent = "";
 
-    document.getElementById(
-        "kyydinPituusLaskettu"
-    ).textContent = "";
 
 
     paivitaKyytienEtsiminenKytkin();
@@ -2742,39 +2633,22 @@ function haeKyytipyynnot() {
                 
                 
                                 /*
-                                 * Kyydin pituus
+                                 * Matkani tehokkuus
+                                 *
+                                 * Kyydin pituuden pitää olla vähintään
+                                 * valittu osuus tämän kyydin mukaisesta
+                                 * jäljellä olevasta kokonaismatkasta.
                                  */
                 
                                 (
-                                    pyydettyMatkaAlarajaKm == null ||
-                                    parseFloat(
-                                        laskelma.kuljetettavaMatka.matkaKm.toFixed(1)
-                                    ) >=
-                                        pyydettyMatkaAlarajaKm
-                                ) &&
-                
-                                (
-                                    pyydettyMatkaYlarajaKm == null ||
-                                    parseFloat(
-                                        laskelma.kuljetettavaMatka.matkaKm.toFixed(1)
-                                    ) <=
-                                        pyydettyMatkaYlarajaKm
-                                ) &&
-                
-                                (
-                                    pyydettyAikaAlarajaMin == null ||
-                                    parseFloat(
-                                        laskelma.kuljetettavaMatka.aikaMin.toFixed(0)
-                                    ) >=
-                                        pyydettyAikaAlarajaMin
-                                ) &&
-                
-                                (
-                                    pyydettyAikaYlarajaMin == null ||
-                                    parseFloat(
-                                        laskelma.kuljetettavaMatka.aikaMin.toFixed(0)
-                                    ) <=
-                                        pyydettyAikaYlarajaMin
+                                    matkaniTehokkuusRajaProsentti == null ||
+                                    (
+                                        laskelma.reittiACDB.matkaKm > 0 &&
+                                        laskelma.kuljetettavaMatka.matkaKm /
+                                            laskelma.reittiACDB.matkaKm *
+                                            100 >=
+                                            matkaniTehokkuusRajaProsentti
+                                    )
                                 )
                             );
                         }
@@ -2990,6 +2864,17 @@ function haeKyytipyynnot() {
                                 0,
                                 laskelma.lisaaikaMin
                             );
+
+
+                        const matkaniKokonaismatkaKm =
+                            laskelma.reittiACDB.matkaKm;
+
+                        const matkaniTehokkuusProsentti =
+                            matkaniKokonaismatkaKm > 0
+                                ? laskelma.kuljetettavaMatka.matkaKm /
+                                    matkaniKokonaismatkaKm *
+                                    100
+                                : 0;
                         
                         
                         const kyytipyyntoAikaTunnit =
@@ -3135,6 +3020,12 @@ function haeKyytipyynnot() {
                             ${Math.round(kyytipyyntoTehokkuusAikaProsentti)} %
                             (${kyytipyyntoAikaTunnit} h ${kyytipyyntoAikaMinuutit} min /
                             ${kyytipyyntoKokonaisaikaTunnit} h ${kyytipyyntoKokonaisaikaMinuutit} min)
+
+                            <br>
+                            <b>Matkani tehokkuus:</b>
+                            ${Math.round(matkaniTehokkuusProsentti)} %
+                            (${laskelma.kuljetettavaMatka.matkaKm.toFixed(1)} km /
+                            ${matkaniKokonaismatkaKm.toFixed(1)} km)
                             
                             <br><br>
                             
@@ -3603,208 +3494,151 @@ async function laskeMatkustajanReitti() {
 }
 
 
-function paivitaKyydinPituus(
-    muutettuNuppi = "",
+function muotoileTunnitJaMinuutit(aikaMin) {
+
+    const pyoristettyAikaMin =
+        Math.max(
+            0,
+            Math.round(aikaMin)
+        );
+
+    const tunnit =
+        Math.floor(
+            pyoristettyAikaMin /
+            60
+        );
+
+    const minuutit =
+        pyoristettyAikaMin %
+        60;
+
+    return tunnit +
+        " h " +
+        minuutit +
+        " min";
+}
+
+
+function paivitaMatkaniTehokkuus(
     haePyynnotUudelleen = true
 ) {
 
-    const ala =
-        document.getElementById(
-            "kyydinPituusAlarajaProsentti"
-        );
-
-    const yla =
-        document.getElementById(
-            "kyydinPituusYlarajaProsentti"
-        );
-
     const saadin =
-        document.querySelector(
-            ".kyydin-pituus-saadin"
+        document.getElementById(
+            "matkaniTehokkuusRajaProsentti"
         );
 
-    let alaraja =
-        parseInt(ala.value);
-
-    let ylaraja =
-        parseInt(yla.value);
-
-
-    if (
-        muutettuNuppi === "alaraja" &&
-        alaraja > ylaraja
-    ) {
-
-        alaraja =
-            ylaraja;
-
-        ala.value =
-            alaraja;
-    }
-
-
-    if (
-        muutettuNuppi === "ylaraja" &&
-        ylaraja < alaraja
-    ) {
-
-        ylaraja =
-            alaraja;
-
-        yla.value =
-            ylaraja;
-    }
-
-
-    kyydinPituusAlarajaProsentti =
-        alaraja;
-
-    kyydinPituusYlarajaProsentti =
-        ylaraja;
-
-
-    const valittuRaita =
-        document.getElementById(
-            "kyydinPituusValittuRaita"
+    const saadinAsento =
+        parseInt(
+            saadin.value
         );
 
-    valittuRaita.style.left =
-        (3 + 319 * alaraja / 100) +
-        "px";
-
-    valittuRaita.style.width =
-        (319 * (ylaraja - alaraja) / 100) +
-        "px";
-
-
-    const eiSuodatusta =
-        alaraja === 0 &&
-        ylaraja === 100;
-
-
-    saadin.classList.toggle(
-        "ei-suodatusta",
-        eiSuodatusta
-    );
+    const sallitutProsentit = [
+        0,
+        10,
+        20,
+        30,
+        40,
+        50,
+        60,
+        70,
+        80,
+        90,
+        95,
+        100
+    ];
 
 
-    if (eiSuodatusta) {
+    if (saadinAsento === 0) {
 
-        pyydettyMatkaAlarajaKm = null;
-        pyydettyMatkaYlarajaKm = null;
+        matkaniTehokkuusRajaProsentti =
+            null;
 
-        pyydettyAikaAlarajaMin = null;
-        pyydettyAikaYlarajaMin = null;
+        matkaniTehokkuusRajaKm =
+            null;
+
+        matkaniTehokkuusRajaMin =
+            null;
 
         document.getElementById(
-            "kyydinPituusArvot"
-        ).textContent = "";
+            "matkaniTehokkuusProsenttiTeksti"
+        ).textContent =
+            "";
 
-        paivitaSuodataNappi();
+        document.getElementById(
+            "matkaniTehokkuusLaskettu"
+        ).textContent =
+            "";
+
+    } else {
+
+        matkaniTehokkuusRajaProsentti =
+            sallitutProsentit[
+                saadinAsento - 1
+            ];
+
+        document.getElementById(
+            "matkaniTehokkuusProsenttiTeksti"
+        ).textContent =
+            matkaniTehokkuusRajaProsentti +
+            " %";
 
 
         if (
-            haePyynnotUudelleen &&
-            unsubscribeKyytipyynnot
+            reittiABMatkaKm == null ||
+            reittiABAikaMin == null
         ) {
 
-            unsubscribeKyytipyynnot();
-
-            unsubscribeKyytipyynnot =
+            matkaniTehokkuusRajaKm =
                 null;
+
+            matkaniTehokkuusRajaMin =
+                null;
+
+            document.getElementById(
+                "matkaniTehokkuusLaskettu"
+            ).textContent =
+                "";
+
+        } else {
+
+            const kokonaismatkaKm =
+                reittiABMatkaKm +
+                (
+                    lisamatkaRajaKm == null
+                        ? 0
+                        : lisamatkaRajaKm
+                );
+
+            const kokonaisaikaMin =
+                reittiABAikaMin +
+                (
+                    lisaaikaRajaMin == null
+                        ? 0
+                        : lisaaikaRajaMin
+                );
+
+            matkaniTehokkuusRajaKm =
+                kokonaismatkaKm *
+                matkaniTehokkuusRajaProsentti /
+                100;
+
+            matkaniTehokkuusRajaMin =
+                kokonaisaikaMin *
+                matkaniTehokkuusRajaProsentti /
+                100;
+
+            document.getElementById(
+                "matkaniTehokkuusLaskettu"
+            ).textContent =
+                " → " +
+                matkaniTehokkuusRajaKm.toFixed(1) +
+                " km / " +
+                muotoileTunnitJaMinuutit(
+                    matkaniTehokkuusRajaMin
+                );
         }
-
-
-        if (
-            haePyynnotUudelleen &&
-            tarjoaKyytia
-        ) {
-
-            haeKyytipyynnot();
-        }
-
-        return;
     }
-
-
-    if (
-        reittiABMatkaKm == null ||
-        reittiABAikaMin == null
-    ) {
-
-        pyydettyMatkaAlarajaKm = null;
-        pyydettyMatkaYlarajaKm = null;
-
-        pyydettyAikaAlarajaMin = null;
-        pyydettyAikaYlarajaMin = null;
-
-        document.getElementById(
-            "kyydinPituusArvot"
-        ).textContent = "";
-
-        paivitaSuodataNappi();
-
-        return;
-    }
-
-
-    const kokonaismatkaKm =
-        reittiABMatkaKm +
-        (
-            lisamatkaRajaKm == null
-                ? 0
-                : lisamatkaRajaKm
-        );
-
-    const kokonaisaikaMin =
-        reittiABAikaMin +
-        (
-            lisaaikaRajaMin == null
-                ? 0
-                : lisaaikaRajaMin
-        );
-
-
-    pyydettyMatkaAlarajaKm =
-        kokonaismatkaKm *
-        alaraja /
-        100;
-
-    pyydettyMatkaYlarajaKm =
-        kokonaismatkaKm *
-        ylaraja /
-        100;
-
-    pyydettyAikaAlarajaMin =
-        kokonaisaikaMin *
-        alaraja /
-        100;
-
-    pyydettyAikaYlarajaMin =
-        kokonaisaikaMin *
-        ylaraja /
-        100;
-
-
-    document.getElementById(
-        "kyydinPituusArvot"
-    ).textContent =
-        alaraja +
-        "-" +
-        ylaraja +
-        "% eli " +
-        pyydettyMatkaAlarajaKm.toFixed(1) +
-        "-" +
-        pyydettyMatkaYlarajaKm.toFixed(1) +
-        " km / " +
-        Math.round(
-            pyydettyAikaAlarajaMin
-        ) +
-        "-" +
-        Math.round(
-            pyydettyAikaYlarajaMin
-        ) +
-        " min";
 
 
     paivitaSuodataNappi();
@@ -3816,7 +3650,6 @@ function paivitaKyydinPituus(
     ) {
 
         unsubscribeKyytipyynnot();
-
         unsubscribeKyytipyynnot =
             null;
     }
@@ -3830,6 +3663,7 @@ function paivitaKyydinPituus(
         haeKyytipyynnot();
     }
 }
+
 
 function tehokkuusOnVahintaan(
     lisaarvo,
@@ -3930,8 +3764,8 @@ function paivitaSuodataNappi() {
     const ohariTyhja = document.getElementById("ohariRajaProsentti").value === "12";
     const lisamatkaTyhja = document.getElementById("lisamatkaRajaProsentti").value === "4";
     const suhdeTyhja = document.getElementById("kyydinPituusSuhdeLisamatkaanProsentti").value === "0";
-    const kyydinPituusTyhja = document.getElementById("kyydinPituusAlarajaProsentti").value === "0" && document.getElementById("kyydinPituusYlarajaProsentti").value === "100";
-    document.getElementById("tyhjennaKaikkiSuodattimetNappi").disabled = ohariTyhja && lisamatkaTyhja && suhdeTyhja && kyydinPituusTyhja;
+    const matkaniTehokkuusTyhja = document.getElementById("matkaniTehokkuusRajaProsentti").value === "0";
+    document.getElementById("tyhjennaKaikkiSuodattimetNappi").disabled = ohariTyhja && lisamatkaTyhja && suhdeTyhja && matkaniTehokkuusTyhja;
 }
 
 function tyhjennaSuodatinpari(matkaKenttaId, aikaKenttaId) {
@@ -3949,16 +3783,19 @@ function tyhjennaKaikkiSuodattimet() {
     document.getElementById("lisamatkaLaskettu").textContent = "";
     document.getElementById("kyydinPituusSuhdeLisamatkaanProsentti").value = "0";
     document.getElementById("kyydinTehokkuusProsenttiTeksti").textContent = "";
-    document.getElementById("kyydinPituusAlarajaProsentti").value = "0";
-    document.getElementById("kyydinPituusYlarajaProsentti").value = "100";
+    document.getElementById("matkaniTehokkuusRajaProsentti").value = "0";
+    document.getElementById("matkaniTehokkuusProsenttiTeksti").textContent = "";
+    document.getElementById("matkaniTehokkuusLaskettu").textContent = "";
     ohariRajaProsentti = null;    noutomatkaRajaKm = null;
     noutoaikaRajaMin = null;
     lisamatkaRajaProsentti = null; lisamatkaRajaKm = null; lisaaikaRajaMin = null;
     kyydinPituusSuhdeLisamatkaanRajaProsentti = null;
-    kyydinPituusAlarajaProsentti = 0; kyydinPituusYlarajaProsentti = 100;
+    matkaniTehokkuusRajaProsentti = null;
+    matkaniTehokkuusRajaKm = null;
+    matkaniTehokkuusRajaMin = null;
     paivitaLisamatkaProsentti();
     paivitaOhariProsentti(false);
-    paivitaKyydinPituus("", false);
+    paivitaMatkaniTehokkuus(false);
     paivitaSuodatus();
 }
 
@@ -3986,8 +3823,7 @@ function paivitaKokonaismatka() {
         kokonaismatkaTeksti.textContent =
             "";
 
-        paivitaKyydinPituus(
-            "",
+        paivitaMatkaniTehokkuus(
             false
         );
 
@@ -4031,8 +3867,7 @@ function paivitaKokonaismatka() {
         " min";
 
 
-    paivitaKyydinPituus(
-        "",
+    paivitaMatkaniTehokkuus(
         false
     );
 }
@@ -4301,8 +4136,8 @@ window.paivitaAloitaKyytienEtsiminenNappi =
 window.paivitaKyydinPituusSuhdeLisamatkaan =
     paivitaKyydinPituusSuhdeLisamatkaan;
 
-window.paivitaKyydinPituus =
-    paivitaKyydinPituus;
+window.paivitaMatkaniTehokkuus =
+    paivitaMatkaniTehokkuus;
 
 window.paivitaOhariProsentti =
     paivitaOhariProsentti;

@@ -416,8 +416,14 @@
     "
 >
 
-<div style="min-height: 22px;">
-    <span>Kokonaismatkani enint.:</span>
+<div
+    id="kokonaismatkaRivi"
+    style="min-height: 22px;"
+>
+    <span id="kokonaismatkaOtsikko">
+        Matkani enintään:
+    </span>
+
     <span id="kokonaismatkaLaskettu"></span>
 </div>
 
@@ -3591,15 +3597,52 @@ function tyhjennaKaikkiSuodattimet() {
 
 function paivitaKokonaismatka() {
 
+    const kokonaismatkaOtsikko =
+        document.getElementById(
+            "kokonaismatkaOtsikko"
+        );
+
     const kokonaismatkaTeksti =
         document.getElementById(
             "kokonaismatkaLaskettu"
         );
 
+
+    /*
+     * Jos Lisämatka enintään ei ole päällä,
+     * Matkani enintään -rivi jätetään tyhjäksi.
+     *
+     * Riville varattu tila säilyy HTML:n
+     * min-height-määrityksen ansiosta.
+     */
+
+    if (
+        lisamatkaRajaKm == null ||
+        lisaaikaRajaMin == null
+    ) {
+
+        kokonaismatkaOtsikko.textContent =
+            "";
+
+        kokonaismatkaTeksti.textContent =
+            "";
+
+        paivitaKyydinPituus(
+            "",
+            false
+        );
+
+        return;
+    }
+
+
     if (
         reittiABMatkaKm == null ||
         reittiABAikaMin == null
     ) {
+
+        kokonaismatkaOtsikko.textContent =
+            "";
 
         kokonaismatkaTeksti.textContent =
             "";
@@ -3607,23 +3650,18 @@ function paivitaKokonaismatka() {
         return;
     }
 
-    const lisamatkaKm =
-        lisamatkaRajaKm == null
-            ? 0
-            : lisamatkaRajaKm;
-
-    const lisaaikaMin =
-        lisaaikaRajaMin == null
-            ? 0
-            : lisaaikaRajaMin;
 
     const laskettuKokonaismatkaKm =
         reittiABMatkaKm +
-        lisamatkaKm;
+        lisamatkaRajaKm;
 
     const laskettuKokonaisaikaMin =
         reittiABAikaMin +
-        lisaaikaMin;
+        lisaaikaRajaMin;
+
+
+    kokonaismatkaOtsikko.textContent =
+        "Matkani enintään:";
 
     kokonaismatkaTeksti.textContent =
         laskettuKokonaismatkaKm.toFixed(1) +
@@ -3633,7 +3671,11 @@ function paivitaKokonaismatka() {
         ) +
         " min";
 
-    paivitaKyydinPituus("", false);
+
+    paivitaKyydinPituus(
+        "",
+        false
+    );
 }
 
 

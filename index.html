@@ -1783,7 +1783,7 @@ function paivitaAloitaKyytienEtsiminenNappi() {
         ).value.trim() !== "";
 
     const lahtopaikkaValittu =
-        tarjoajanLahtopaikka != "" &&
+        tarjoajanLahtopaikanTyyppi != "" &&
         tarjoajanLahtopaikkaLatitude != null &&
         tarjoajanLahtopaikkaLongitude != null;
 
@@ -2044,18 +2044,17 @@ async function aloitaTarjoaminen() {
 
 
     if (
-        tarjoajanLahtopaikka == "" ||
+        tarjoajanLahtopaikanTyyppi == "" ||
         tarjoajanLahtopaikkaLatitude == null ||
         tarjoajanLahtopaikkaLongitude == null
     ) {
-
+    
         alert(
             "Valitse ensin tarjoajan lähtöpaikka"
         );
-
+    
         return;
     }
-
 
     if (
         tarjoajanMaaranpaa == "" ||

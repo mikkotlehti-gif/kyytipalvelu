@@ -457,7 +457,7 @@
         id="kyydinPituusSuhdeLisamatkaanProsentti"
         type="range"
         min="0"
-        max="12"
+        max="11"
         step="1"
         value="0"
         style="
@@ -473,7 +473,7 @@
 
 <div style="min-height: 22px;">
     <label>
-        Kyyti kokonaismatkasta vähint.:
+        Kyytimatkan osuus kokonaismatkasta vähint.:
     </label>
     <span id="matkaniTehokkuusProsenttiTeksti"></span>
 </div>
@@ -503,7 +503,7 @@
         id="matkaniTehokkuusRajaProsentti"
         type="range"
         min="0"
-        max="12"
+        max="11"
         step="1"
         value="0"
         style="
@@ -3021,7 +3021,7 @@ function haeKyytipyynnot() {
                             ${kyytipyyntoKokonaisaikaTunnit} h ${kyytipyyntoKokonaisaikaMinuutit} min)
 
                             <br>
-                            <b>Kyyti kokonaismatkasta:</b>
+                            <b>Kyytimatkan osuus kokonaismatkasta:</b>
                             <br>
                             ${Math.round(matkaniTehokkuusMatkaProsentti)} %
                             (${laskelma.kuljetettavaMatka.matkaKm.toFixed(1)} km /
@@ -3537,7 +3537,6 @@ function paivitaMatkaniTehokkuus(
         );
 
     const sallitutProsentit = [
-        0,
         10,
         20,
         30,
@@ -3633,7 +3632,6 @@ function paivitaKyydinPituusSuhdeLisamatkaan() {
         );
 
     const sallitutProsentit = [
-        0,
         10,
         20,
         30,

@@ -541,7 +541,7 @@
 <br><br>
 
 <label for="kyydinPituusSuhdeLisamatkaanProsentti">
-    Kyydin pituus suhteessa lisämatkaan:
+    Kyydin tehokkuus (kyyti/(kyyti+lisämatka)) vähint.:
 </label>
 
 <br>
@@ -2643,12 +2643,12 @@ function haeKyytipyynnot() {
                                 (
                                     kyydinPituusSuhdeLisamatkaanRajaProsentti == null ||
                                     (
-                                        suhdeOnEnintaan(
+                                        tehokkuusOnVahintaan(
                                             laskelma.lisamatkaKm,
                                             laskelma.kuljetettavaMatka.matkaKm,
                                             kyydinPituusSuhdeLisamatkaanRajaProsentti
                                         ) &&
-                                        suhdeOnEnintaan(
+                                        tehokkuusOnVahintaan(
                                             laskelma.lisaaikaMin,
                                             laskelma.kuljetettavaMatka.aikaMin,
                                             kyydinPituusSuhdeLisamatkaanRajaProsentti
@@ -3610,7 +3610,7 @@ function paivitaKyydinPituus(
     }
 }
 
-function suhdeOnEnintaan(
+function tehokkuusOnVahintaan(
     lisaarvo,
     kyydinArvo,
     rajaProsentti
@@ -3623,14 +3623,19 @@ function suhdeOnEnintaan(
         );
 
     if (kyydinArvo <= 0) {
-        return turvallinenLisaarvo === 0;
+        return false;
     }
 
-    return (
-        turvallinenLisaarvo /
-        kyydinArvo *
-        100
-    ) <= rajaProsentti;
+    const tehokkuusProsentti =
+        kyydinArvo /
+        (
+            kyydinArvo +
+            turvallinenLisaarvo
+        ) *
+        100;
+
+    return tehokkuusProsentti >=
+        rajaProsentti;
 }
 
 

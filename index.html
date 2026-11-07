@@ -2911,6 +2911,46 @@ function haeKyytipyynnot() {
                                 kyytipyyntoKokonaisaikaMin %
                                 60
                             );
+
+                        const ohariLisamatkastaMatkaProsentti =
+                            laskelma.lisamatkaKm > 0
+                                ? laskelma.reittiNoutopaikkaan.matkaKm /
+                                    laskelma.lisamatkaKm *
+                                    100
+                                : 0;
+                        
+                        const ohariLisamatkastaAikaProsentti =
+                            laskelma.lisaaikaMin > 0
+                                ? laskelma.reittiNoutopaikkaan.aikaMin /
+                                    laskelma.lisaaikaMin *
+                                    100
+                                : 0;
+                        
+                        
+                        const ohariAikaTunnit =
+                            Math.floor(
+                                laskelma.reittiNoutopaikkaan.aikaMin /
+                                60
+                            );
+                        
+                        const ohariAikaMinuutit =
+                            Math.round(
+                                laskelma.reittiNoutopaikkaan.aikaMin %
+                                60
+                            );
+                        
+                        
+                        const lisamatkaAikaTunnit =
+                            Math.floor(
+                                laskelma.lisaaikaMin /
+                                60
+                            );
+                        
+                        const lisamatkaAikaMinuutit =
+                            Math.round(
+                                laskelma.lisaaikaMin %
+                                60
+                            );
                         
                         const osoitetiedotNakyvissa =
                             laajatOsoitetiedot.has(
@@ -2962,7 +3002,20 @@ function haeKyytipyynnot() {
                             <b>Turha ajo oharitilanteessa:</b>
                             ${laskelma.reittiNoutopaikkaan.matkaKm.toFixed(1)} km /
                             ${reitiltaNoutoaikaTeksti}
-
+                            
+                            <br>
+                            <b>Ohari lisämatkasta:</b>
+                            
+                            <br>
+                            ${Math.round(ohariLisamatkastaMatkaProsentti)} %
+                            (${laskelma.reittiNoutopaikkaan.matkaKm.toFixed(1)} km /
+                            ${laskelma.lisamatkaKm.toFixed(1)} km)
+                            
+                            <br>
+                            ${Math.round(ohariLisamatkastaAikaProsentti)} %
+                            (${ohariAikaTunnit} h ${ohariAikaMinuutit} min /
+                            ${lisamatkaAikaTunnit} h ${lisamatkaAikaMinuutit} min)
+                            
                             <br><b>Vaikutus matkasi pituuteen:</b>
                             <br>
                             +${laskelma.lisamatkaKm.toFixed(1)} km

@@ -540,6 +540,26 @@
 
 <br><br>
 
+<label for="kyydinPituusSuhdeLisamatkaanProsentti">
+    Kyydin pituus suhteessa lisämatkaan:
+</label>
+
+<br>
+
+<input
+    id="kyydinPituusSuhdeLisamatkaanProsentti"
+    type="text"
+    inputmode="numeric"
+    maxlength="3"
+    style="width: 45px;"
+    oninput="paivitaKyydinPituusSuhdeLisamatkaan();"
+    disabled
+>
+
+<span>%</span>
+
+<br><br>
+
 <div style="min-height: 22px;">
     <div
         id="kyydinPituusArvot"
@@ -732,6 +752,9 @@ var lisamatkaRajaProsentti = null;
 var lisamatkaRajaKm = null;
 
 var lisaaikaRajaMin = null;
+
+
+var kyydinPituusSuhdeLisamatkaanRajaProsentti = null;
 
 
 var kyydinPituusAlarajaProsentti = 0;
@@ -2133,6 +2156,10 @@ async function aloitaTarjoaminen() {
     ).disabled = false;
 
     document.getElementById(
+        "kyydinPituusSuhdeLisamatkaanProsentti"
+    ).disabled = false;
+
+    document.getElementById(
         "kyydinPituusAlarajaProsentti"
     ).disabled = false;
 
@@ -2233,6 +2260,10 @@ function lopetaTarjoaminen() {
     ).disabled = true;
 
     document.getElementById(
+        "kyydinPituusSuhdeLisamatkaanProsentti"
+    ).disabled = true;
+
+    document.getElementById(
         "kyydinPituusAlarajaProsentti"
     ).disabled = true;
 
@@ -2319,6 +2350,12 @@ function lopetaTarjoaminen() {
     lisamatkaRajaKm = null;
 
     lisaaikaRajaMin = null;
+
+    kyydinPituusSuhdeLisamatkaanRajaProsentti = null;
+
+    document.getElementById(
+        "kyydinPituusSuhdeLisamatkaanProsentti"
+    ).value = "";
 
     pyydettyMatkaAlarajaKm = null;
     pyydettyMatkaYlarajaKm = null;
@@ -2601,6 +2638,22 @@ function haeKyytipyynnot() {
                                         laskelma.lisaaikaMin.toFixed(0)
                                     ) <=
                                         lisaaikaRajaMin
+                                ) &&
+
+                                (
+                                    kyydinPituusSuhdeLisamatkaanRajaProsentti == null ||
+                                    (
+                                        suhdeOnEnintaan(
+                                            laskelma.lisamatkaKm,
+                                            laskelma.kuljetettavaMatka.matkaKm,
+                                            kyydinPituusSuhdeLisamatkaanRajaProsentti
+                                        ) &&
+                                        suhdeOnEnintaan(
+                                            laskelma.lisaaikaMin,
+                                            laskelma.kuljetettavaMatka.aikaMin,
+                                            kyydinPituusSuhdeLisamatkaanRajaProsentti
+                                        )
+                                    )
                                 ) &&
 
                                 (
@@ -3557,6 +3610,54 @@ function paivitaKyydinPituus(
     }
 }
 
+function suhdeOnEnintaan(
+    lisaarvo,
+    kyydinArvo,
+    rajaProsentti
+) {
+
+    const turvallinenLisaarvo =
+        Math.max(
+            0,
+            lisaarvo
+        );
+
+    if (kyydinArvo <= 0) {
+        return turvallinenLisaarvo === 0;
+    }
+
+    return (
+        turvallinenLisaarvo /
+        kyydinArvo *
+        100
+    ) <= rajaProsentti;
+}
+
+
+function paivitaKyydinPituusSuhdeLisamatkaan() {
+
+    const kentta =
+        document.getElementById(
+            "kyydinPituusSuhdeLisamatkaanProsentti"
+        );
+
+    kentta.value =
+        kentta.value.replace(
+            /[^0-9]/g,
+            ""
+        );
+
+    kyydinPituusSuhdeLisamatkaanRajaProsentti =
+        kentta.value === ""
+            ? null
+            : parseInt(
+                kentta.value
+            );
+
+    paivitaSuodatus();
+}
+
+
 function paivitaSuodatus() {
     paivitaSuodataNappi();
     if (unsubscribeKyytipyynnot) { unsubscribeKyytipyynnot(); unsubscribeKyytipyynnot = null; }
@@ -3566,8 +3667,9 @@ function paivitaSuodatus() {
 function paivitaSuodataNappi() {
     const ohariTyhja = document.getElementById("ohariRajaProsentti").value === "12";
     const lisamatkaTyhja = document.getElementById("lisamatkaRajaProsentti").value === "4";
+    const suhdeTyhja = document.getElementById("kyydinPituusSuhdeLisamatkaanProsentti").value === "";
     const kyydinPituusTyhja = document.getElementById("kyydinPituusAlarajaProsentti").value === "0" && document.getElementById("kyydinPituusYlarajaProsentti").value === "100";
-    document.getElementById("tyhjennaKaikkiSuodattimetNappi").disabled = ohariTyhja && lisamatkaTyhja && kyydinPituusTyhja;
+    document.getElementById("tyhjennaKaikkiSuodattimetNappi").disabled = ohariTyhja && lisamatkaTyhja && suhdeTyhja && kyydinPituusTyhja;
 }
 
 function tyhjennaSuodatinpari(matkaKenttaId, aikaKenttaId) {
@@ -3583,11 +3685,13 @@ function tyhjennaKaikkiSuodattimet() {
     document.getElementById("lisamatkaRajaProsentti").value = "4";
     document.getElementById("lisamatkaProsenttiTeksti").textContent = "";
     document.getElementById("lisamatkaLaskettu").textContent = "";
+    document.getElementById("kyydinPituusSuhdeLisamatkaanProsentti").value = "";
     document.getElementById("kyydinPituusAlarajaProsentti").value = "0";
     document.getElementById("kyydinPituusYlarajaProsentti").value = "100";
     ohariRajaProsentti = null;    noutomatkaRajaKm = null;
     noutoaikaRajaMin = null;
     lisamatkaRajaProsentti = null; lisamatkaRajaKm = null; lisaaikaRajaMin = null;
+    kyydinPituusSuhdeLisamatkaanRajaProsentti = null;
     kyydinPituusAlarajaProsentti = 0; kyydinPituusYlarajaProsentti = 100;
     paivitaLisamatkaProsentti();
     paivitaOhariProsentti(false);
@@ -3607,14 +3711,6 @@ function paivitaKokonaismatka() {
             "kokonaismatkaLaskettu"
         );
 
-
-    /*
-     * Jos Lisämatka enintään ei ole päällä,
-     * Matkani enintään -rivi jätetään tyhjäksi.
-     *
-     * Riville varattu tila säilyy HTML:n
-     * min-height-määrityksen ansiosta.
-     */
 
     if (
         lisamatkaRajaKm == null ||
@@ -3677,7 +3773,6 @@ function paivitaKokonaismatka() {
         false
     );
 }
-
 
 function paivitaOhariProsentti(
     haePyynnotUudelleen = true
@@ -3993,6 +4088,9 @@ window.paivitaJoMatkalla =
 
 window.paivitaAloitaKyytienEtsiminenNappi =
     paivitaAloitaKyytienEtsiminenNappi;
+
+window.paivitaKyydinPituusSuhdeLisamatkaan =
+    paivitaKyydinPituusSuhdeLisamatkaan;
 
 window.paivitaKyydinPituus =
     paivitaKyydinPituus;

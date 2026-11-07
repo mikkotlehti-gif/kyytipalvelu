@@ -540,23 +540,50 @@
 
 <br><br>
 
-<label for="kyydinPituusSuhdeLisamatkaanProsentti">
-    Kyydin tehokkuus (kyyti/(kyyti+lisämatka)) vähint.:
-</label>
+<div style="min-height: 22px;">
+    <label>
+        Kyydin tehokkuus (kyyti/(kyyti+lisämatka)) vähint.:
+    </label>
 
-<br>
+    <span id="kyydinTehokkuusProsenttiTeksti"></span>
+</div>
 
-<input
-    id="kyydinPituusSuhdeLisamatkaanProsentti"
-    type="text"
-    inputmode="numeric"
-    maxlength="3"
-    style="width: 45px;"
-    oninput="paivitaKyydinPituusSuhdeLisamatkaan();"
-    disabled
+<div
+    style="
+        position: relative;
+        width: 325px;
+        padding-top: 8px;
+        margin-left: 20px;
+    "
 >
+    <div
+        style="
+            position: absolute;
+            left: 10%;
+            top: 3px;
+            width: 2px;
+            height: 28px;
+            background-color: #666;
+            pointer-events: none;
+            z-index: 2;
+        "
+    ></div>
 
-<span>%</span>
+    <input
+        id="kyydinPituusSuhdeLisamatkaanProsentti"
+        type="range"
+        min="0"
+        max="12"
+        step="1"
+        value="0"
+        style="
+            width: 325px;
+            accent-color: #777;
+        "
+        oninput="paivitaKyydinPituusSuhdeLisamatkaan();"
+        disabled
+    >
+</div>
 
 <br><br>
 
@@ -2355,7 +2382,11 @@ function lopetaTarjoaminen() {
 
     document.getElementById(
         "kyydinPituusSuhdeLisamatkaanProsentti"
-    ).value = "";
+    ).value = "0";
+
+    document.getElementById(
+        "kyydinTehokkuusProsenttiTeksti"
+    ).textContent = "";
 
     pyydettyMatkaAlarajaKm = null;
     pyydettyMatkaYlarajaKm = null;
@@ -3831,23 +3862,59 @@ function tehokkuusOnVahintaan(
 
 function paivitaKyydinPituusSuhdeLisamatkaan() {
 
-    const kentta =
+    const saadin =
         document.getElementById(
             "kyydinPituusSuhdeLisamatkaanProsentti"
         );
 
-    kentta.value =
-        kentta.value.replace(
-            /[^0-9]/g,
-            ""
+    const saadinAsento =
+        parseInt(
+            saadin.value
         );
 
-    kyydinPituusSuhdeLisamatkaanRajaProsentti =
-        kentta.value === ""
-            ? null
-            : parseInt(
-                kentta.value
-            );
+    const sallitutProsentit = [
+        0,
+        10,
+        20,
+        30,
+        40,
+        50,
+        60,
+        70,
+        80,
+        90,
+        95,
+        100
+    ];
+
+
+    if (saadinAsento === 0) {
+
+        kyydinPituusSuhdeLisamatkaanRajaProsentti =
+            null;
+
+        document.getElementById(
+            "kyydinTehokkuusProsenttiTeksti"
+        ).textContent =
+            "";
+
+    } else {
+
+        const prosentti =
+            sallitutProsentit[
+                saadinAsento - 1
+            ];
+
+        kyydinPituusSuhdeLisamatkaanRajaProsentti =
+            prosentti;
+
+        document.getElementById(
+            "kyydinTehokkuusProsenttiTeksti"
+        ).textContent =
+            prosentti +
+            " %";
+    }
+
 
     paivitaSuodatus();
 }
@@ -3862,7 +3929,7 @@ function paivitaSuodatus() {
 function paivitaSuodataNappi() {
     const ohariTyhja = document.getElementById("ohariRajaProsentti").value === "12";
     const lisamatkaTyhja = document.getElementById("lisamatkaRajaProsentti").value === "4";
-    const suhdeTyhja = document.getElementById("kyydinPituusSuhdeLisamatkaanProsentti").value === "";
+    const suhdeTyhja = document.getElementById("kyydinPituusSuhdeLisamatkaanProsentti").value === "0";
     const kyydinPituusTyhja = document.getElementById("kyydinPituusAlarajaProsentti").value === "0" && document.getElementById("kyydinPituusYlarajaProsentti").value === "100";
     document.getElementById("tyhjennaKaikkiSuodattimetNappi").disabled = ohariTyhja && lisamatkaTyhja && suhdeTyhja && kyydinPituusTyhja;
 }
@@ -3880,7 +3947,8 @@ function tyhjennaKaikkiSuodattimet() {
     document.getElementById("lisamatkaRajaProsentti").value = "4";
     document.getElementById("lisamatkaProsenttiTeksti").textContent = "";
     document.getElementById("lisamatkaLaskettu").textContent = "";
-    document.getElementById("kyydinPituusSuhdeLisamatkaanProsentti").value = "";
+    document.getElementById("kyydinPituusSuhdeLisamatkaanProsentti").value = "0";
+    document.getElementById("kyydinTehokkuusProsenttiTeksti").textContent = "";
     document.getElementById("kyydinPituusAlarajaProsentti").value = "0";
     document.getElementById("kyydinPituusYlarajaProsentti").value = "100";
     ohariRajaProsentti = null;    noutomatkaRajaKm = null;

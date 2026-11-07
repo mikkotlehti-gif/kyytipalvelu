@@ -2629,14 +2629,48 @@ function haeKyytipyynnot() {
                 const suodatetutPyynnot =
                     pyyntojenLaskelmat.filter(
                         (laskelma) => {
-
+                
+                            const ohariMatkaProsentti =
+                                laskelma.lisamatkaKm > 0
+                                    ? (
+                                        laskelma.reittiNoutopaikkaan.matkaKm /
+                                        laskelma.lisamatkaKm *
+                                        100
+                                    )
+                                    : 0;
+                
+                            const ohariAikaProsentti =
+                                laskelma.lisaaikaMin > 0
+                                    ? (
+                                        laskelma.reittiNoutopaikkaan.aikaMin /
+                                        laskelma.lisaaikaMin *
+                                        100
+                                    )
+                                    : 0;
+                
+                
+                            return (
+                
+                                /*
+                                 * Ohari lisämatkasta enint.
+                                 *
+                                 * Ainakin toisen pitää olla enintään
+                                 * käyttäjän valitsema prosenttiraja.
+                                 */
+                
                                 (
                                     ohariRajaProsentti == null ||
-                                    laskelma.ohariLisamatkastaMatkaProsentti <=
+                                    ohariMatkaProsentti <=
                                         ohariRajaProsentti ||
-                                    laskelma.ohariLisamatkastaAikaProsentti <=
+                                    ohariAikaProsentti <=
                                         ohariRajaProsentti
                                 ) &&
+                
+                
+                                /*
+                                 * Lisämatka enintään
+                                 */
+                
                                 (
                                     lisamatkaRajaKm == null ||
                                     parseFloat(
@@ -2644,7 +2678,7 @@ function haeKyytipyynnot() {
                                     ) <=
                                         lisamatkaRajaKm
                                 ) &&
-
+                
                                 (
                                     lisaaikaRajaMin == null ||
                                     parseFloat(
@@ -2652,7 +2686,12 @@ function haeKyytipyynnot() {
                                     ) <=
                                         lisaaikaRajaMin
                                 ) &&
-
+                
+                
+                                /*
+                                 * Kyydin tehokkuus
+                                 */
+                
                                 (
                                     kyydinPituusSuhdeLisamatkaanRajaProsentti == null ||
                                     (
@@ -2661,6 +2700,7 @@ function haeKyytipyynnot() {
                                             laskelma.kuljetettavaMatka.matkaKm,
                                             kyydinPituusSuhdeLisamatkaanRajaProsentti
                                         ) &&
+                
                                         tehokkuusOnVahintaan(
                                             laskelma.lisaaikaMin,
                                             laskelma.kuljetettavaMatka.aikaMin,
@@ -2668,22 +2708,42 @@ function haeKyytipyynnot() {
                                         )
                                     )
                                 ) &&
-
+                
+                
+                                /*
+                                 * Kyydin pituus
+                                 */
+                
                                 (
                                     pyydettyMatkaAlarajaKm == null ||
-                                    parseFloat(laskelma.kuljetettavaMatka.matkaKm.toFixed(1)) >= pyydettyMatkaAlarajaKm
+                                    parseFloat(
+                                        laskelma.kuljetettavaMatka.matkaKm.toFixed(1)
+                                    ) >=
+                                        pyydettyMatkaAlarajaKm
                                 ) &&
+                
                                 (
                                     pyydettyMatkaYlarajaKm == null ||
-                                    parseFloat(laskelma.kuljetettavaMatka.matkaKm.toFixed(1)) <= pyydettyMatkaYlarajaKm
+                                    parseFloat(
+                                        laskelma.kuljetettavaMatka.matkaKm.toFixed(1)
+                                    ) <=
+                                        pyydettyMatkaYlarajaKm
                                 ) &&
+                
                                 (
                                     pyydettyAikaAlarajaMin == null ||
-                                    parseFloat(laskelma.kuljetettavaMatka.aikaMin.toFixed(0)) >= pyydettyAikaAlarajaMin
+                                    parseFloat(
+                                        laskelma.kuljetettavaMatka.aikaMin.toFixed(0)
+                                    ) >=
+                                        pyydettyAikaAlarajaMin
                                 ) &&
+                
                                 (
                                     pyydettyAikaYlarajaMin == null ||
-                                    parseFloat(laskelma.kuljetettavaMatka.aikaMin.toFixed(0)) <= pyydettyAikaYlarajaMin
+                                    parseFloat(
+                                        laskelma.kuljetettavaMatka.aikaMin.toFixed(0)
+                                    ) <=
+                                        pyydettyAikaYlarajaMin
                                 )
                             );
                         }

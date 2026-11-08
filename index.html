@@ -451,7 +451,7 @@
 <br>
 <div style="min-height: 22px;">
     <label>
-        Lisäajomatka enintään:
+        Lisäajo enint.:
     </label>
 
     <span id="lisamatkaProsenttiTeksti"></span>
@@ -498,7 +498,7 @@
 <br><br>
 <div style="min-height: 22px;">
     <label>
-        Ohari lisämatkasta enint.:
+        Ohari lisäajosta enint.:
     </label>
 
     <span id="ohariProsenttiTeksti"></span>
@@ -594,7 +594,7 @@
 
 <div style="min-height: 22px;">
     <label>
-        Kyytimatkan osuus kyydin vuoksi ajettavasta matkasta vähint.:
+        Kyytiajon osuus kyydin vuoksi ajettavasta ajosta vähint.:
     </label>
 
     <span id="kyydinTehokkuusProsenttiTeksti"></span>
@@ -641,7 +641,7 @@
 
 <div style="min-height: 22px;">
     <label>
-        Kyytimatkan osuus kokonaismatkasta vähint.:
+        Kyytiajon osuus kokonaisajosta vähint.:
     </label>
     <span id="matkaniTehokkuusProsenttiTeksti"></span>
 </div>
@@ -3484,7 +3484,7 @@ function haeKyytipyynnot() {
                                 ) &&
                 
                                 /*
-                                 * Ohari lisämatkasta enint.
+                                 * Ohari lisäajosta enint.
                                  *
                                  * Ainakin toisen pitää olla enintään
                                  * käyttäjän valitsema prosenttiraja.
@@ -3500,7 +3500,7 @@ function haeKyytipyynnot() {
                 
                 
                                 /*
-                                 * Lisäajomatka enintään
+                                 * Lisäajo enint.
                                  */
                 
                                 (
@@ -3532,7 +3532,7 @@ function haeKyytipyynnot() {
                 
                 
                             /*
-                             * Kyytimatkan osuus kyydin vuoksi ajettavasta matkasta
+                             * Kyytiajon osuus kyydin vuoksi ajettavasta ajosta
                              *
                              * Suodatus perustuu vain kilometreihin.
                              */
@@ -3934,7 +3934,7 @@ function haeKyytipyynnot() {
                             ${reitiltaNoutoaikaTeksti}
                             
                             <br>
-                            <b>Ohari lisämatkasta:</b>
+                            <b>Ohari lisäajosta:</b>
                             
                             <br>
                             ${Math.round(
@@ -3950,7 +3950,7 @@ function haeKyytipyynnot() {
                             (${ohariAikaTunnit} h ${ohariAikaMinuutit} min /
                             ${lisamatkaAikaTunnit} h ${lisamatkaAikaMinuutit} min)
                             
-                            <br><b>Vaikutus matkasi pituuteen:</b>
+                            <br><b>Lisäajo:</b>
                             <br>
                             +${laskelma.lisamatkaKm.toFixed(1)} km
                             (${reittiABMatkaKm.toFixed(1)} → ${laskelma.reittiACDB.matkaKm.toFixed(1)} km)
@@ -3960,12 +3960,12 @@ function haeKyytipyynnot() {
                             (${omaReittiAikaTeksti} → ${kokonaisAikaTeksti})
 
                             <br>
-                            <b>Pyydetyn matkan pituus:</b>
+                            <b>Pyydetty kyyti:</b>
                             ${laskelma.kuljetettavaMatka.matkaKm.toFixed(1)} km /
                             ${pyydettyAikaTeksti}
                             
                             <br>
-                            <b>Kyytimatkan osuus kyydin vuoksi ajettavasta matkasta:</b>
+                            <b>Kyytiajon osuus kyydin vuoksi ajettavasta ajosta:</b>
                             
                             <br>
                             ${Math.round(kyytipyyntoTehokkuusMatkaProsentti)} %
@@ -3978,7 +3978,7 @@ function haeKyytipyynnot() {
                             ${kyytipyyntoKokonaisaikaTunnit} h ${kyytipyyntoKokonaisaikaMinuutit} min)
 
                             <br>
-                            <b>Kyytimatkan osuus kokonaismatkasta:</b>
+                            <b>Kyytiajon osuus kokonaisajosta:</b>
                             <br>
                             ${Math.round(matkaniTehokkuusMatkaProsentti)} %
                             (${laskelma.kuljetettavaMatka.matkaKm.toFixed(1)} km /

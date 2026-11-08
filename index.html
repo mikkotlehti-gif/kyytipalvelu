@@ -314,7 +314,7 @@
 <br>
 <div style="min-height: 22px;">
     <label>
-        Lisämatka enintään:
+        Lisäajomatka enintään:
     </label>
 
     <span id="lisamatkaProsenttiTeksti"></span>
@@ -407,20 +407,51 @@
 
 <br><br>
 
-<label for="odotusaikaRajaMin">
-    KESKEN Odotusaika enint. (kun jo matkalla) (min):
-</label>
+<div style="min-height: 22px;">
+    <label>
+        Odotusaika lisäksi enint. (kun jo matkalla):
+    </label>
 
-<br>
+    <span id="odotusaikaProsenttiTeksti"></span>
+    <span id="odotusaikaLaskettu"></span>
+</div>
 
-<input
-    id="odotusaikaRajaMin"
-    type="text"
-    inputmode="numeric"
-    maxlength="3"
-    style="width: 45px;"
-    disabled
+<div
+    style="
+        position: relative;
+        width: 325px;
+        padding-top: 8px;
+        margin-left: 20px;
+    "
 >
+    <div
+        style="
+            position: absolute;
+            left: 9.09%;
+            top: 3px;
+            width: 2px;
+            height: 28px;
+            background-color: #666;
+            pointer-events: none;
+            z-index: 2;
+        "
+    ></div>
+
+    <input
+        id="odotusaikaRajaProsentti"
+        type="range"
+        min="0"
+        max="11"
+        step="1"
+        value="0"
+        style="
+            width: 325px;
+            accent-color: #777;
+        "
+        oninput="paivitaOdotusaikaProsentti();"
+        disabled
+    >
+</div>
 
 <br><br>
 
@@ -668,6 +699,8 @@ var lisamatkaRajaProsentti = null;
 var lisamatkaRajaKm = null;
 
 var lisaaikaRajaMin = null;
+var odotusaikaRajaProsentti = null;
+var odotusaikaRajaMin = null;
 
 
 var kyydinPituusSuhdeLisamatkaanRajaProsentti = null;
@@ -2067,6 +2100,9 @@ async function aloitaTarjoaminen() {
     document.getElementById(
         "lisamatkaRajaProsentti"
     ).disabled = false;
+    document.getElementById(
+        "odotusaikaRajaProsentti"
+    ).disabled = !tarjoajaJoMatkalla;
 
     document.getElementById(
         "kyydinPituusSuhdeLisamatkaanProsentti"
@@ -2132,6 +2168,8 @@ async function aloitaTarjoaminen() {
 
     paivitaLisamatkaProsentti();
     
+    paivitaOdotusaikaProsentti(false);
+    
     paivitaOhariProsentti();
     
     paivitaSuodatus();
@@ -2166,6 +2204,9 @@ function lopetaTarjoaminen() {
 
     document.getElementById(
         "lisamatkaRajaProsentti"
+    ).disabled = true;
+    document.getElementById(
+        "odotusaikaRajaProsentti"
     ).disabled = true;
 
     document.getElementById(
@@ -2256,6 +2297,17 @@ function lopetaTarjoaminen() {
 
     lisaaikaRajaMin = null;
 
+    odotusaikaRajaProsentti = null;
+    odotusaikaRajaMin = null;
+    document.getElementById(
+        "odotusaikaRajaProsentti"
+    ).value = "0";
+    document.getElementById(
+        "odotusaikaProsenttiTeksti"
+    ).textContent = "";
+    document.getElementById(
+        "odotusaikaLaskettu"
+    ).textContent = "";
     kyydinPituusSuhdeLisamatkaanRajaProsentti = null;
 
     document.getElementById(
@@ -2579,7 +2631,7 @@ function haeKyytipyynnot() {
                 
                 
                                 /*
-                                 * Lisämatka enintään
+                                 * Lisäajomatka enintään
                                  */
                 
                                 (
@@ -2596,6 +2648,17 @@ function haeKyytipyynnot() {
                                         laskelma.lisaaikaMin.toFixed(0)
                                     ) <=
                                         lisaaikaRajaMin
+                                ) &&
+                                /*
+                                 * Odotusaika lisäksi enint. (kun jo matkalla)
+                                 *
+                                 * Suodatus vertaa noutopaikkaan kuluvaa aikaa
+                                 * jäljellä olevaan ajoaikaan omaan määränpäähän.
+                                 */
+                                (
+                                    odotusaikaRajaMin == null ||
+                                    laskelma.matkaNoutopaikalle.aikaMin <=
+                                        odotusaikaRajaMin
                                 ) &&
                 
                 
@@ -3232,6 +3295,8 @@ async function laskeReittiAB() {
 
         paivitaLisamatkaProsentti();
     }
+
+    paivitaOdotusaikaProsentti(false);
 }
 
 
@@ -3687,9 +3752,10 @@ function paivitaSuodatus() {
 function paivitaSuodataNappi() {
     const ohariTyhja = document.getElementById("ohariRajaProsentti").value === "12";
     const lisamatkaTyhja = document.getElementById("lisamatkaRajaProsentti").value === "4";
+    const odotusaikaTyhja = document.getElementById("odotusaikaRajaProsentti").value === "0";
     const suhdeTyhja = document.getElementById("kyydinPituusSuhdeLisamatkaanProsentti").value === "0";
     const matkaniTehokkuusTyhja = document.getElementById("matkaniTehokkuusRajaProsentti").value === "0";
-    document.getElementById("tyhjennaKaikkiSuodattimetNappi").disabled = ohariTyhja && lisamatkaTyhja && suhdeTyhja && matkaniTehokkuusTyhja;
+    document.getElementById("tyhjennaKaikkiSuodattimetNappi").disabled = ohariTyhja && lisamatkaTyhja && odotusaikaTyhja && suhdeTyhja && matkaniTehokkuusTyhja;
 }
 
 function tyhjennaSuodatinpari(matkaKenttaId, aikaKenttaId) {
@@ -3705,6 +3771,9 @@ function tyhjennaKaikkiSuodattimet() {
     document.getElementById("lisamatkaRajaProsentti").value = "4";
     document.getElementById("lisamatkaProsenttiTeksti").textContent = "";
     document.getElementById("lisamatkaLaskettu").textContent = "";
+    document.getElementById("odotusaikaRajaProsentti").value = "0";
+    document.getElementById("odotusaikaProsenttiTeksti").textContent = "";
+    document.getElementById("odotusaikaLaskettu").textContent = "";
     document.getElementById("kyydinPituusSuhdeLisamatkaanProsentti").value = "0";
     document.getElementById("kyydinTehokkuusProsenttiTeksti").textContent = "";
     document.getElementById("matkaniTehokkuusRajaProsentti").value = "0";
@@ -3712,14 +3781,106 @@ function tyhjennaKaikkiSuodattimet() {
     ohariRajaProsentti = null;    noutomatkaRajaKm = null;
     noutoaikaRajaMin = null;
     lisamatkaRajaProsentti = null; lisamatkaRajaKm = null; lisaaikaRajaMin = null;
+    odotusaikaRajaProsentti = null; odotusaikaRajaMin = null;
     kyydinPituusSuhdeLisamatkaanRajaProsentti = null;
     matkaniTehokkuusRajaProsentti = null;
     matkaniTehokkuusRajaKm = null;
     matkaniTehokkuusRajaMin = null;
     paivitaLisamatkaProsentti();
+    paivitaOdotusaikaProsentti(false);
     paivitaOhariProsentti(false);
     paivitaMatkaniTehokkuus(false);
     paivitaSuodatus();
+}
+
+function paivitaOdotusaikaProsentti(
+    haePyynnotUudelleen = true
+) {
+    const saadin =
+        document.getElementById(
+            "odotusaikaRajaProsentti"
+        );
+
+    const saadinAsento =
+        parseInt(
+            saadin.value
+        );
+
+    const sallitutProsentit = [
+        0,
+        10,
+        20,
+        30,
+        40,
+        50,
+        60,
+        70,
+        80,
+        90,
+        100
+    ];
+
+    if (saadinAsento === 0) {
+        odotusaikaRajaProsentti = null;
+        odotusaikaRajaMin = null;
+
+        document.getElementById(
+            "odotusaikaProsenttiTeksti"
+        ).textContent = "";
+
+        document.getElementById(
+            "odotusaikaLaskettu"
+        ).textContent = "";
+    } else {
+        const prosentti =
+            sallitutProsentit[
+                saadinAsento - 1
+            ];
+
+        odotusaikaRajaProsentti =
+            prosentti;
+
+        odotusaikaRajaMin =
+            reittiABAikaMin == null
+                ? null
+                : reittiABAikaMin *
+                    prosentti /
+                    100;
+
+        document.getElementById(
+            "odotusaikaProsenttiTeksti"
+        ).textContent =
+            prosentti +
+            " %";
+
+        document.getElementById(
+            "odotusaikaLaskettu"
+        ).textContent =
+            odotusaikaRajaMin == null
+                ? ""
+                : " → " +
+                    Math.round(
+                        odotusaikaRajaMin
+                    ) +
+                    " min";
+    }
+
+    paivitaSuodataNappi();
+
+    if (
+        haePyynnotUudelleen &&
+        unsubscribeKyytipyynnot
+    ) {
+        unsubscribeKyytipyynnot();
+        unsubscribeKyytipyynnot = null;
+    }
+
+    if (
+        haePyynnotUudelleen &&
+        tarjoaKyytia
+    ) {
+        haeKyytipyynnot();
+    }
 }
 
 function paivitaKokonaismatka() {
@@ -4067,6 +4228,8 @@ window.paivitaOhariProsentti =
 
 window.paivitaLisamatkaProsentti =
     paivitaLisamatkaProsentti;
+window.paivitaOdotusaikaProsentti =
+    paivitaOdotusaikaProsentti;
 
 window.vaihdaKyytienEtsiminen =
     vaihdaKyytienEtsiminen;

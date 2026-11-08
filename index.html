@@ -7,6 +7,80 @@
 
 <br><br>
 
+<label for="matkustajanTuntomerkki">
+    Tuntomerkki:
+</label>
+
+<br>
+
+<input
+    id="matkustajanTuntomerkki"
+    type="text"
+    placeholder="Anna tuntomerkki"
+    oninput="paivitaLuoKyytipyyntoNappi()"
+>
+
+<br><br>
+
+<label for="matkustajanLahtopaikka">
+    Oma lähtöpaikka:
+</label>
+
+<br>
+
+<div id="matkustajanLahtopaikanValinta">
+    <button
+        id="kaytaMatkustajanNykyistaSijaintiaNappi"
+        onclick="valitseMatkustajanNykyinenSijainti()"
+    >
+        Käytä nykyistä sijaintia
+    </button>
+
+    <br><br>
+
+    <input
+        id="matkustajanLahtopaikka"
+        type="text"
+        placeholder="Anna oma lähtöpaikka"
+        oninput="document.getElementById('etsiMatkustajanLahtopaikkaNappi').disabled = (this.value == '')"
+    >
+
+    <button
+        id="etsiMatkustajanLahtopaikkaNappi"
+        onclick="etsiMatkustajanLahtopaikka()"
+        disabled
+    >
+        Etsi lähtöpaikka
+    </button>
+
+    <div
+        id="matkustajanLahtopaikkaHakutulokset"
+        style="margin-top: 10px;"
+    ></div>
+</div>
+
+<div
+    id="matkustajanValittuLahtopaikka"
+    style="display: none; margin-top: 10px;"
+>
+    📍 <span id="matkustajanValittuLahtopaikkaTeksti"></span>
+
+    <button
+        id="vaihdaMatkustajanLahtopaikkaNappi"
+        onclick="vaihdaMatkustajanLahtopaikka()"
+    >
+        Vaihda
+    </button>
+</div>
+
+<br><br>
+
+<label for="maaranpaa">
+    Määränpää:
+</label>
+
+<br>
+
 <input
     id="maaranpaa"
     type="text"
@@ -28,7 +102,70 @@
     style="margin-top: 10px;"
 ></div>
 
+<div
+    id="matkustajanValittuMaaranpaa"
+    style="display: none; margin-top: 10px;"
+>
+    📍 <span id="matkustajanValittuMaaranpaaTeksti"></span>
+
+    <button
+        id="vaihdaMatkustajanMaaranpaaNappi"
+        onclick="vaihdaMatkustajanMaaranpaa()"
+    >
+        Vaihda
+    </button>
+</div>
+
+<br><br>
+
+<label for="matkustajanLahtoAikaisintaan">
+    Haluan lähteä aikaisintaan:
+</label>
+
 <br>
+
+<input
+    id="matkustajanLahtoAikaisintaan"
+    type="datetime-local"
+    onchange="paivitaLuoKyytipyyntoNappi()"
+>
+
+<label>
+    <input
+        id="matkustajaJoMatkalla"
+        type="checkbox"
+        onchange="paivitaMatkustajaJoMatkalla()"
+    >
+    Olen jo matkalla
+</label>
+
+<div style="font-size: 12px; color: #555; margin-top: 4px;">
+    Kun tämä on valittu, oma lähtöpaikka tarkoittaa nykyistä sijaintiasi.
+</div>
+
+<br>
+
+<label for="matkustajanPerillaViimeistaan">
+    Haluan olla perillä viimeistään:
+</label>
+
+<br>
+
+<input
+    id="matkustajanPerillaViimeistaan"
+    type="datetime-local"
+    onchange="paivitaLuoKyytipyyntoNappi()"
+>
+
+<br><br>
+
+<button
+    id="luoKyytipyyntoNappi"
+    onclick="luoKyytipyynto()"
+    disabled
+>
+    Luo kyytipyyntö
+</button>
 
 <button
     id="poistanappi"
@@ -644,11 +781,25 @@ var testiLongitude = 24.6559;
 
 var kyytipyyntoAktiivinen = false;
 
+var matkustajanTuntomerkki = "";
+
+var matkustajanLahtopaikanTyyppi = "";
+
+var matkustajanLahtopaikka = "";
+
+var matkustajanLahtopaikkaLatitude = null;
+
+var matkustajanLahtopaikkaLongitude = null;
+
 var matkustajanMaaranpaa = "";
 
 var matkustajanMaaranpaaLatitude = null;
 
 var matkustajanMaaranpaaLongitude = null;
+
+var matkustajanLahtoAikaisintaan = null;
+
+var matkustajanPerillaViimeistaan = null;
 
 
 var tarjoaKyytia = false;
@@ -793,6 +944,51 @@ navigator.geolocation.watchPosition(
 
             tarjoajanLahtopaikkaLongitude =
                 kayttajanNykyinenLongitude;
+        }
+
+        if (matkustajanLahtopaikanTyyppi === "nykyinen") {
+
+            const matkustajaJoMatkalla =
+                document.getElementById(
+                    "matkustajaJoMatkalla"
+                ).checked;
+
+            if (
+                !kyytipyyntoAktiivinen ||
+                matkustajaJoMatkalla
+            ) {
+                matkustajanLahtopaikkaLatitude =
+                    kayttajanNykyinenLatitude;
+
+                matkustajanLahtopaikkaLongitude =
+                    kayttajanNykyinenLongitude;
+            }
+
+            if (
+                kyytipyyntoAktiivinen &&
+                matkustajaJoMatkalla &&
+                firestoreKyytipyyntoId != ""
+            ) {
+                updateDoc(
+                    doc(
+                        db,
+                        "kyytipyynnot",
+                        firestoreKyytipyyntoId
+                    ),
+                    {
+                        matkustajanLahtopaikkaLatitude:
+                            matkustajanLahtopaikkaLatitude,
+
+                        matkustajanLahtopaikkaLongitude:
+                            matkustajanLahtopaikkaLongitude
+                    }
+                ).catch((virhe) => {
+                    console.error(
+                        "Kyytipyynnön nykyisen sijainnin päivitys epäonnistui:",
+                        virhe
+                    );
+                });
+            }
         }
 
         haeMatkustajanLahtopaikanNimi(
@@ -1022,7 +1218,7 @@ async function etsiMaaranpaa() {
             tulos.lon +
             "')\">" +
 
-            "Luo kyytipyyntö" +
+            "Valitse" +
 
             "</button> " +
 
@@ -1037,6 +1233,213 @@ async function etsiMaaranpaa() {
     ).innerHTML =
         html ||
         "Sopivia osoitteita ei löytynyt.";
+}
+
+
+async function etsiMatkustajanLahtopaikka() {
+
+    const hakuteksti =
+        document.getElementById(
+            "matkustajanLahtopaikka"
+        ).value.trim();
+
+    const sisaltaaNumeron =
+        /\d/.test(hakuteksti);
+
+    if (!sisaltaaNumeron) {
+        document.getElementById(
+            "matkustajanLahtopaikkaHakutulokset"
+        ).innerHTML =
+            "Anna katuosoite ja numero, esimerkiksi Perkiöntie 12.";
+        return;
+    }
+
+    const vastaus =
+        await fetch(
+            "https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=20&countrycodes=fi&q=" +
+            encodeURIComponent(hakuteksti)
+        );
+
+    const tulokset =
+        await vastaus.json();
+
+    let html = "";
+    const loydetytOsoitteet = new Set();
+
+    tulokset.forEach((tulos) => {
+        const osoite = tulos.address || {};
+
+        if (!osoite.road || !osoite.house_number) {
+            return;
+        }
+
+        const katuosoite =
+            osoite.road + " " + osoite.house_number;
+
+        const kuntaTaiKaupunki =
+            osoite.city ||
+            osoite.town ||
+            osoite.municipality ||
+            osoite.village ||
+            "";
+
+        const osoiteTeksti =
+            katuosoite + ", " + kuntaTaiKaupunki;
+
+        if (loydetytOsoitteet.has(osoiteTeksti)) {
+            return;
+        }
+
+        loydetytOsoitteet.add(osoiteTeksti);
+
+        const koodattuOsoite =
+            encodeURIComponent(osoiteTeksti);
+
+        html +=
+            "<div style='margin-bottom: 16px;'>" +
+            osoiteTeksti +
+            "<br>" +
+            "<button onclick=\"valitseMatkustajanLahtopaikka(" +
+            "decodeURIComponent('" +
+            koodattuOsoite +
+            "'), '" +
+            tulos.lat +
+            "', '" +
+            tulos.lon +
+            "')\">Valitse</button>" +
+            "</div>";
+    });
+
+    document.getElementById(
+        "matkustajanLahtopaikkaHakutulokset"
+    ).innerHTML =
+        html || "Sopivia osoitteita ei löytynyt.";
+}
+
+
+function naytaMatkustajanValittuLahtopaikka() {
+
+    document.getElementById(
+        "matkustajanValittuLahtopaikkaTeksti"
+    ).textContent =
+        matkustajanLahtopaikka;
+
+    document.getElementById(
+        "matkustajanLahtopaikanValinta"
+    ).style.display = "none";
+
+    document.getElementById(
+        "matkustajanValittuLahtopaikka"
+    ).style.display = "block";
+
+    document.getElementById(
+        "matkustajanLahtopaikkaHakutulokset"
+    ).innerHTML = "";
+
+    paivitaLuoKyytipyyntoNappi();
+}
+
+
+async function valitseMatkustajanNykyinenSijainti() {
+
+    if (
+        kayttajanNykyinenLatitude == null ||
+        kayttajanNykyinenLongitude == null
+    ) {
+        alert("Nykyistä sijaintia ei ole vielä saatavilla.");
+        return false;
+    }
+
+    matkustajanLahtopaikanTyyppi =
+        "nykyinen";
+
+    matkustajanLahtopaikkaLatitude =
+        kayttajanNykyinenLatitude;
+
+    matkustajanLahtopaikkaLongitude =
+        kayttajanNykyinenLongitude;
+
+    matkustajanLahtopaikka =
+        await haeMatkustajanLahtopaikanNimi(
+            matkustajanLahtopaikkaLatitude,
+            matkustajanLahtopaikkaLongitude
+        );
+
+    naytaMatkustajanValittuLahtopaikka();
+    return true;
+}
+
+
+function valitseMatkustajanLahtopaikka(
+    nimi,
+    latitude,
+    longitude
+) {
+
+    matkustajanLahtopaikanTyyppi =
+        "osoite";
+
+    matkustajanLahtopaikka =
+        nimi;
+
+    matkustajanLahtopaikkaLatitude =
+        parseFloat(latitude);
+
+    matkustajanLahtopaikkaLongitude =
+        parseFloat(longitude);
+
+    document.getElementById(
+        "matkustajanLahtopaikka"
+    ).value =
+        matkustajanLahtopaikka;
+
+    naytaMatkustajanValittuLahtopaikka();
+}
+
+
+function vaihdaMatkustajanLahtopaikka() {
+
+    if (
+        document.getElementById(
+            "matkustajaJoMatkalla"
+        ).checked
+    ) {
+        alert(
+            "Kun olet jo matkalla, oma lähtöpaikka on nykyinen sijaintisi."
+        );
+        return;
+    }
+
+    matkustajanLahtopaikanTyyppi = "";
+    matkustajanLahtopaikka = "";
+    matkustajanLahtopaikkaLatitude = null;
+    matkustajanLahtopaikkaLongitude = null;
+
+    document.getElementById(
+        "matkustajanValittuLahtopaikka"
+    ).style.display = "none";
+
+    document.getElementById(
+        "matkustajanLahtopaikanValinta"
+    ).style.display = "block";
+
+    document.getElementById(
+        "matkustajanLahtopaikka"
+    ).value = "";
+
+    document.getElementById(
+        "etsiMatkustajanLahtopaikkaNappi"
+    ).disabled = true;
+
+    document.getElementById(
+        "matkustajanLahtopaikkaHakutulokset"
+    ).innerHTML = "";
+
+    document.getElementById(
+        "matkustajanLahtopaikka"
+    ).focus();
+
+    paivitaLuoKyytipyyntoNappi();
 }
 
 
@@ -1447,7 +1850,7 @@ function vaihdaTarjoajanMaaranpaa() {
 }
 
 
-async function valitseMaaranpaa(
+function valitseMaaranpaa(
     nimi,
     latitude,
     longitude
@@ -1467,7 +1870,76 @@ async function valitseMaaranpaa(
     ).value =
         matkustajanMaaranpaa;
 
-    await luoKyytipyynto();
+    document.getElementById(
+        "matkustajanValittuMaaranpaaTeksti"
+    ).textContent =
+        matkustajanMaaranpaa;
+
+    document.getElementById(
+        "maaranpaaHakutulokset"
+    ).innerHTML = "";
+
+    document.getElementById(
+        "maaranpaa"
+    ).style.display = "none";
+
+    document.getElementById(
+        "etsinappi"
+    ).style.display = "none";
+
+    document.getElementById(
+        "matkustajanValittuMaaranpaa"
+    ).style.display = "block";
+
+    paivitaLuoKyytipyyntoNappi();
+}
+
+
+function vaihdaMatkustajanMaaranpaa() {
+
+    matkustajanMaaranpaa = "";
+    matkustajanMaaranpaaLatitude = null;
+    matkustajanMaaranpaaLongitude = null;
+
+    document.getElementById(
+        "matkustajanValittuMaaranpaa"
+    ).style.display = "none";
+
+    document.getElementById(
+        "maaranpaa"
+    ).style.display = "";
+
+    document.getElementById(
+        "maaranpaa"
+    ).value = "";
+
+    document.getElementById(
+        "etsinappi"
+    ).style.display = "";
+
+    document.getElementById(
+        "etsinappi"
+    ).disabled = true;
+
+    document.getElementById(
+        "maaranpaaHakutulokset"
+    ).innerHTML = "";
+
+    document.getElementById(
+        "maaranpaa"
+    ).focus();
+
+    paivitaLuoKyytipyyntoNappi();
+}
+
+
+function turvaaHtml(arvo) {
+    return String(arvo)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 }
 
 
@@ -1517,47 +1989,226 @@ async function haeMatkustajanLahtopaikanNimi(
 }
 
 
+async function paivitaMatkustajaJoMatkalla() {
+
+    const joMatkalla =
+        document.getElementById(
+            "matkustajaJoMatkalla"
+        ).checked;
+
+    const lahtoKentta =
+        document.getElementById(
+            "matkustajanLahtoAikaisintaan"
+        );
+
+    if (joMatkalla) {
+        lahtoKentta.value = "";
+        lahtoKentta.disabled = true;
+
+        const sijaintiValittu =
+            await valitseMatkustajanNykyinenSijainti();
+
+        if (!sijaintiValittu) {
+            document.getElementById(
+                "matkustajaJoMatkalla"
+            ).checked = false;
+            lahtoKentta.disabled = false;
+        }
+    } else {
+        lahtoKentta.disabled = false;
+    }
+
+    document.getElementById(
+        "vaihdaMatkustajanLahtopaikkaNappi"
+    ).disabled =
+        document.getElementById(
+            "matkustajaJoMatkalla"
+        ).checked;
+
+    paivitaLuoKyytipyyntoNappi();
+}
+
+
+function paivitaLuoKyytipyyntoNappi() {
+
+    const tuntomerkkiAnnettu =
+        document.getElementById(
+            "matkustajanTuntomerkki"
+        ).value.trim() !== "";
+
+    const lahtopaikkaValittu =
+        matkustajanLahtopaikanTyyppi != "" &&
+        matkustajanLahtopaikkaLatitude != null &&
+        matkustajanLahtopaikkaLongitude != null;
+
+    const maaranpaaValittu =
+        matkustajanMaaranpaa != "" &&
+        matkustajanMaaranpaaLatitude != null &&
+        matkustajanMaaranpaaLongitude != null;
+
+    const lahtoaikaAnnettu =
+        document.getElementById(
+            "matkustajanLahtoAikaisintaan"
+        ).value !== "";
+
+    const joMatkalla =
+        document.getElementById(
+            "matkustajaJoMatkalla"
+        ).checked;
+
+    const perillaAikaAnnettu =
+        document.getElementById(
+            "matkustajanPerillaViimeistaan"
+        ).value !== "";
+
+    const aikaehdotTayttyvat =
+        joMatkalla ||
+        (
+            lahtoaikaAnnettu &&
+            perillaAikaAnnettu
+        );
+
+    document.getElementById(
+        "luoKyytipyyntoNappi"
+    ).disabled =
+        kyytipyyntoAktiivinen ||
+        !(
+            tuntomerkkiAnnettu &&
+            lahtopaikkaValittu &&
+            maaranpaaValittu &&
+            aikaehdotTayttyvat
+        );
+}
+
+
 async function luoKyytipyynto() {
 
-    if (
-        kayttajanNykyinenLatitude == null ||
-        kayttajanNykyinenLongitude == null
-    ) {
-
-        document.getElementById(
-            "kyytipyynto"
-        ).innerHTML =
-            "Odottaa sijaintiasi." +
-            "<br>Yritä pian uudestaan.";
-
-        return;
-    }
-
-    if (matkustajanMaaranpaa == "") {
-
-        document.getElementById(
-            "kyytipyynto"
-        ).innerHTML =
-            "Anna ensin määränpää";
-
-        return;
-    }
-
     if (kyytipyyntoAktiivinen) {
+        return;
+    }
+
+    matkustajanTuntomerkki =
+        document.getElementById(
+            "matkustajanTuntomerkki"
+        ).value.trim();
+
+    const matkustajaJoMatkalla =
+        document.getElementById(
+            "matkustajaJoMatkalla"
+        ).checked;
+
+    matkustajanLahtoAikaisintaan =
+        matkustajaJoMatkalla
+            ? null
+            : document.getElementById(
+                "matkustajanLahtoAikaisintaan"
+            ).value || null;
+
+    matkustajanPerillaViimeistaan =
+        document.getElementById(
+            "matkustajanPerillaViimeistaan"
+        ).value || null;
+
+    if (matkustajanTuntomerkki == "") {
+        alert("Anna tuntomerkki");
+        return;
+    }
+
+    if (
+        matkustajanLahtopaikanTyyppi == "" ||
+        matkustajanLahtopaikkaLatitude == null ||
+        matkustajanLahtopaikkaLongitude == null
+    ) {
+        alert("Valitse ensin oma lähtöpaikka.");
+        return;
+    }
+
+    if (
+        matkustajaJoMatkalla &&
+        matkustajanLahtopaikanTyyppi !== "nykyinen"
+    ) {
+        alert(
+            "Kun olet jo matkalla, oman lähtöpaikan pitää olla nykyinen sijaintisi."
+        );
+        return;
+    }
+
+    if (
+        matkustajanMaaranpaa == "" ||
+        matkustajanMaaranpaaLatitude == null ||
+        matkustajanMaaranpaaLongitude == null
+    ) {
+        alert("Valitse ensin määränpää hakutuloksista.");
+        return;
+    }
+
+    if (
+        !matkustajaJoMatkalla &&
+        !matkustajanLahtoAikaisintaan
+    ) {
+        alert(
+            "Anna Haluan lähteä aikaisintaan -aika tai valitse Olen jo matkalla."
+        );
+        return;
+    }
+
+    if (
+        !matkustajaJoMatkalla &&
+        !matkustajanPerillaViimeistaan
+    ) {
+        alert(
+            "Anna Haluan olla perillä viimeistään -aika."
+        );
+        return;
+    }
+
+    if (
+        matkustajanLahtoAikaisintaan &&
+        new Date(
+            matkustajanLahtoAikaisintaan
+        ).getTime() < Date.now()
+    ) {
+        alert(
+            "Haluan lähteä aikaisintaan -aika ei voi olla menneisyydessä."
+        );
         return;
     }
 
     const matkustajanReitti =
         await laskeMatkustajanReitti();
 
+    const nykyinenAikaMs = Date.now();
+
+    const todellinenLahtoaikaMs =
+        matkustajaJoMatkalla
+            ? nykyinenAikaMs
+            : Math.max(
+                nykyinenAikaMs,
+                new Date(
+                    matkustajanLahtoAikaisintaan
+                ).getTime()
+            );
+
+    if (matkustajanPerillaViimeistaan) {
+        const aikaisinMahdollinenSaapuminenMs =
+            todellinenLahtoaikaMs +
+            matkustajanReitti.aikaMin * 60 * 1000;
+
+        if (
+            aikaisinMahdollinenSaapuminenMs >
+            new Date(
+                matkustajanPerillaViimeistaan
+            ).getTime()
+        ) {
+            alert(
+                "Et ehdi määränpäähäsi annettuun määräaikaan mennessä."
+            );
+            return;
+        }
+    }
+
     const aika =
         new Date().toLocaleString();
-
-    const lahtopaikanTiedot =
-        await haeMatkustajanLahtopaikanNimi(
-            kayttajanNykyinenLatitude,
-            kayttajanNykyinenLongitude
-        );
 
     const docRef =
         await addDoc(
@@ -1568,15 +2219,21 @@ async function luoKyytipyynto() {
             {
                 luojaUid:
                     auth.currentUser.uid,
-                
+
+                matkustajanTuntomerkki:
+                    matkustajanTuntomerkki,
+
+                matkustajanLahtopaikanTyyppi:
+                    matkustajanLahtopaikanTyyppi,
+
                 matkustajanLahtopaikka:
-                    lahtopaikanTiedot,
+                    matkustajanLahtopaikka,
 
                 matkustajanLahtopaikkaLatitude:
-                    kayttajanNykyinenLatitude,
+                    matkustajanLahtopaikkaLatitude,
 
                 matkustajanLahtopaikkaLongitude:
-                    kayttajanNykyinenLongitude,
+                    matkustajanLahtopaikkaLongitude,
 
                 matkustajanMaaranpaa:
                     matkustajanMaaranpaa,
@@ -1586,6 +2243,15 @@ async function luoKyytipyynto() {
 
                 matkustajanMaaranpaaLongitude:
                     matkustajanMaaranpaaLongitude,
+
+                matkustajanLahtoAikaisintaan:
+                    matkustajanLahtoAikaisintaan,
+
+                matkustajanPerillaViimeistaan:
+                    matkustajanPerillaViimeistaan,
+
+                matkustajaJoMatkalla:
+                    matkustajaJoMatkalla,
 
                 luotu:
                     new Date().toISOString(),
@@ -1605,24 +2271,43 @@ async function luoKyytipyynto() {
 
     const matkaAikaTunnit =
         Math.floor(
-            matkustajanReitti.aikaMin /
-            60
+            matkustajanReitti.aikaMin / 60
         );
 
     const matkaAikaMinuutit =
         Math.round(
-            matkustajanReitti.aikaMin %
-            60
+            matkustajanReitti.aikaMin % 60
         );
+
+    const lahtoaikaTeksti =
+        matkustajaJoMatkalla
+            ? "Olen jo matkalla"
+            : muotoileLuontiaika(
+                matkustajanLahtoAikaisintaan
+            );
+
+    const perillaTeksti =
+        matkustajanPerillaViimeistaan
+            ? muotoileLuontiaika(
+                matkustajanPerillaViimeistaan
+            )
+            : "Ei määritetty";
 
     document.getElementById(
         "kyytipyynto"
     ).innerHTML =
-        "Lähtöpaikka: " +
-        lahtopaikanTiedot +
-
+        "Tuntomerkki: " +
+        turvaaHtml(
+            matkustajanTuntomerkki
+        ) +
+        "<br>Lähtöpaikka: " +
+        turvaaHtml(
+            matkustajanLahtopaikka
+        ) +
         "<br>Määränpää: " +
-        matkustajanMaaranpaa +
+        turvaaHtml(
+            matkustajanMaaranpaa
+        ) +
         " (" +
         matkustajanReitti.matkaKm.toFixed(1) +
         " km, " +
@@ -1630,7 +2315,10 @@ async function luoKyytipyynto() {
         " h " +
         matkaAikaMinuutit +
         " min)" +
-
+        "<br>Haluan lähteä aikaisintaan: " +
+        lahtoaikaTeksti +
+        "<br>Haluan olla perillä viimeistään: " +
+        perillaTeksti +
         "<br>Luotu: " +
         aika;
 
@@ -1639,31 +2327,42 @@ async function luoKyytipyynto() {
     ).disabled = false;
 
     document.getElementById(
-        "maaranpaa"
+        "luoKyytipyyntoNappi"
     ).disabled = true;
 
+    [
+        "matkustajanTuntomerkki",
+        "matkustajanLahtopaikka",
+        "etsiMatkustajanLahtopaikkaNappi",
+        "kaytaMatkustajanNykyistaSijaintiaNappi",
+        "vaihdaMatkustajanLahtopaikkaNappi",
+        "maaranpaa",
+        "etsinappi",
+        "vaihdaMatkustajanMaaranpaaNappi",
+        "matkustajanLahtoAikaisintaan",
+        "matkustajaJoMatkalla",
+        "matkustajanPerillaViimeistaan"
+    ].forEach((id) => {
+        document.getElementById(id).disabled = true;
+    });
+
     document.getElementById(
-        "etsinappi"
-    ).disabled = true;
+        "matkustajanLahtopaikkaHakutulokset"
+    ).innerHTML = "";
 
     document.getElementById(
         "maaranpaaHakutulokset"
     ).innerHTML = "";
 }
 
-
 async function peruKyytipyynto() {
 
     if (unsubscribeOmaKyyti) {
-
         unsubscribeOmaKyyti();
-
-        unsubscribeOmaKyyti =
-            null;
+        unsubscribeOmaKyyti = null;
     }
 
     if (firestoreKyytipyyntoId != "") {
-
         await deleteDoc(
             doc(
                 db,
@@ -1671,7 +2370,6 @@ async function peruKyytipyynto() {
                 firestoreKyytipyyntoId
             )
         );
-
         firestoreKyytipyyntoId = "";
     }
 
@@ -1684,35 +2382,102 @@ async function peruKyytipyynto() {
         "kyytiSaapunut"
     ).innerHTML = "";
 
+    matkustajanTuntomerkki = "";
+    matkustajanLahtopaikanTyyppi = "";
+    matkustajanLahtopaikka = "";
+    matkustajanLahtopaikkaLatitude = null;
+    matkustajanLahtopaikkaLongitude = null;
+    matkustajanMaaranpaa = "";
+    matkustajanMaaranpaaLatitude = null;
+    matkustajanMaaranpaaLongitude = null;
+    matkustajanLahtoAikaisintaan = null;
+    matkustajanPerillaViimeistaan = null;
+    kyytipyyntoAktiivinen = false;
+
     document.getElementById(
-        "maaranpaaHakutulokset"
+        "matkustajanTuntomerkki"
+    ).value = "";
+
+    document.getElementById(
+        "matkustajanLahtopaikka"
+    ).value = "";
+
+    document.getElementById(
+        "matkustajanLahtopaikkaHakutulokset"
     ).innerHTML = "";
 
-    matkustajanMaaranpaa = "";
+    document.getElementById(
+        "matkustajanValittuLahtopaikka"
+    ).style.display = "none";
 
-    matkustajanMaaranpaaLatitude = null;
-
-    matkustajanMaaranpaaLongitude = null;
+    document.getElementById(
+        "matkustajanLahtopaikanValinta"
+    ).style.display = "block";
 
     document.getElementById(
         "maaranpaa"
     ).value = "";
 
-    kyytipyyntoAktiivinen = false;
+    document.getElementById(
+        "maaranpaa"
+    ).style.display = "";
+
+    document.getElementById(
+        "maaranpaaHakutulokset"
+    ).innerHTML = "";
+
+    document.getElementById(
+        "matkustajanValittuMaaranpaa"
+    ).style.display = "none";
+
+    document.getElementById(
+        "etsinappi"
+    ).style.display = "";
+
+    document.getElementById(
+        "matkustajanLahtoAikaisintaan"
+    ).value = "";
+
+    document.getElementById(
+        "matkustajanPerillaViimeistaan"
+    ).value = "";
+
+    document.getElementById(
+        "matkustajaJoMatkalla"
+    ).checked = false;
+
+    [
+        "matkustajanTuntomerkki",
+        "matkustajanLahtopaikka",
+        "kaytaMatkustajanNykyistaSijaintiaNappi",
+        "vaihdaMatkustajanLahtopaikkaNappi",
+        "maaranpaa",
+        "vaihdaMatkustajanMaaranpaaNappi",
+        "matkustajanLahtoAikaisintaan",
+        "matkustajaJoMatkalla",
+        "matkustajanPerillaViimeistaan"
+    ].forEach((id) => {
+        document.getElementById(id).disabled = false;
+    });
+
+    document.getElementById(
+        "etsiMatkustajanLahtopaikkaNappi"
+    ).disabled = true;
+
+    document.getElementById(
+        "etsinappi"
+    ).disabled = true;
+
+    document.getElementById(
+        "luoKyytipyyntoNappi"
+    ).disabled = true;
 
     document.getElementById(
         "poistanappi"
     ).disabled = true;
 
-    document.getElementById(
-        "maaranpaa"
-    ).disabled = false;
-
-    document.getElementById(
-        "etsinappi"
-    ).disabled = true;
+    paivitaLuoKyytipyyntoNappi();
 }
-
 
 function paivitaJoMatkalla() {
 
@@ -2461,6 +3226,106 @@ function kuunteleKyytipyyntojenKokonaismaaraa() {
 }
 
 
+function pyyntoSopiiAikaikkunaan(laskelma) {
+
+    const pyynto =
+        laskelma.pyynto;
+
+    const pyyntoonOnTallennettuAikaehdot =
+        pyynto.matkustajaJoMatkalla === true ||
+        Boolean(pyynto.matkustajanLahtoAikaisintaan) ||
+        Boolean(pyynto.matkustajanPerillaViimeistaan);
+
+    if (!pyyntoonOnTallennettuAikaehdot) {
+        return true;
+    }
+
+    const nytMs = Date.now();
+
+    const tarjoajaJoMatkalla =
+        document.getElementById(
+            "tarjoajaJoMatkalla"
+        ).checked;
+
+    const tarjoajanTodellinenLahtoaikaMs =
+        tarjoajaJoMatkalla
+            ? nytMs
+            : Math.max(
+                nytMs,
+                tarjoajanLahtoAikaisintaan
+                    ? new Date(
+                        tarjoajanLahtoAikaisintaan
+                    ).getTime()
+                    : nytMs
+            );
+
+    const saapuminenNoutopaikkaanMs =
+        tarjoajanTodellinenLahtoaikaMs +
+        laskelma.matkaNoutopaikalle.aikaMin *
+            60 * 1000;
+
+    const matkustajanAikaisinLahtoaikaMs =
+        pyynto.matkustajaJoMatkalla
+            ? nytMs
+            : pyynto.matkustajanLahtoAikaisintaan
+                ? new Date(
+                    pyynto.matkustajanLahtoAikaisintaan
+                ).getTime()
+                : nytMs;
+
+    const todellinenNoutoaikaMs =
+        Math.max(
+            saapuminenNoutopaikkaanMs,
+            matkustajanAikaisinLahtoaikaMs
+        );
+
+    const odotusNoutopaikallaMs =
+        Math.max(
+            0,
+            todellinenNoutoaikaMs -
+                saapuminenNoutopaikkaanMs
+        );
+
+    const matkustajanSaapumisaikaMs =
+        todellinenNoutoaikaMs +
+        laskelma.kuljetettavaMatka.aikaMin *
+            60 * 1000;
+
+    if (pyynto.matkustajanPerillaViimeistaan) {
+        const matkustajanMaarapaivaMs =
+            new Date(
+                pyynto.matkustajanPerillaViimeistaan
+            ).getTime();
+
+        if (
+            matkustajanSaapumisaikaMs >
+            matkustajanMaarapaivaMs
+        ) {
+            return false;
+        }
+    }
+
+    if (tarjoajanPerillaViimeistaan) {
+        const tarjoajanSaapumisaikaMs =
+            tarjoajanTodellinenLahtoaikaMs +
+            laskelma.reittiACDB.aikaMin *
+                60 * 1000 +
+            odotusNoutopaikallaMs;
+
+        if (
+            tarjoajanSaapumisaikaMs >
+            new Date(
+                tarjoajanPerillaViimeistaan
+            ).getTime()
+        ) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
 function haeKyytipyynnot() {
 
     kyytipyyntojenHakuversio++;
@@ -2613,6 +3478,10 @@ function haeKyytipyynnot() {
                 
                 
                             return (
+
+                                pyyntoSopiiAikaikkunaan(
+                                    laskelma
+                                ) &&
                 
                                 /*
                                  * Ohari lisämatkasta enint.
@@ -2999,6 +3868,31 @@ function haeKyytipyynnot() {
 
                             ${muotoileLuontiaika(pyynto.luotu)} /
                             ${pyynto.status}
+
+                            <br>
+                            <b>Tuntomerkki:</b>
+                            ${turvaaHtml(
+                                pyynto.matkustajanTuntomerkki ||
+                                "Ei määritetty"
+                            )}
+
+                            <br>
+                            <b>Haluaa lähteä aikaisintaan:</b>
+                            ${pyynto.matkustajaJoMatkalla
+                                ? "Olen jo matkalla"
+                                : pyynto.matkustajanLahtoAikaisintaan
+                                    ? muotoileLuontiaika(
+                                        pyynto.matkustajanLahtoAikaisintaan
+                                    )
+                                    : "Ei määritetty"}
+
+                            <br>
+                            <b>Haluaa olla perillä viimeistään:</b>
+                            ${pyynto.matkustajanPerillaViimeistaan
+                                ? muotoileLuontiaika(
+                                    pyynto.matkustajanPerillaViimeistaan
+                                )
+                                : "Ei määritetty"}
 
                             <div
                                 id="osoitteetTiivis-${laskelma.id}"
@@ -3533,9 +4427,9 @@ async function laskeMatkustajanReitti() {
     const url =
         "https://router.project-osrm.org/route/v1/driving/" +
 
-        kayttajanNykyinenLongitude +
+        matkustajanLahtopaikkaLongitude +
         "," +
-        kayttajanNykyinenLatitude +
+        matkustajanLahtopaikkaLatitude +
 
         ";" +
 
@@ -4154,6 +5048,30 @@ function paivitaLisamatkaProsentti() {
 window.etsiMaaranpaa =
     etsiMaaranpaa;
 
+window.etsiMatkustajanLahtopaikka =
+    etsiMatkustajanLahtopaikka;
+
+window.valitseMatkustajanLahtopaikka =
+    valitseMatkustajanLahtopaikka;
+
+window.valitseMatkustajanNykyinenSijainti =
+    valitseMatkustajanNykyinenSijainti;
+
+window.vaihdaMatkustajanLahtopaikka =
+    vaihdaMatkustajanLahtopaikka;
+
+window.vaihdaMatkustajanMaaranpaa =
+    vaihdaMatkustajanMaaranpaa;
+
+window.paivitaMatkustajaJoMatkalla =
+    paivitaMatkustajaJoMatkalla;
+
+window.paivitaLuoKyytipyyntoNappi =
+    paivitaLuoKyytipyyntoNappi;
+
+window.luoKyytipyynto =
+    luoKyytipyynto;
+
 window.etsiTarjoajanLahtopaikka =
     etsiTarjoajanLahtopaikka;
 
@@ -4234,6 +5152,7 @@ window.paivitaOdotusaikaProsentti =
 window.vaihdaKyytienEtsiminen =
     vaihdaKyytienEtsiminen;
 
+paivitaLuoKyytipyyntoNappi();
 paivitaAloitaKyytienEtsiminenNappi();
     
 </script>

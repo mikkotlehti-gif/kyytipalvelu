@@ -159,6 +159,56 @@
 
 <br><br>
 
+<div style="min-height: 22px;">
+    <label for="matkustajanOdotanEnint">
+        Odotan enint.:
+    </label>
+
+    <span id="matkustajanOdotanEnintTeksti">OFF</span>
+</div>
+
+<div
+    style="
+        position: relative;
+        width: 325px;
+        padding-top: 8px;
+        margin-left: 20px;
+    "
+>
+    <div
+        style="
+            position: absolute;
+            left: 9.09%;
+            top: 4px;
+            width: 2px;
+            height: 28px;
+            background-color: #666;
+            pointer-events: none;
+            z-index: 2;
+        "
+    ></div>
+
+    <input
+        id="matkustajanOdotanEnint"
+        type="range"
+        min="0"
+        max="10"
+        step="1"
+        value="0"
+        style="
+            width: 325px;
+            accent-color: #777;
+        "
+        oninput="paivitaMatkustajanOdotanEnint();"
+    >
+</div>
+
+<div style="font-size: 12px; color: #555; margin-top: 4px;">
+    OFF ei rajoita odotusaikaa. 0 min tarkoittaa välitöntä noutoa.
+</div>
+
+<br><br>
+
 <button
     id="luoKyytipyyntoNappi"
     onclick="luoKyytipyynto()"
@@ -800,6 +850,8 @@ var matkustajanMaaranpaaLongitude = null;
 var matkustajanLahtoAikaisintaan = null;
 
 var matkustajanPerillaViimeistaan = null;
+
+var matkustajanOdotanEnintMin = null;
 
 
 var tarjoaKyytia = false;
@@ -2029,6 +2081,48 @@ async function paivitaMatkustajaJoMatkalla() {
 }
 
 
+function paivitaMatkustajanOdotanEnint() {
+
+    const saadinAsento =
+        parseInt(
+            document.getElementById(
+                "matkustajanOdotanEnint"
+            ).value
+        );
+
+    const sallitutMinuutit = [
+        0,
+        5,
+        10,
+        15,
+        20,
+        30,
+        45,
+        60,
+        90,
+        120
+    ];
+
+    if (saadinAsento === 0) {
+        matkustajanOdotanEnintMin = null;
+        document.getElementById(
+            "matkustajanOdotanEnintTeksti"
+        ).textContent = "OFF";
+    } else {
+        matkustajanOdotanEnintMin =
+            sallitutMinuutit[
+                saadinAsento - 1
+            ];
+
+        document.getElementById(
+            "matkustajanOdotanEnintTeksti"
+        ).textContent =
+            matkustajanOdotanEnintMin +
+            " min";
+    }
+}
+
+
 function paivitaLuoKyytipyyntoNappi() {
 
     const tuntomerkkiAnnettu =
@@ -2108,6 +2202,8 @@ async function luoKyytipyynto() {
         document.getElementById(
             "matkustajanPerillaViimeistaan"
         ).value || null;
+
+    paivitaMatkustajanOdotanEnint();
 
     if (matkustajanTuntomerkki == "") {
         alert("Anna tuntomerkki");
@@ -2253,6 +2349,9 @@ async function luoKyytipyynto() {
                 matkustajaJoMatkalla:
                     matkustajaJoMatkalla,
 
+                matkustajanOdotanEnintMin:
+                    matkustajanOdotanEnintMin,
+
                 luotu:
                     new Date().toISOString(),
 
@@ -2319,6 +2418,10 @@ async function luoKyytipyynto() {
         lahtoaikaTeksti +
         "<br>Haluan olla perillä viimeistään: " +
         perillaTeksti +
+        "<br>Odotan enint.: " +
+        (matkustajanOdotanEnintMin == null
+            ? "OFF"
+            : matkustajanOdotanEnintMin + " min") +
         "<br>Luotu: " +
         aika;
 
@@ -2341,7 +2444,8 @@ async function luoKyytipyynto() {
         "vaihdaMatkustajanMaaranpaaNappi",
         "matkustajanLahtoAikaisintaan",
         "matkustajaJoMatkalla",
-        "matkustajanPerillaViimeistaan"
+        "matkustajanPerillaViimeistaan",
+        "matkustajanOdotanEnint"
     ].forEach((id) => {
         document.getElementById(id).disabled = true;
     });
@@ -2392,6 +2496,7 @@ async function peruKyytipyynto() {
     matkustajanMaaranpaaLongitude = null;
     matkustajanLahtoAikaisintaan = null;
     matkustajanPerillaViimeistaan = null;
+    matkustajanOdotanEnintMin = null;
     kyytipyyntoAktiivinen = false;
 
     document.getElementById(
@@ -2446,6 +2551,12 @@ async function peruKyytipyynto() {
         "matkustajaJoMatkalla"
     ).checked = false;
 
+    document.getElementById(
+        "matkustajanOdotanEnint"
+    ).value = "0";
+
+    paivitaMatkustajanOdotanEnint();
+
     [
         "matkustajanTuntomerkki",
         "matkustajanLahtopaikka",
@@ -2455,7 +2566,8 @@ async function peruKyytipyynto() {
         "vaihdaMatkustajanMaaranpaaNappi",
         "matkustajanLahtoAikaisintaan",
         "matkustajaJoMatkalla",
-        "matkustajanPerillaViimeistaan"
+        "matkustajanPerillaViimeistaan",
+        "matkustajanOdotanEnint"
     ].forEach((id) => {
         document.getElementById(id).disabled = false;
     });
@@ -3231,16 +3343,37 @@ function pyyntoSopiiAikaikkunaan(laskelma) {
     const pyynto =
         laskelma.pyynto;
 
-    const pyyntoonOnTallennettuAikaehdot =
-        pyynto.matkustajaJoMatkalla === true ||
-        Boolean(pyynto.matkustajanLahtoAikaisintaan) ||
-        Boolean(pyynto.matkustajanPerillaViimeistaan);
+    const nytMs = Date.now();
 
-    if (!pyyntoonOnTallennettuAikaehdot) {
-        return true;
+    function aikaMsTai(arvo, oletusMs) {
+        if (!arvo) {
+            return oletusMs;
+        }
+
+        const aikaMs =
+            new Date(arvo).getTime();
+
+        return Number.isFinite(aikaMs)
+            ? aikaMs
+            : oletusMs;
     }
 
-    const nytMs = Date.now();
+    function minuutitTaiNull(arvo) {
+        if (
+            arvo === null ||
+            arvo === undefined ||
+            arvo === ""
+        ) {
+            return null;
+        }
+
+        const minuutit = Number(arvo);
+
+        return Number.isFinite(minuutit) &&
+            minuutit >= 0
+                ? minuutit
+                : null;
+    }
 
     const tarjoajaJoMatkalla =
         document.getElementById(
@@ -3252,11 +3385,10 @@ function pyyntoSopiiAikaikkunaan(laskelma) {
             ? nytMs
             : Math.max(
                 nytMs,
-                tarjoajanLahtoAikaisintaan
-                    ? new Date(
-                        tarjoajanLahtoAikaisintaan
-                    ).getTime()
-                    : nytMs
+                aikaMsTai(
+                    tarjoajanLahtoAikaisintaan,
+                    nytMs
+                )
             );
 
     const saapuminenNoutopaikkaanMs =
@@ -3266,24 +3398,54 @@ function pyyntoSopiiAikaikkunaan(laskelma) {
 
     const matkustajanAikaisinLahtoaikaMs =
         pyynto.matkustajaJoMatkalla
-            ? nytMs
-            : pyynto.matkustajanLahtoAikaisintaan
-                ? new Date(
-                    pyynto.matkustajanLahtoAikaisintaan
-                ).getTime()
-                : nytMs;
+            ? aikaMsTai(
+                pyynto.luotu,
+                nytMs
+            )
+            : aikaMsTai(
+                pyynto.matkustajanLahtoAikaisintaan,
+                nytMs
+            );
+
+    const tarjoajanOdotusMs =
+        Math.max(
+            0,
+            matkustajanAikaisinLahtoaikaMs -
+                saapuminenNoutopaikkaanMs
+        );
+
+    const matkustajanOdotusMs =
+        Math.max(
+            0,
+            saapuminenNoutopaikkaanMs -
+                matkustajanAikaisinLahtoaikaMs
+        );
+
+    if (
+        odotusaikaRajaMin != null &&
+        tarjoajanOdotusMs >
+            odotusaikaRajaMin * 60 * 1000
+    ) {
+        return false;
+    }
+
+    const matkustajanOdotanEnintMin =
+        minuutitTaiNull(
+            pyynto.matkustajanOdotanEnintMin
+        );
+
+    if (
+        matkustajanOdotanEnintMin != null &&
+        matkustajanOdotusMs >
+            matkustajanOdotanEnintMin * 60 * 1000
+    ) {
+        return false;
+    }
 
     const todellinenNoutoaikaMs =
         Math.max(
             saapuminenNoutopaikkaanMs,
             matkustajanAikaisinLahtoaikaMs
-        );
-
-    const odotusNoutopaikallaMs =
-        Math.max(
-            0,
-            todellinenNoutoaikaMs -
-                saapuminenNoutopaikkaanMs
         );
 
     const matkustajanSaapumisaikaMs =
@@ -3293,11 +3455,13 @@ function pyyntoSopiiAikaikkunaan(laskelma) {
 
     if (pyynto.matkustajanPerillaViimeistaan) {
         const matkustajanMaarapaivaMs =
-            new Date(
-                pyynto.matkustajanPerillaViimeistaan
-            ).getTime();
+            aikaMsTai(
+                pyynto.matkustajanPerillaViimeistaan,
+                null
+            );
 
         if (
+            matkustajanMaarapaivaMs != null &&
             matkustajanSaapumisaikaMs >
             matkustajanMaarapaivaMs
         ) {
@@ -3310,13 +3474,18 @@ function pyyntoSopiiAikaikkunaan(laskelma) {
             tarjoajanTodellinenLahtoaikaMs +
             laskelma.reittiACDB.aikaMin *
                 60 * 1000 +
-            odotusNoutopaikallaMs;
+            tarjoajanOdotusMs;
+
+        const tarjoajanMaarapaivaMs =
+            aikaMsTai(
+                tarjoajanPerillaViimeistaan,
+                null
+            );
 
         if (
+            tarjoajanMaarapaivaMs != null &&
             tarjoajanSaapumisaikaMs >
-            new Date(
-                tarjoajanPerillaViimeistaan
-            ).getTime()
+            tarjoajanMaarapaivaMs
         ) {
             return false;
         }
@@ -3517,17 +3686,6 @@ function haeKyytipyynnot() {
                                         laskelma.lisaaikaMin.toFixed(0)
                                     ) <=
                                         lisaaikaRajaMin
-                                ) &&
-                                /*
-                                 * Odotusaika lisäksi enint. (kun jo matkalla)
-                                 *
-                                 * Suodatus vertaa noutopaikkaan kuluvaa aikaa
-                                 * jäljellä olevaan ajoaikaan omaan määränpäähän.
-                                 */
-                                (
-                                    odotusaikaRajaMin == null ||
-                                    laskelma.matkaNoutopaikalle.aikaMin <=
-                                        odotusaikaRajaMin
                                 ) &&
                 
                 
@@ -3893,6 +4051,15 @@ function haeKyytipyynnot() {
                                     pyynto.matkustajanPerillaViimeistaan
                                 )
                                 : "Ei määritetty"}
+
+                            <br>
+                            <b>Odottaa enintään:</b>
+                            ${pyynto.matkustajanOdotanEnintMin === null ||
+                            pyynto.matkustajanOdotanEnintMin === undefined ||
+                            pyynto.matkustajanOdotanEnintMin === ""
+                                ? "OFF"
+                                : Number(pyynto.matkustajanOdotanEnintMin) +
+                                    " min"}
 
                             <div
                                 id="osoitteetTiivis-${laskelma.id}"
@@ -5066,6 +5233,9 @@ window.vaihdaMatkustajanMaaranpaa =
 window.paivitaMatkustajaJoMatkalla =
     paivitaMatkustajaJoMatkalla;
 
+window.paivitaMatkustajanOdotanEnint =
+    paivitaMatkustajanOdotanEnint;
+
 window.paivitaLuoKyytipyyntoNappi =
     paivitaLuoKyytipyyntoNappi;
 
@@ -5152,6 +5322,7 @@ window.paivitaOdotusaikaProsentti =
 window.vaihdaKyytienEtsiminen =
     vaihdaKyytienEtsiminen;
 
+paivitaMatkustajanOdotanEnint();
 paivitaLuoKyytipyyntoNappi();
 paivitaAloitaKyytienEtsiminenNappi();
     

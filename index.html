@@ -1,3 +1,38 @@
+<!doctype html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kyytipalvelu TESTI2</title>
+<style>
+    :root { color-scheme: light; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    body { max-width: 920px; margin: 0 auto; padding: 18px; color: #202124; background: #fafafa; }
+    button, input { font: inherit; }
+    button { min-height: 34px; padding: 5px 10px; cursor: pointer; }
+    button:disabled { cursor: not-allowed; opacity: .55; }
+    input[type="text"], input[type="datetime-local"] { max-width: 100%; min-height: 32px; box-sizing: border-box; }
+    #kyytienEtsiminenAlue { border-radius: 12px; border: 1px solid #d7d7d7; }
+    .tarjous-toiminnot { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 4px; }
+    .ensisijainen { color: #fff; background: #1976d2; border: 1px solid #115ca7; border-radius: 6px; }
+    .toissijainen { background: #fff; border: 1px solid #777; border-radius: 6px; }
+    .vaarallinen { color: #a00000; background: #fff; border: 1px solid #c62828; border-radius: 6px; }
+    #tallennetutKyytitarjoukset { display: grid; gap: 12px; margin: 12px 0 22px; }
+    .tarjouskortti { padding: 14px; border: 1px solid #c8c8c8; border-left-width: 6px; border-radius: 10px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+    .tarjouskortti.kaytossa { border-left-color: #2e7d32; }
+    .tarjouskortti.ei-kaytossa { border-left-color: #8a8a8a; }
+    .tarjouskortti.valittu { outline: 3px solid rgba(25,118,210,.24); }
+    .tarjouskortti h3 { margin: 0 0 8px; font-size: 1.05rem; }
+    .tarjouskortti p { margin: 5px 0; }
+    .tilamerkki { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: .85rem; font-weight: 700; }
+    .tilamerkki.kaytossa { color: #1b5e20; background: #e3f3e5; }
+    .tilamerkki.ei-kaytossa { color: #555; background: #ececec; }
+    .huomio { margin-top: 8px; padding: 9px; color: #7a2500; background: #fff1e8; border-radius: 6px; }
+    #tarjousLomakeTila, #valittuTarjousOtsikko { margin: 8px 0; font-weight: 700; }
+    #tarjousTallennusPalaute { min-height: 22px; margin-top: 8px; }
+    @media (max-width: 520px) { body { padding: 10px; } input[type="range"] { max-width: 82vw; } }
+</style>
+</head>
+<body>
 <h1>Kyytipalvelu TESTI2</h1>
 
 <p>Rooli:</p>
@@ -403,80 +438,24 @@
 
 <br><br>
 
-<div
-    id="kyytienEtsiminenKytkin"
-    role="button"
-    tabindex="0"
-    aria-pressed="false"
-    onclick="vaihdaKyytienEtsiminen()"
-    style="
-        display: flex;
-        align-items: center;
-        width: fit-content;
-        cursor: pointer;
-        user-select: none;
-    "
->
-    <div
-        id="kyytienEtsiminenKytkinRunko"
-        style="
-            position: relative;
-            width: 64px;
-            height: 32px;
-            flex-shrink: 0;
-            border-radius: 18px;
-            background-color: #b5b5b5;
-            border: 2px solid #777;
-            transition:
-                background-color 0.2s,
-                border-color 0.2s;
-        "
-    >
-        <div
-            id="kyytienEtsiminenKytkinNuppi"
-            style="
-                position: absolute;
-                top: 3px;
-                left: 3px;
-                width: 26px;
-                height: 26px;
-                border-radius: 50%;
-                background-color: white;
-                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
-                transition: left 0.2s;
-            "
-        ></div>
-    </div>
-
-    <div
-        id="kyytienEtsiminenKytkinTeksti"
-        style="
-            margin-left: 10px;
-            color: #555;
-            line-height: 1.2;
-        "
-    >
-        <div
-            id="kyytienEtsiminenTeksti"
-            style="
-                font-weight: bold;
-            "
-        >
-            Etsiminen
-        </div>
-
-        <div
-            id="kyytienEtsiminenTila"
-            style="
-                margin-top: 2px;
-                font-size: 12px;
-                color: #777;
-            "
-        >
-            Täytä pakolliset tiedot
-        </div>
-    </div>
+<div id="tarjousLomakeTila">Uusi kyytitarjous</div>
+<div class="tarjous-toiminnot">
+    <button id="uusiTarjousNappi" class="toissijainen" onclick="uusiKyytitarjous()">
+        Uusi kyytitarjous
+    </button>
 </div>
+<div class="tarjous-toiminnot">
+    <button id="tallennaTarjousKayttoonNappi" class="ensisijainen" onclick="tallennaKyytitarjous('kaytossa')" disabled>
+        Tallenna käyttöön
+    </button>
+    <button id="tallennaTarjousEiKaytossaNappi" class="toissijainen" onclick="tallennaKyytitarjous('ei_kaytossa')" disabled>
+        Tallenna ei käytössä
+    </button>
+    <button id="peruutaTarjouksenMuokkausNappi" class="toissijainen" onclick="uusiKyytitarjous()" style="display:none;">
+        Peruuta muokkaus
+    </button>
+</div>
+<div id="tarjousTallennusPalaute" role="status" aria-live="polite"></div>
 
 <div
     id="kyytienEtsiminenAlue"
@@ -744,8 +723,17 @@
 </button>
 
 <br><br>
+<hr>
+<h2>Tallennetut kyytitarjoukset</h2>
+<p>Useita tarjouksia voi olla käytössä. Yhden tarjouksen täsmääviä kyytipyyntöjä tarkastellaan kerrallaan.</p>
+<div id="tallennetutKyytitarjoukset">
+    <p>Kirjaudutaan ja ladataan tarjouksia…</p>
+</div>
 
-<b>Täsmäävät kyytipyynnöt:</b>
+<hr>
+<h2>Täsmäävät kyytipyynnöt</h2>
+<div id="valittuTarjousOtsikko">Valitse käytössä oleva tarjous kortilta.</div>
+<b>Määrä:</b>
 <span id="kyytipyyntojenMaara">0</span>
 
 <div id="havaittukyytipyynto"></div>
@@ -802,7 +790,9 @@ signInAnonymously(auth)
             userCredential.user.uid
         );
 
+        kayttajaUid = userCredential.user.uid;
         kuunteleKyytipyyntojenKokonaismaaraa();
+        kuunteleKyytitarjouksia();
 
     })
     .catch((error) => {
@@ -855,6 +845,15 @@ var matkustajanOdotanEnintMin = null;
 
 
 var tarjoaKyytia = false;
+var kayttajaUid = "";
+var tallennetutKyytitarjoukset = [];
+var muokattavaTarjousId = null;
+var valittuTarjousId = null;
+var valitunTarjouksenJoMatkalla = false;
+var unsubscribeKyytitarjoukset = null;
+var tarjoustenMaaratarkistusKaynnissa = false;
+var tarjouksetTarkistettuLatauksessa = false;
+var tarjoustenMaaratarkistusAjastin = null;
 
 var autonTuntomerkki = "";
 
@@ -2614,446 +2613,52 @@ function paivitaJoMatkalla() {
         lahtoKentta.disabled = false;
     }
 
+    document.getElementById(
+        "odotusaikaRajaProsentti"
+    ).disabled = !joMatkalla;
+
+    if (!joMatkalla) {
+        document.getElementById(
+            "odotusaikaRajaProsentti"
+        ).value = "0";
+        paivitaOdotusaikaProsentti(false);
+    }
+
     paivitaAloitaKyytienEtsiminenNappi();
 }
 
 function paivitaAloitaKyytienEtsiminenNappi() {
-
-    const autonTuntomerkkiAnnettu =
-        document.getElementById(
-            "autonTuntomerkki"
-        ).value.trim() !== "";
-
-    const lahtopaikkaValittu =
-        tarjoajanLahtopaikanTyyppi != "" &&
-        tarjoajanLahtopaikkaLatitude != null &&
-        tarjoajanLahtopaikkaLongitude != null;
-
-    const maaranpaaValittu =
-        tarjoajanMaaranpaa != "" &&
-        tarjoajanMaaranpaaLatitude != null &&
-        tarjoajanMaaranpaaLongitude != null;
-
-    const lahtoaikaAnnettu =
-        document.getElementById(
-            "tarjoajanLahtoAikaisintaan"
-        ).value !== "";
-
-    const joMatkalla =
-        document.getElementById(
-            "tarjoajaJoMatkalla"
-        ).checked;
-
-    const perillaAikaAnnettu =
-        document.getElementById(
-            "tarjoajanPerillaViimeistaan"
-        ).value !== "";
-
-    const aikaehdotTayttyvat =
-        joMatkalla ||
-        (
-            lahtoaikaAnnettu &&
-            perillaAikaAnnettu
-        );
-
-    const kytkin =
-        document.getElementById(
-            "kyytienEtsiminenKytkin"
-        );
-
-    const runko =
-        document.getElementById(
-            "kyytienEtsiminenKytkinRunko"
-        );
-
-    const tila =
-        document.getElementById(
-            "kyytienEtsiminenTila"
-        );
-
     const tiedotValmiina =
-        autonTuntomerkkiAnnettu &&
-        lahtopaikkaValittu &&
-        maaranpaaValittu &&
-        aikaehdotTayttyvat;
+        document.getElementById("autonTuntomerkki").value.trim() !== "" &&
+        tarjoajanLahtopaikanTyyppi !== "" &&
+        tarjoajanLahtopaikkaLatitude != null &&
+        tarjoajanLahtopaikkaLongitude != null &&
+        tarjoajanMaaranpaa !== "" &&
+        tarjoajanMaaranpaaLatitude != null &&
+        tarjoajanMaaranpaaLongitude != null &&
+        (
+            document.getElementById("tarjoajaJoMatkalla").checked ||
+            (
+                document.getElementById("tarjoajanLahtoAikaisintaan").value !== "" &&
+                document.getElementById("tarjoajanPerillaViimeistaan").value !== ""
+            )
+        );
 
-    if (!tarjoaKyytia) {
-
-        kytkin.style.opacity =
-            tiedotValmiina
-                ? "1"
-                : "0.45";
-
-        kytkin.style.pointerEvents =
-            tiedotValmiina
-                ? "auto"
-                : "none";
-
-        if (tiedotValmiina) {
-
-            runko.style.backgroundColor =
-                "#2196f3";
-
-            runko.style.borderColor =
-                "#1976d2";
-
-            tila.textContent =
-                "Valmis käynnistettäväksi";
-
-            tila.style.color =
-                "#555";
-
-        } else {
-
-            runko.style.backgroundColor =
-                "#b5b5b5";
-
-            runko.style.borderColor =
-                "#777";
-
-            tila.textContent =
-                "Täytä pakolliset tiedot";
-
-            tila.style.color =
-                "#777";
-        }
-    }
+    document.getElementById("tallennaTarjousKayttoonNappi").disabled = !tiedotValmiina;
+    document.getElementById("tallennaTarjousEiKaytossaNappi").disabled = !tiedotValmiina;
 }
 
 async function vaihdaKyytienEtsiminen() {
-
-    if (tarjoaKyytia) {
-
-        lopetaTarjoaminen();
-
-        return;
-    }
-
-    await aloitaTarjoaminen();
+    await tallennaKyytitarjous("kaytossa");
 }
 
 
 function paivitaKyytienEtsiminenKytkin() {
-
-    const kytkin =
-        document.getElementById(
-            "kyytienEtsiminenKytkin"
-        );
-
-    const runko =
-        document.getElementById(
-            "kyytienEtsiminenKytkinRunko"
-        );
-
-    const nuppi =
-        document.getElementById(
-            "kyytienEtsiminenKytkinNuppi"
-        );
-
-    const tila =
-        document.getElementById(
-            "kyytienEtsiminenTila"
-        );
-
-    const alue =
-        document.getElementById(
-            "kyytienEtsiminenAlue"
-        );
-
-    if (tarjoaKyytia) {
-
-        runko.style.backgroundColor =
-            "#4caf50";
-
-        runko.style.borderColor =
-            "#2e7d32";
-
-        nuppi.style.left =
-            "35px";
-
-        tila.textContent =
-            "Käynnissä";
-
-        tila.style.color =
-            "#2e7d32";
-
-        alue.style.backgroundColor =
-            "#e5f5e5";
-
-        kytkin.setAttribute(
-            "aria-pressed",
-            "true"
-        );
-
-        kytkin.style.opacity =
-            "1";
-
-        kytkin.style.pointerEvents =
-            "auto";
-
-    } else {
-
-        nuppi.style.left =
-            "3px";
-
-        alue.style.backgroundColor =
-            "#eeeeee";
-
-        kytkin.setAttribute(
-            "aria-pressed",
-            "false"
-        );
-
-        paivitaAloitaKyytienEtsiminenNappi();
-    }
+    paivitaAloitaKyytienEtsiminenNappi();
 }
 
 async function aloitaTarjoaminen() {
-
-    autonTuntomerkki =
-        document.getElementById(
-            "autonTuntomerkki"
-        ).value;
-
-    const tarjoajaJoMatkalla =
-        document.getElementById(
-            "tarjoajaJoMatkalla"
-        ).checked;
-
-    tarjoajanLahtoAikaisintaan =
-        tarjoajaJoMatkalla
-            ? null
-            : document.getElementById(
-                "tarjoajanLahtoAikaisintaan"
-            ).value || null;
-
-    tarjoajanPerillaViimeistaan =
-        document.getElementById(
-            "tarjoajanPerillaViimeistaan"
-        ).value || null;
-
-
-    if (
-        !tarjoajaJoMatkalla &&
-        !tarjoajanLahtoAikaisintaan
-    ) {
-
-        alert(
-            "Anna Haluan lähteä aikaisintaan -aika tai valitse Olen jo matkalla."
-        );
-
-        return;
-    }
-
-
-    if (
-        !tarjoajaJoMatkalla &&
-        !tarjoajanPerillaViimeistaan
-    ) {
-
-        alert(
-            "Anna Haluan olla perillä viimeistään -aika."
-        );
-
-        return;
-    }
-
-
-    if (
-        tarjoajanLahtoAikaisintaan &&
-        new Date(
-            tarjoajanLahtoAikaisintaan
-        ).getTime() <
-            Date.now()
-    ) {
-
-        alert(
-            "Haluan lähteä aikaisintaan -aika ei voi olla menneisyydessä."
-        );
-
-        return;
-    }
-
-
-    if (autonTuntomerkki == "") {
-
-        alert(
-            "Anna auton tuntomerkki"
-        );
-
-        return;
-    }
-
-
-    if (
-        tarjoajanLahtopaikanTyyppi == "" ||
-        tarjoajanLahtopaikkaLatitude == null ||
-        tarjoajanLahtopaikkaLongitude == null
-    ) {
-    
-        alert(
-            "Valitse ensin tarjoajan lähtöpaikka"
-        );
-    
-        return;
-    }
-
-    if (
-        tarjoajanMaaranpaa == "" ||
-        tarjoajanMaaranpaaLatitude == null ||
-        tarjoajanMaaranpaaLongitude == null
-    ) {
-
-        alert(
-            "Valitse ensin tarjoajan määränpää hakutuloksista"
-        );
-
-        return;
-    }
-
-
-
-    await laskeReittiAB();
-
-    paivitaSuodatus();
-
-
-    const nykyinenAikaMs =
-        Date.now();
-
-    const annettuLahtoaikaMs =
-        tarjoajanLahtoAikaisintaan
-            ? new Date(
-                tarjoajanLahtoAikaisintaan
-            ).getTime()
-            : nykyinenAikaMs;
-
-    const todellinenLahtoaikaMs =
-        tarjoajaJoMatkalla
-            ? nykyinenAikaMs
-            : Math.max(
-                nykyinenAikaMs,
-                annettuLahtoaikaMs
-            );
-
-    const omanMatkanKestoMs =
-        reittiABAikaMin *
-        60 *
-        1000;
-
-    const aikaisinMahdollinenSaapuminenMs =
-        todellinenLahtoaikaMs +
-        omanMatkanKestoMs;
-
-
-    if (tarjoajanPerillaViimeistaan) {
-
-        const perillaViimeistaanMs =
-            new Date(
-                tarjoajanPerillaViimeistaan
-            ).getTime();
-
-        if (
-            aikaisinMahdollinenSaapuminenMs >
-            perillaViimeistaanMs
-        ) {
-
-            alert(
-                "Et ehdi omaan määränpäähäsi annettuun määräaikaan mennessä."
-            );
-
-            return;
-        }
-    }
-
-
-    tarjoaKyytia = true;
-
-
-    document.getElementById(
-        "ohariRajaProsentti"
-    ).disabled = false;
-
-    document.getElementById(
-        "lisamatkaRajaProsentti"
-    ).disabled = false;
-    document.getElementById(
-        "odotusaikaRajaProsentti"
-    ).disabled = !tarjoajaJoMatkalla;
-
-    document.getElementById(
-        "kyydinPituusSuhdeLisamatkaanProsentti"
-    ).disabled = false;
-
-    document.getElementById(
-        "matkaniTehokkuusRajaProsentti"
-    ).disabled = false;
-
-
-    document.getElementById(
-        "autonTuntomerkki"
-    ).disabled = true;
-
-    document.getElementById(
-        "tarjoajanLahtopaikka"
-    ).disabled = true;
-
-    document.getElementById(
-        "etsiTarjoajanLahtopaikkaNappi"
-    ).disabled = true;
-
-    document.getElementById(
-        "kaytaNykyistaSijaintiaNappi"
-    ).disabled = true;
-
-    document.getElementById(
-        "vaihdaTarjoajanLahtopaikkaNappi"
-    ).disabled = true;
-
-    document.getElementById(
-        "tarjoajanMaaranpaa"
-    ).disabled = true;
-
-    document.getElementById(
-        "vaihdaTarjoajanMaaranpaaNappi"
-    ).disabled = true;
-
-    document.getElementById(
-        "tarjoajaJoMatkalla"
-    ).disabled = true;
-
-    document.getElementById(
-        "tarjoajanLahtoAikaisintaan"
-    ).disabled = true;
-
-    document.getElementById(
-        "tarjoajanPerillaViimeistaan"
-    ).disabled = true;
-
-    document.getElementById(
-        "etsiTarjoajanMaaranpaaNappi"
-    ).disabled = true;
-
-    document.getElementById(
-        "tarjoajanLahtopaikkaHakutulokset"
-    ).innerHTML = "";
-
-    document.getElementById(
-        "tarjoajanMaaranpaaHakutulokset"
-    ).innerHTML = "";
-
-
-    paivitaLisamatkaProsentti();
-    
-    paivitaOdotusaikaProsentti(false);
-    
-    paivitaOhariProsentti();
-    
-    paivitaSuodatus();
-    
-    haeKyytipyynnot();
-
-    paivitaKyytienEtsiminenKytkin();
+    await tallennaKyytitarjous("kaytossa");
 }
 
 
@@ -3062,175 +2667,589 @@ async function aloitaTarjoaminen() {
  */
 
 function lopetaTarjoaminen() {
-
     tarjoaKyytia = false;
-
-    paivitaKyytienEtsiminenKytkin();
-
+    valittuTarjousId = null;
+    valitunTarjouksenJoMatkalla = false;
+    kyytipyyntojenHakuversio++;
     if (unsubscribeKyytipyynnot) {
-
         unsubscribeKyytipyynnot();
-
-        unsubscribeKyytipyynnot =
-            null;
+        unsubscribeKyytipyynnot = null;
     }
-
-    document.getElementById(
-        "ohariRajaProsentti"
-    ).disabled = true;
-
-    document.getElementById(
-        "lisamatkaRajaProsentti"
-    ).disabled = true;
-    document.getElementById(
-        "odotusaikaRajaProsentti"
-    ).disabled = true;
-
-    document.getElementById(
-        "kyydinPituusSuhdeLisamatkaanProsentti"
-    ).disabled = true;
-
-    document.getElementById(
-        "matkaniTehokkuusRajaProsentti"
-    ).disabled = true;
-
-    document.getElementById(
-        "tyhjennaKaikkiSuodattimetNappi"
-    ).disabled = true;
-
-
-    document.getElementById(
-        "havaittukyytipyynto"
-    ).innerHTML = "";
-
-    document.getElementById(
-        "kyytipyyntojenMaara"
-    ).textContent = "0";
-
-
-    document.getElementById(
-        "autonTuntomerkki"
-    ).disabled = false;
-
-    document.getElementById(
-        "tarjoajanLahtopaikka"
-    ).disabled = false;
-
-    document.getElementById(
-        "kaytaNykyistaSijaintiaNappi"
-    ).disabled = false;
-
-    document.getElementById(
-        "vaihdaTarjoajanLahtopaikkaNappi"
-    ).disabled = false;
-
-    document.getElementById(
-        "tarjoajanMaaranpaa"
-    ).disabled = false;
-
-    document.getElementById(
-        "vaihdaTarjoajanMaaranpaaNappi"
-    ).disabled = false;
-
-    document.getElementById(
-        "tarjoajaJoMatkalla"
-    ).disabled = false;
-
-    document.getElementById(
-        "tarjoajanLahtoAikaisintaan"
-    ).disabled =
-        document.getElementById(
-            "tarjoajaJoMatkalla"
-        ).checked;
-
-    document.getElementById(
-        "tarjoajanPerillaViimeistaan"
-    ).disabled = false;
-
-    document.getElementById(
-        "etsiTarjoajanMaaranpaaNappi"
-    ).disabled = true;
-
-    document.getElementById(
-        "tarjoajanLahtopaikkaHakutulokset"
-    ).innerHTML = "";
-
-    document.getElementById(
-        "tarjoajanMaaranpaaHakutulokset"
-    ).innerHTML = "";
-
-
-    autonTuntomerkki = "";
-
-    ohariRajaProsentti = null;
-
-    noutomatkaRajaKm = null;
-
-    noutoaikaRajaMin = null;
-
-    lisamatkaRajaProsentti = null;
-
-    lisamatkaRajaKm = null;
-
-    lisaaikaRajaMin = null;
-
-    odotusaikaRajaProsentti = null;
-    odotusaikaRajaMin = null;
-    document.getElementById(
-        "odotusaikaRajaProsentti"
-    ).value = "0";
-    document.getElementById(
-        "odotusaikaProsenttiTeksti"
-    ).textContent = "";
-    document.getElementById(
-        "odotusaikaLaskettu"
-    ).textContent = "";
-    kyydinPituusSuhdeLisamatkaanRajaProsentti = null;
-
-    document.getElementById(
-        "kyydinPituusSuhdeLisamatkaanProsentti"
-    ).value = "0";
-
-    document.getElementById(
-        "kyydinTehokkuusProsenttiTeksti"
-    ).textContent = "";
-
-    matkaniTehokkuusRajaProsentti = null;
-    matkaniTehokkuusRajaKm = null;
-    matkaniTehokkuusRajaMin = null;
-    document.getElementById(
-        "matkaniTehokkuusRajaProsentti"
-    ).value = "0";
-    document.getElementById(
-        "matkaniTehokkuusProsenttiTeksti"
-    ).textContent = "";
-
-    kokonaismatkaRajaKm = null;
-
-    kokonaisaikaRajaMin = null;
-
-    reittiABMatkaKm = null;
-
-    reittiABAikaMin = null;
-
-
-    document.getElementById(
-        "ohariLaskettu"
-    ).textContent = "";
-    
-    document.getElementById(
-        "lisamatkaLaskettu"
-    ).textContent = "";
-
-    document.getElementById(
-        "kokonaismatkaLaskettu"
-    ).textContent = "";
-
-
-
-    paivitaKyytienEtsiminenKytkin();
+    document.getElementById("kyytipyyntojenMaara").textContent = "0";
+    document.getElementById("havaittukyytipyynto").innerHTML = "";
+    document.getElementById("valittuTarjousOtsikko").textContent =
+        "Valitse käytössä oleva tarjous kortilta.";
+    naytaTallennetutKyytitarjoukset();
 }
 
+
+
+/*
+ * Usean itsenäisen kyytitarjouksen hallinta
+ */
+
+function lukitseTarjouslomake(lukittu) {
+    [
+        "autonTuntomerkki",
+        "tarjoajanLahtopaikka",
+        "etsiTarjoajanLahtopaikkaNappi",
+        "kaytaNykyistaSijaintiaNappi",
+        "vaihdaTarjoajanLahtopaikkaNappi",
+        "tarjoajanMaaranpaa",
+        "etsiTarjoajanMaaranpaaNappi",
+        "vaihdaTarjoajanMaaranpaaNappi",
+        "tarjoajanLahtoAikaisintaan",
+        "tarjoajaJoMatkalla",
+        "tarjoajanPerillaViimeistaan",
+        "lisamatkaRajaProsentti",
+        "ohariRajaProsentti",
+        "odotusaikaRajaProsentti",
+        "kyydinPituusSuhdeLisamatkaanProsentti",
+        "matkaniTehokkuusRajaProsentti",
+        "tyhjennaKaikkiSuodattimetNappi",
+        "tallennaTarjousKayttoonNappi",
+        "tallennaTarjousEiKaytossaNappi"
+    ].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.disabled = lukittu;
+    });
+    if (!lukittu) {
+        document.getElementById("tarjoajanLahtoAikaisintaan").disabled =
+            document.getElementById("tarjoajaJoMatkalla").checked;
+        document.getElementById("odotusaikaRajaProsentti").disabled =
+            !document.getElementById("tarjoajaJoMatkalla").checked;
+        document.getElementById("etsiTarjoajanLahtopaikkaNappi").disabled =
+            document.getElementById("tarjoajanLahtopaikka").value.trim() === "";
+        document.getElementById("etsiTarjoajanMaaranpaaNappi").disabled =
+            document.getElementById("tarjoajanMaaranpaa").value.trim() === "";
+        paivitaAloitaKyytienEtsiminenNappi();
+        paivitaSuodataNappi();
+    }
+}
+
+function tarjousKenttienArvot() {
+    const joMatkalla = document.getElementById("tarjoajaJoMatkalla").checked;
+    return {
+        autonTuntomerkki: document.getElementById("autonTuntomerkki").value.trim(),
+        tarjoajanLahtopaikanTyyppi,
+        tarjoajanLahtopaikka,
+        tarjoajanLahtopaikkaLatitude,
+        tarjoajanLahtopaikkaLongitude,
+        tarjoajanMaaranpaa,
+        tarjoajanMaaranpaaLatitude,
+        tarjoajanMaaranpaaLongitude,
+        tarjoajaJoMatkalla: joMatkalla,
+        tarjoajanLahtoAikaisintaan: joMatkalla
+            ? null
+            : (document.getElementById("tarjoajanLahtoAikaisintaan").value || null),
+        tarjoajanPerillaViimeistaan:
+            document.getElementById("tarjoajanPerillaViimeistaan").value || null,
+        reittiABMatkaKm: Number.isFinite(reittiABMatkaKm) ? reittiABMatkaKm : null,
+        reittiABAikaMin: Number.isFinite(reittiABAikaMin) ? reittiABAikaMin : null,
+        reittiABKoordinaatit: Array.isArray(reittiABKoordinaatit) ? reittiABKoordinaatit : [],
+        suodattimet: {
+            lisamatka: document.getElementById("lisamatkaRajaProsentti").value,
+            ohari: document.getElementById("ohariRajaProsentti").value,
+            odotusaika: document.getElementById("odotusaikaRajaProsentti").value,
+            kyytiajonOsuus: document.getElementById("kyydinPituusSuhdeLisamatkaanProsentti").value,
+            kokonaisajonOsuus: document.getElementById("matkaniTehokkuusRajaProsentti").value
+        }
+    };
+}
+
+function tarjousOnLomakkeellaValmis() {
+    const t = tarjousKenttienArvot();
+    return t.autonTuntomerkki !== "" &&
+        t.tarjoajanLahtopaikanTyyppi !== "" &&
+        t.tarjoajanLahtopaikkaLatitude != null &&
+        t.tarjoajanLahtopaikkaLongitude != null &&
+        t.tarjoajanMaaranpaa !== "" &&
+        t.tarjoajanMaaranpaaLatitude != null &&
+        t.tarjoajanMaaranpaaLongitude != null &&
+        (t.tarjoajaJoMatkalla || (t.tarjoajanLahtoAikaisintaan && t.tarjoajanPerillaViimeistaan));
+}
+
+async function haeSuoraReittiTarjoukselle(tarjous, paivitaNykySijainti = false) {
+    let lat = tarjous.tarjoajanLahtopaikkaLatitude;
+    let lon = tarjous.tarjoajanLahtopaikkaLongitude;
+    let paikanNimi = tarjous.tarjoajanLahtopaikka;
+
+    if (paivitaNykySijainti && tarjous.tarjoajaJoMatkalla) {
+        if (kayttajanNykyinenLatitude == null || kayttajanNykyinenLongitude == null) {
+            throw new Error("Nykyistä sijaintia ei ole vielä saatavilla.");
+        }
+        lat = kayttajanNykyinenLatitude;
+        lon = kayttajanNykyinenLongitude;
+        paikanNimi = await haeMatkustajanLahtopaikanNimi(lat, lon);
+    }
+
+    const url = "https://router.project-osrm.org/route/v1/driving/" +
+        lon + "," + lat + ";" +
+        tarjous.tarjoajanMaaranpaaLongitude + "," +
+        tarjous.tarjoajanMaaranpaaLatitude +
+        "?overview=full&geometries=geojson";
+    const vastaus = await fetch(url);
+    if (!vastaus.ok) throw new Error("Suoran reitin laskenta epäonnistui.");
+    const data = await vastaus.json();
+    if (!data.routes || !data.routes[0]) throw new Error("Suoraa reittiä ei löytynyt.");
+    return {
+        tarjoajanLahtopaikka: paikanNimi,
+        tarjoajanLahtopaikanTyyppi: tarjous.tarjoajaJoMatkalla && paivitaNykySijainti
+            ? "nykyinen"
+            : tarjous.tarjoajanLahtopaikanTyyppi,
+        tarjoajanLahtopaikkaLatitude: lat,
+        tarjoajanLahtopaikkaLongitude: lon,
+        reittiABMatkaKm: data.routes[0].distance / 1000,
+        reittiABAikaMin: data.routes[0].duration / 60,
+        reittiABKoordinaatit: data.routes[0].geometry.coordinates
+    };
+}
+
+function maarapaivaOnMahdoton(tarjous, aikaMin, nytMs = Date.now()) {
+    if (!tarjous.tarjoajanPerillaViimeistaan) return false;
+    const maarapaivaMs = new Date(tarjous.tarjoajanPerillaViimeistaan).getTime();
+    return Number.isFinite(maarapaivaMs) &&
+        Number.isFinite(aikaMin) &&
+        nytMs + aikaMin * 60 * 1000 > maarapaivaMs;
+}
+
+function muodostaMaarapaivaSyy(tarjous, aikaMin, nytMs = Date.now()) {
+    const arvioMs = nytMs + aikaMin * 60 * 1000;
+    return "Automaattisesti pois käytöstä: nykyhetki + suoran reitin ajoaika (" +
+        Math.round(aikaMin) + " min, arvio " +
+        new Date(arvioMs).toLocaleString("fi-FI") +
+        ") ylittää perilläoloajan " +
+        new Date(tarjous.tarjoajanPerillaViimeistaan).toLocaleString("fi-FI") + ".";
+}
+
+async function deaktivoiMuutJoMatkallaTarjoukset(sailytaId) {
+    const muut = tallennetutKyytitarjoukset.filter((t) =>
+        t.id !== sailytaId &&
+        t.tila === "kaytossa" &&
+        t.tarjoajaJoMatkalla
+    );
+    await Promise.all(muut.map((t) => updateDoc(doc(db, "kyytitarjoukset", t.id), {
+        tila: "ei_kaytossa",
+        kaytostaPoistonSyy: "Toinen Olen jo matkalla -tarjous otettiin käyttöön.",
+        paivitetty: new Date().toISOString()
+    })));
+}
+
+async function tallennaKyytitarjous(haluttuTila) {
+    if (!kayttajaUid) {
+        alert("Kirjautuminen on vielä kesken. Yritä hetken kuluttua uudelleen.");
+        return;
+    }
+    if (!tarjousOnLomakkeellaValmis()) {
+        alert("Täytä auton tuntomerkki, reitti ja vaaditut aikatiedot.");
+        return;
+    }
+
+    const palaute = document.getElementById("tarjousTallennusPalaute");
+    palaute.textContent = "Tallennetaan…";
+    const nyt = new Date().toISOString();
+    let tarjous = tarjousKenttienArvot();
+
+    try {
+        const reitti = await haeSuoraReittiTarjoukselle(
+            tarjous,
+            haluttuTila === "kaytossa" && tarjous.tarjoajaJoMatkalla
+        );
+        tarjous = { ...tarjous, ...reitti };
+        if (haluttuTila === "kaytossa" && tarjous.tarjoajaJoMatkalla) {
+            tarjous.tarjoajanLahtoAikaisintaan = null;
+            tarjous.kayttoonOtettu = nyt;
+        }
+
+        const mahdoton = maarapaivaOnMahdoton(tarjous, tarjous.reittiABAikaMin);
+        const syy = mahdoton
+            ? muodostaMaarapaivaSyy(tarjous, tarjous.reittiABAikaMin)
+            : null;
+        const tallennettavaTila = mahdoton ? "ei_kaytossa" : haluttuTila;
+
+        if (tallennettavaTila === "kaytossa" && tarjous.tarjoajaJoMatkalla) {
+            await deaktivoiMuutJoMatkallaTarjoukset(muokattavaTarjousId);
+        }
+
+        const data = {
+            ...tarjous,
+            ownerUid: kayttajaUid,
+            tila: tallennettavaTila,
+            kaytostaPoistonSyy: syy,
+            paivitetty: nyt
+        };
+
+        let id = muokattavaTarjousId;
+        if (id) {
+            await updateDoc(doc(db, "kyytitarjoukset", id), data);
+        } else {
+            const viite = await addDoc(collection(db, "kyytitarjoukset"), {
+                ...data,
+                luotu: nyt
+            });
+            id = viite.id;
+        }
+
+        if (mahdoton && haluttuTila === "kaytossa") {
+            alert("Tarjousta ei voitu ottaa käyttöön, koska suoran reitin perusteella et ehdi perille annettuun aikaan. Tarjous tallennettiin Ei käytössä -tilaan.");
+        }
+        palaute.textContent = muokattavaTarjousId
+            ? "Muutokset tallennettu."
+            : "Kyytitarjous tallennettu.";
+        muokattavaTarjousId = null;
+        document.getElementById("tarjousLomakeTila").textContent = "Uusi kyytitarjous";
+        document.getElementById("peruutaTarjouksenMuokkausNappi").style.display = "none";
+        uusiKyytitarjous(false);
+    } catch (virhe) {
+        console.error("Kyytitarjouksen tallennus epäonnistui:", virhe);
+        palaute.textContent = "Tallennus epäonnistui: " + virhe.message;
+    }
+}
+
+function asetaSuodattimetTarjouksesta(tarjous, paivitaNakyma = true) {
+    const s = tarjous.suodattimet || {};
+
+    if (!paivitaNakyma) {
+        const lisaJaOhariArvot = [0, 1, 2, 5, 10, 15, 20, 30, 40, 50, 75, 100];
+        const odotusArvot = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+        const osuusArvot = [10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 100];
+        const lisaAsento = Number(s.lisamatka ?? 4);
+        const ohariAsento = Number(s.ohari ?? 12);
+        const odotusAsento = Number(s.odotusaika ?? 0);
+        const kyytiajoAsento = Number(s.kyytiajonOsuus ?? 0);
+        const kokonaisajoAsento = Number(s.kokonaisajonOsuus ?? 0);
+
+        lisamatkaRajaProsentti = lisaAsento === 0 ? null : lisaJaOhariArvot[lisaAsento - 1];
+        lisamatkaRajaKm = lisamatkaRajaProsentti == null ? null : reittiABMatkaKm * lisamatkaRajaProsentti / 100;
+        lisaaikaRajaMin = lisamatkaRajaProsentti == null ? null : reittiABAikaMin * lisamatkaRajaProsentti / 100;
+        ohariRajaProsentti = ohariAsento === 0 ? null : lisaJaOhariArvot[ohariAsento - 1];
+        odotusaikaRajaProsentti = odotusAsento === 0 ? null : odotusArvot[odotusAsento - 1];
+        odotusaikaRajaMin = odotusaikaRajaProsentti == null
+            ? null
+            : reittiABAikaMin * odotusaikaRajaProsentti / 100;
+        kyydinPituusSuhdeLisamatkaanRajaProsentti = kyytiajoAsento === 0
+            ? null
+            : osuusArvot[kyytiajoAsento - 1];
+        matkaniTehokkuusRajaProsentti = kokonaisajoAsento === 0
+            ? null
+            : osuusArvot[kokonaisajoAsento - 1];
+        return;
+    }
+
+    document.getElementById("lisamatkaRajaProsentti").value = s.lisamatka ?? "4";
+    document.getElementById("ohariRajaProsentti").value = s.ohari ?? "12";
+    document.getElementById("odotusaikaRajaProsentti").value = s.odotusaika ?? "0";
+    document.getElementById("kyydinPituusSuhdeLisamatkaanProsentti").value = s.kyytiajonOsuus ?? "0";
+    document.getElementById("matkaniTehokkuusRajaProsentti").value = s.kokonaisajonOsuus ?? "0";
+    paivitaLisamatkaProsentti();
+    paivitaOdotusaikaProsentti(false);
+    paivitaOhariProsentti(false);
+    paivitaKyydinPituusSuhdeLisamatkaan();
+    paivitaMatkaniTehokkuus(false);
+}
+
+function asetaTarjousGlobaaleihin(t) {
+    autonTuntomerkki = t.autonTuntomerkki || "";
+    tarjoajanLahtopaikanTyyppi = t.tarjoajanLahtopaikanTyyppi || "";
+    tarjoajanLahtopaikka = t.tarjoajanLahtopaikka || "";
+    tarjoajanLahtopaikkaLatitude = t.tarjoajanLahtopaikkaLatitude;
+    tarjoajanLahtopaikkaLongitude = t.tarjoajanLahtopaikkaLongitude;
+    tarjoajanMaaranpaa = t.tarjoajanMaaranpaa || "";
+    tarjoajanMaaranpaaLatitude = t.tarjoajanMaaranpaaLatitude;
+    tarjoajanMaaranpaaLongitude = t.tarjoajanMaaranpaaLongitude;
+    tarjoajanLahtoAikaisintaan = t.tarjoajanLahtoAikaisintaan || null;
+    tarjoajanPerillaViimeistaan = t.tarjoajanPerillaViimeistaan || null;
+    reittiABMatkaKm = Number(t.reittiABMatkaKm);
+    reittiABAikaMin = Number(t.reittiABAikaMin);
+    reittiABKoordinaatit = Array.isArray(t.reittiABKoordinaatit) ? t.reittiABKoordinaatit : [];
+    valitunTarjouksenJoMatkalla = !!t.tarjoajaJoMatkalla;
+}
+
+async function avaaTarjouksenPyynnot(id) {
+    const tarjous = tallennetutKyytitarjoukset.find((t) => t.id === id);
+    if (!tarjous) return;
+    if (tarjous.tila !== "kaytossa") {
+        alert("Ota tarjous ensin käyttöön.");
+        return;
+    }
+    if (unsubscribeKyytipyynnot) unsubscribeKyytipyynnot();
+    unsubscribeKyytipyynnot = null;
+    asetaTarjousGlobaaleihin(tarjous);
+    valittuTarjousId = id;
+    tarjoaKyytia = false;
+    asetaSuodattimetTarjouksesta(tarjous, false);
+    tarjoaKyytia = true;
+    document.getElementById("valittuTarjousOtsikko").textContent =
+        haeKaupunkiTaiKunta(tarjous.tarjoajanLahtopaikka) + " → " +
+        haeKaupunkiTaiKunta(tarjous.tarjoajanMaaranpaa);
+    document.getElementById("havaittukyytipyynto").innerHTML = "Lasketaan täsmääviä pyyntöjä…";
+    lukitseTarjouslomake(true);
+    naytaTallennetutKyytitarjoukset();
+    haeKyytipyynnot();
+}
+
+function lataaTarjousLomakkeelle(t) {
+    if (tarjoaKyytia) lopetaTarjoaminen();
+    muokattavaTarjousId = t.id;
+    asetaTarjousGlobaaleihin(t);
+    document.getElementById("autonTuntomerkki").value = t.autonTuntomerkki || "";
+    document.getElementById("tarjoajaJoMatkalla").checked = !!t.tarjoajaJoMatkalla;
+    document.getElementById("tarjoajanLahtoAikaisintaan").value = t.tarjoajanLahtoAikaisintaan || "";
+    document.getElementById("tarjoajanPerillaViimeistaan").value = t.tarjoajanPerillaViimeistaan || "";
+    document.getElementById("tarjoajanLahtoAikaisintaan").disabled = !!t.tarjoajaJoMatkalla;
+    document.getElementById("tarjoajanValittuLahtopaikkaTeksti").textContent = t.tarjoajanLahtopaikka || "";
+    document.getElementById("tarjoajanLahtopaikanValinta").style.display = "none";
+    document.getElementById("tarjoajanValittuLahtopaikka").style.display = "block";
+    document.getElementById("tarjoajanValittuMaaranpaaTeksti").textContent = t.tarjoajanMaaranpaa || "";
+    document.getElementById("tarjoajanMaaranpaa").style.display = "none";
+    document.getElementById("etsiTarjoajanMaaranpaaNappi").style.display = "none";
+    document.getElementById("tarjoajanValittuMaaranpaa").style.display = "block";
+    document.getElementById("tarjoajanValittuReitti").textContent =
+        Number.isFinite(Number(t.reittiABMatkaKm))
+            ? Number(t.reittiABMatkaKm).toFixed(1) + " km / " + muotoileTunnitJaMinuutit(Number(t.reittiABAikaMin))
+            : "";
+    asetaSuodattimetTarjouksesta(t);
+    document.getElementById("odotusaikaRajaProsentti").disabled = !t.tarjoajaJoMatkalla;
+    document.getElementById("tarjousLomakeTila").textContent = "Muokkaa kyytitarjousta";
+    document.getElementById("peruutaTarjouksenMuokkausNappi").style.display = "inline-block";
+    document.getElementById("tarjousTallennusPalaute").textContent = "";
+    lukitseTarjouslomake(false);
+    paivitaAloitaKyytienEtsiminenNappi();
+    window.scrollTo({ top: 230, behavior: "smooth" });
+}
+
+function muokkaaKyytitarjousta(id) {
+    const t = tallennetutKyytitarjoukset.find((x) => x.id === id);
+    if (t) lataaTarjousLomakkeelle(t);
+}
+
+async function poistaKyytitarjous(id) {
+    const t = tallennetutKyytitarjoukset.find((x) => x.id === id);
+    if (!t || !confirm("Poistetaanko kyytitarjous pysyvästi?")) return;
+    if (valittuTarjousId === id) lopetaTarjoaminen();
+    await deleteDoc(doc(db, "kyytitarjoukset", id));
+    if (muokattavaTarjousId === id) uusiKyytitarjous();
+}
+
+async function vaihdaKyytitarjouksenTila(id) {
+    const tarjous = tallennetutKyytitarjoukset.find((t) => t.id === id);
+    if (!tarjous) return;
+    if (tarjous.tila === "kaytossa") {
+        await updateDoc(doc(db, "kyytitarjoukset", id), {
+            tila: "ei_kaytossa",
+            kaytostaPoistonSyy: null,
+            paivitetty: new Date().toISOString()
+        });
+        if (valittuTarjousId === id) lopetaTarjoaminen();
+        return;
+    }
+
+    try {
+        let paivitys = {};
+        if (tarjous.tarjoajaJoMatkalla) {
+            paivitys = await haeSuoraReittiTarjoukselle(tarjous, true);
+            paivitys.kayttoonOtettu = new Date().toISOString();
+            paivitys.tarjoajanLahtoAikaisintaan = null;
+        } else if (!Number.isFinite(Number(tarjous.reittiABAikaMin))) {
+            paivitys = await haeSuoraReittiTarjoukselle(tarjous, false);
+        }
+        const tarkistettava = { ...tarjous, ...paivitys };
+        const aikaMin = Number(tarkistettava.reittiABAikaMin);
+        if (maarapaivaOnMahdoton(tarkistettava, aikaMin)) {
+            const syy = muodostaMaarapaivaSyy(tarkistettava, aikaMin);
+            await updateDoc(doc(db, "kyytitarjoukset", id), {
+                ...paivitys,
+                tila: "ei_kaytossa",
+                kaytostaPoistonSyy: syy,
+                paivitetty: new Date().toISOString()
+            });
+            alert("Tarjousta ei voi ottaa käyttöön ennen kuin perilläoloaika korjataan tai poistetaan.");
+            return;
+        }
+        if (tarjous.tarjoajaJoMatkalla) {
+            await deaktivoiMuutJoMatkallaTarjoukset(id);
+        }
+        await updateDoc(doc(db, "kyytitarjoukset", id), {
+            ...paivitys,
+            tila: "kaytossa",
+            kaytostaPoistonSyy: null,
+            paivitetty: new Date().toISOString()
+        });
+    } catch (virhe) {
+        alert("Tarjouksen käyttöön ottaminen epäonnistui: " + virhe.message);
+    }
+}
+
+function uusiKyytitarjous(tyhjennaPalaute = true) {
+    if (tarjoaKyytia) lopetaTarjoaminen();
+    muokattavaTarjousId = null;
+    autonTuntomerkki = "";
+    tarjoajanLahtopaikanTyyppi = "";
+    tarjoajanLahtopaikka = "";
+    tarjoajanLahtopaikkaLatitude = null;
+    tarjoajanLahtopaikkaLongitude = null;
+    tarjoajanMaaranpaa = "";
+    tarjoajanMaaranpaaLatitude = null;
+    tarjoajanMaaranpaaLongitude = null;
+    tarjoajanLahtoAikaisintaan = null;
+    tarjoajanPerillaViimeistaan = null;
+    reittiABMatkaKm = null;
+    reittiABAikaMin = null;
+    reittiABKoordinaatit = [];
+    document.getElementById("autonTuntomerkki").value = "";
+    document.getElementById("tarjoajanLahtopaikka").value = "";
+    document.getElementById("tarjoajanLahtopaikkaHakutulokset").innerHTML = "";
+    document.getElementById("tarjoajanLahtopaikanValinta").style.display = "block";
+    document.getElementById("tarjoajanValittuLahtopaikka").style.display = "none";
+    document.getElementById("tarjoajanMaaranpaa").value = "";
+    document.getElementById("tarjoajanMaaranpaa").style.display = "";
+    document.getElementById("etsiTarjoajanMaaranpaaNappi").style.display = "";
+    document.getElementById("tarjoajanMaaranpaaHakutulokset").innerHTML = "";
+    document.getElementById("tarjoajanValittuMaaranpaa").style.display = "none";
+    document.getElementById("tarjoajanValittuReitti").textContent = "";
+    document.getElementById("tarjoajanLahtoAikaisintaan").value = "";
+    document.getElementById("tarjoajanLahtoAikaisintaan").disabled = false;
+    document.getElementById("tarjoajanPerillaViimeistaan").value = "";
+    document.getElementById("tarjoajaJoMatkalla").checked = false;
+    document.getElementById("lisamatkaRajaProsentti").value = "4";
+    document.getElementById("ohariRajaProsentti").value = "12";
+    document.getElementById("odotusaikaRajaProsentti").value = "0";
+    document.getElementById("kyydinPituusSuhdeLisamatkaanProsentti").value = "0";
+    document.getElementById("matkaniTehokkuusRajaProsentti").value = "0";
+    ["lisamatkaRajaProsentti", "ohariRajaProsentti", "kyydinPituusSuhdeLisamatkaanProsentti", "matkaniTehokkuusRajaProsentti"]
+        .forEach((id) => document.getElementById(id).disabled = false);
+    document.getElementById("odotusaikaRajaProsentti").disabled = true;
+    document.getElementById("lisamatkaProsenttiTeksti").textContent = "";
+    document.getElementById("lisamatkaLaskettu").textContent = "";
+    document.getElementById("ohariProsenttiTeksti").textContent = "";
+    document.getElementById("odotusaikaProsenttiTeksti").textContent = "";
+    document.getElementById("odotusaikaLaskettu").textContent = "";
+    document.getElementById("kyydinTehokkuusProsenttiTeksti").textContent = "";
+    document.getElementById("matkaniTehokkuusProsenttiTeksti").textContent = "";
+    document.getElementById("kokonaismatkaOtsikko").textContent = "";
+    document.getElementById("kokonaismatkaLaskettu").textContent = "";
+    document.getElementById("tarjousLomakeTila").textContent = "Uusi kyytitarjous";
+    document.getElementById("peruutaTarjouksenMuokkausNappi").style.display = "none";
+    if (tyhjennaPalaute) document.getElementById("tarjousTallennusPalaute").textContent = "";
+    lukitseTarjouslomake(false);
+    paivitaAloitaKyytienEtsiminenNappi();
+}
+
+function naytaTallennetutKyytitarjoukset() {
+    const alue = document.getElementById("tallennetutKyytitarjoukset");
+    if (!alue) return;
+    if (!tallennetutKyytitarjoukset.length) {
+        alue.innerHTML = "<p>Ei tallennettuja kyytitarjouksia.</p>";
+        return;
+    }
+    const jarjestetyt = [...tallennetutKyytitarjoukset].sort((a, b) =>
+        (b.paivitetty || b.luotu || "").localeCompare(a.paivitetty || a.luotu || "")
+    );
+    alue.innerHTML = jarjestetyt.map((t) => {
+        const kaytossa = t.tila === "kaytossa";
+        const valittu = t.id === valittuTarjousId;
+        const lahto = haeKaupunkiTaiKunta(t.tarjoajanLahtopaikka || "") || "Lähtöpaikka";
+        const maara = haeKaupunkiTaiKunta(t.tarjoajanMaaranpaa || "") || "Määränpää";
+        const aika = t.tarjoajaJoMatkalla
+            ? "Olen jo matkalla" + (t.kayttoonOtettu ? " · päivitetty " + new Date(t.kayttoonOtettu).toLocaleString("fi-FI") : "")
+            : (t.tarjoajanLahtoAikaisintaan ? new Date(t.tarjoajanLahtoAikaisintaan).toLocaleString("fi-FI") : "Ei lähtöaikaa");
+        const perilla = t.tarjoajanPerillaViimeistaan
+            ? new Date(t.tarjoajanPerillaViimeistaan).toLocaleString("fi-FI")
+            : "Ei määräaikaa";
+        return `<article class="tarjouskortti ${kaytossa ? "kaytossa" : "ei-kaytossa"} ${valittu ? "valittu" : ""}">
+            <h3>${turvaaHtml(lahto)} → ${turvaaHtml(maara)}</h3>
+            <p><span class="tilamerkki ${kaytossa ? "kaytossa" : "ei-kaytossa"}">${kaytossa ? "Käytössä" : "Ei käytössä"}</span></p>
+            <p><b>Lähtö:</b> ${turvaaHtml(aika)}</p>
+            <p><b>Perillä viimeistään:</b> ${turvaaHtml(perilla)}</p>
+            <p><b>Suora reitti:</b> ${Number.isFinite(Number(t.reittiABMatkaKm)) ? Number(t.reittiABMatkaKm).toFixed(1) + " km / " + muotoileTunnitJaMinuutit(Number(t.reittiABAikaMin)) : "Ei laskettu"}</p>
+            ${t.kaytostaPoistonSyy ? `<div class="huomio"><b>Syy:</b> ${turvaaHtml(t.kaytostaPoistonSyy)}</div>` : ""}
+            <div class="tarjous-toiminnot">
+                <button class="ensisijainen" onclick="avaaTarjouksenPyynnot('${t.id}')" ${kaytossa ? "" : "disabled"}>Näytä pyynnöt</button>
+                <button class="toissijainen" onclick="vaihdaKyytitarjouksenTila('${t.id}')">${kaytossa ? "Poista käytöstä" : "Ota käyttöön"}</button>
+                <button class="toissijainen" onclick="muokkaaKyytitarjousta('${t.id}')">Muokkaa</button>
+                <button class="vaarallinen" onclick="poistaKyytitarjous('${t.id}')">Poista</button>
+            </div>
+        </article>`;
+    }).join("");
+}
+
+function kuunteleKyytitarjouksia() {
+    if (!kayttajaUid) return;
+    if (unsubscribeKyytitarjoukset) unsubscribeKyytitarjoukset();
+    const omat = query(collection(db, "kyytitarjoukset"), where("ownerUid", "==", kayttajaUid));
+    unsubscribeKyytitarjoukset = onSnapshot(omat, (snapshot) => {
+        tallennetutKyytitarjoukset = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+        const valittu = tallennetutKyytitarjoukset.find((t) => t.id === valittuTarjousId);
+        if (valittuTarjousId && (!valittu || valittu.tila !== "kaytossa")) lopetaTarjoaminen();
+        naytaTallennetutKyytitarjoukset();
+        if (!tarjouksetTarkistettuLatauksessa) {
+            tarjouksetTarkistettuLatauksessa = true;
+            tarkistaTarjoustenMaarajat();
+        }
+    }, (virhe) => {
+        console.error("Kyytitarjousten lataus epäonnistui:", virhe);
+        document.getElementById("tallennetutKyytitarjoukset").innerHTML =
+            `<div class="huomio">Tarjousten lataus epäonnistui: ${turvaaHtml(virhe.message)}</div>`;
+    });
+    if (!tarjoustenMaaratarkistusAjastin) {
+        tarjoustenMaaratarkistusAjastin = setInterval(tarkistaTarjoustenMaarajat, 60 * 1000);
+    }
+}
+
+async function tarkistaTarjoustenMaarajat() {
+    if (tarjoustenMaaratarkistusKaynnissa || !kayttajaUid) return;
+    tarjoustenMaaratarkistusKaynnissa = true;
+    try {
+        const joMatkallaKaytossa = tallennetutKyytitarjoukset
+            .filter((t) => t.tila === "kaytossa" && t.tarjoajaJoMatkalla)
+            .sort((a, b) =>
+                (b.kayttoonOtettu || b.paivitetty || "").localeCompare(
+                    a.kayttoonOtettu || a.paivitetty || ""
+                )
+            );
+        for (const ylimaarainen of joMatkallaKaytossa.slice(1)) {
+            await updateDoc(doc(db, "kyytitarjoukset", ylimaarainen.id), {
+                tila: "ei_kaytossa",
+                kaytostaPoistonSyy: "Toinen Olen jo matkalla -tarjous on käytössä.",
+                paivitetty: new Date().toISOString()
+            });
+            if (valittuTarjousId === ylimaarainen.id) lopetaTarjoaminen();
+        }
+
+        const kaytossaOlevat = tallennetutKyytitarjoukset.filter((t) =>
+            t.tila === "kaytossa" && t.tarjoajanPerillaViimeistaan
+        );
+        for (const tarjous of kaytossaOlevat) {
+            try {
+                let reitti = {};
+                if (tarjous.tarjoajaJoMatkalla && kayttajanNykyinenLatitude != null) {
+                    reitti = await haeSuoraReittiTarjoukselle(tarjous, true);
+                }
+                const tarkistettava = { ...tarjous, ...reitti };
+                const aikaMin = Number(tarkistettava.reittiABAikaMin);
+                if (maarapaivaOnMahdoton(tarkistettava, aikaMin)) {
+                    await updateDoc(doc(db, "kyytitarjoukset", tarjous.id), {
+                        ...reitti,
+                        tila: "ei_kaytossa",
+                        kaytostaPoistonSyy: muodostaMaarapaivaSyy(tarkistettava, aikaMin),
+                        automaattisestiPoistettuKaytosta: new Date().toISOString(),
+                        paivitetty: new Date().toISOString()
+                    });
+                    if (valittuTarjousId === tarjous.id) lopetaTarjoaminen();
+                } else if (Object.keys(reitti).length) {
+                    await updateDoc(doc(db, "kyytitarjoukset", tarjous.id), {
+                        ...reitti,
+                        paivitetty: new Date().toISOString()
+                    });
+                }
+            } catch (virhe) {
+                console.warn("Tarjouksen määräaikatarkistus ohitettiin:", tarjous.id, virhe);
+            }
+        }
+    } finally {
+        tarjoustenMaaratarkistusKaynnissa = false;
+    }
+}
 
 /*
  * Aktiivisten kyytipyyntöjen kuuntelu
@@ -3376,9 +3395,7 @@ function pyyntoSopiiAikaikkunaan(laskelma) {
     }
 
     const tarjoajaJoMatkalla =
-        document.getElementById(
-            "tarjoajaJoMatkalla"
-        ).checked;
+        valitunTarjouksenJoMatkalla;
 
     const tarjoajanTodellinenLahtoaikaMs =
         tarjoajaJoMatkalla
@@ -5321,9 +5338,18 @@ window.paivitaOdotusaikaProsentti =
 
 window.vaihdaKyytienEtsiminen =
     vaihdaKyytienEtsiminen;
+window.tallennaKyytitarjous = tallennaKyytitarjous;
+window.uusiKyytitarjous = uusiKyytitarjous;
+window.avaaTarjouksenPyynnot = avaaTarjouksenPyynnot;
+window.muokkaaKyytitarjousta = muokkaaKyytitarjousta;
+window.poistaKyytitarjous = poistaKyytitarjous;
+window.vaihdaKyytitarjouksenTila = vaihdaKyytitarjouksenTila;
 
 paivitaMatkustajanOdotanEnint();
 paivitaLuoKyytipyyntoNappi();
+uusiKyytitarjous(false);
 paivitaAloitaKyytienEtsiminenNappi();
-    
+
 </script>
+</body>
+</html>

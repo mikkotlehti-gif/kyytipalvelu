@@ -2746,7 +2746,12 @@ function tarjousKenttienArvot() {
             document.getElementById("tarjoajanPerillaViimeistaan").value || null,
         reittiABMatkaKm: Number.isFinite(reittiABMatkaKm) ? reittiABMatkaKm : null,
         reittiABAikaMin: Number.isFinite(reittiABAikaMin) ? reittiABAikaMin : null,
-        reittiABKoordinaatit: Array.isArray(reittiABKoordinaatit) ? reittiABKoordinaatit : [],
+        reittiABKoordinaatit: Array.isArray(reittiABKoordinaatit)
+            ? reittiABKoordinaatit.map(piste => ({
+                longitude: piste[0],
+                latitude: piste[1]
+            }))
+            : [],
         suodattimet: {
             lisamatka: document.getElementById("lisamatkaRajaProsentti").value,
             ohari: document.getElementById("ohariRajaProsentti").value,
@@ -2801,7 +2806,10 @@ async function haeSuoraReittiTarjoukselle(tarjous, paivitaNykySijainti = false) 
         tarjoajanLahtopaikkaLongitude: lon,
         reittiABMatkaKm: data.routes[0].distance / 1000,
         reittiABAikaMin: data.routes[0].duration / 60,
-        reittiABKoordinaatit: data.routes[0].geometry.coordinates
+        reittiABKoordinaatit: data.routes[0].geometry.coordinates.map(piste => ({
+            longitude: piste[0],
+            latitude: piste[1]
+        }))
     };
 }
 
